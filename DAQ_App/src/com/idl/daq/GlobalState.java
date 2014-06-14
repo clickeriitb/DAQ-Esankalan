@@ -3,6 +3,9 @@ package com.idl.daq;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.daq.sensors.AdcProc;
 import com.daq.sensors.Sensor;
 import com.daq.sensors.UartProc;
@@ -18,21 +21,21 @@ public class GlobalState extends Application{
 
 	ArrayList<Sensor> sensors;
 	
-	ArrayList<String> temp;
+	ArrayList<JSONObject> temp;
 	
 	public GlobalState() {
 		super();
 		sensors = new ArrayList<Sensor>();
-		temp = new ArrayList<String>();
+		temp = new ArrayList<JSONObject>();
 		isExiting = true;
 	}
 
-	public void addToTemp(String s){
-		L.d("added " + s);
-		temp.add(s);
-	}
+//	public void addToTemp(String s){
+//		L.d("added " + s);
+//		temp.add(s);
+//	}
 	
-	public ArrayList<String> getTemp(){
+	public ArrayList<JSONObject> getTemp(){
 		return temp;
 	}
 	
@@ -125,7 +128,12 @@ public class GlobalState extends Application{
 		@Override
 		public void onDataRecieved(String message) {
 			L.d("received message : %s", message);
-			temp.add(message);
+			try {
+				temp.add(new JSONObject(message));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		//	values.add("BBB : " + message);
 		//	arrayAdapter.notifyDataSetChanged();
 			//showToast(message);

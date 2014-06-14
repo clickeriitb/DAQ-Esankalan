@@ -43,7 +43,7 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 	private int count;
 	GlobalState gS;
 
-	ArrayList<String> t;
+	ArrayList<JSONObject> t;
 	/**
 	 * The dummy content this fragment is presenting.
 	 */
@@ -168,7 +168,14 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 		
 		t = gS.getTemp();
 		for(int i=data.size();i<t.size();++i){
-			data.add(t.get(i) + " "+mySensor.getSensorName());
+			try {
+				if(t.get(i).get("sensorName").equals(mySensor.getSensorName())){
+					data.add(mySensor.getSensorName() + " " + t.get(i).getDouble("data"));
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		a.notifyDataSetChanged();		
 //		for(int i=0;i<100;++i){

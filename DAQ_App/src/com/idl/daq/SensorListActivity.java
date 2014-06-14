@@ -134,7 +134,7 @@ public class SensorListActivity extends ActionBarActivity implements
 			Intent i = new Intent(getApplicationContext(),SelectProtocol.class);
 			startActivity(i);
 			//gS.setExiting(false);
-			//finish();
+			finish();
 		} 
 		
 		else if(id==R.id.action_start){

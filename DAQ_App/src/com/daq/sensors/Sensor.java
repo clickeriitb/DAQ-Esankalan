@@ -1,8 +1,11 @@
 package com.daq.sensors;
 
+import java.util.ArrayList;
+
 import org.json.JSONObject;
 
 import android.content.Context;
+
 import com.idl.daq.SensorDetailFragment;
 
 public abstract class Sensor {

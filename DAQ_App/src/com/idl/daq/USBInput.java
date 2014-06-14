@@ -58,15 +58,15 @@ public class USBInput extends IntentService{
 //		}
 		
 		L.d("open connection");
-		mParcelFileDescriptor = mUsbManager.openAccessory(mAccessory);
-		if (mParcelFileDescriptor == null) {
-			L.e("could not open accessory");
-			mCallback.onConnectionClosed();
-			return;
-		}
-		mFileDescriptor = mParcelFileDescriptor.getFileDescriptor();
-		mInputStream = new FileInputStream(mFileDescriptor);
-		mOutputStream = new FileOutputStream(mFileDescriptor);
+//		mParcelFileDescriptor = mUsbManager.openAccessory(mAccessory);
+//		if (mParcelFileDescriptor == null) {
+//			L.e("could not open accessory");
+//			mCallback.onConnectionClosed();
+//			return;
+//		}
+//		mFileDescriptor = mParcelFileDescriptor.getFileDescriptor();
+//		mInputStream = new FileInputStream(mFileDescriptor);
+//		mOutputStream = new FileOutputStream(mFileDescriptor);
 		mCallback.onConnectionEstablished();
 		usb.setAccessoryConnected(true);
 
@@ -74,7 +74,7 @@ public class USBInput extends IntentService{
 		String message;
 		
 		L.d("Hello");
-		while (!usb.mQuit.get() && count<20) {
+		while (!usb.mQuit.get()) {
 			try {
 				message = "";
 				byte[] buf = new byte[BUFFER_SIZE];
@@ -124,9 +124,12 @@ public class USBInput extends IntentService{
 		}
 
 		usb.setAccessoryConnected(false);
+		L.d("usb set Accessory Connected false");
 		usb.mQuit.set(false);
+		L.d("mQuit false");
 		usb.onDestroy();
 		gS.finishUSB();
+		L.d("finish USB");
 //	//	sAccessoryThread = null;
 	}
 

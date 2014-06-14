@@ -28,7 +28,7 @@ public class USBEngine {
 	private final USBCallback mCallback;
 
 	private final static String ACTION_ACCESSORY_DETACHED = "android.hardware.usb.action.USB_ACCESSORY_DETACHED";
-	private static final String ACTION_USB_PERMISSION = "ch.nexuscomputing.simpleaccessory.USB_PERMISSION";
+	private static final String ACTION_USB_PERMISSION = "com.idl.daq.USB_PERMISSION";
 	private volatile boolean mAccessoryConnected = false;
 	public final AtomicBoolean mQuit = new AtomicBoolean(false);
 
