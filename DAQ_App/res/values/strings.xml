@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DAQ</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="protocol_prompt">Choose Protocol</string>
+
+    <string-array name="protocols">
+        <item>ADC</item>
+        <item>I2C</item>
+        <item>UART</item>
+        <item>SPI</item>
+    </string-array>
+
+    <string name="title_sensor_list">Sensors</string>
+    <string name="title_sensor_detail">Sensor Detail</string>
+    <string name="action_add">ADD</string>
+    <string name="action_start">START</string>
+    <string name="action_stop">STOP</string>
+
+</resources>
