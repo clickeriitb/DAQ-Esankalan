@@ -59,6 +59,12 @@
             android:name="android.support.PARENT_ACTIVITY"
             android:value="com.idl.daq.SelectProtocol" />
     </activity>
+    
+    <activity
+        android:name="com.idl.daq.SensorFormActivity"
+        android:label="@string/app_name" >
+    </activity>
+    
     <service 
         android:name=".USBInput"
         android:exported="false"></service>

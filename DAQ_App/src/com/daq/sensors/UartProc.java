@@ -3,6 +3,8 @@ package com.daq.sensors;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.daq.formula.FormulaContainer;
+
 public class UartProc extends Sensor{
 
 	String pin1,pin2,command;
@@ -11,8 +13,8 @@ public class UartProc extends Sensor{
 	
 	
 	public UartProc(String sensorName, String command, 
-			String pin1, String pin2, String formula, float baudRate) {
-		super(sensorName,formula);
+			String pin1, String pin2, FormulaContainer fc, float baudRate) {
+		super(sensorName,fc);
 		this.pin1 = pin1;
 		this.pin2 = pin2;
 		this.command = command;

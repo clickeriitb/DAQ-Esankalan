@@ -1,5 +1,6 @@
 package com.idl.daq;
 
+import com.daq.formula.FormulaContainer;
 import com.daq.sensors.AdcProc;
 
 import android.app.Activity;
@@ -51,7 +52,7 @@ public class AdcProcActivity extends Activity implements OnClickListener{
 		float inputTo = Float.parseFloat(inputRangeFrom.getText().toString());
 		
 		
-		adcSensor = new AdcProc(sensor,pinNum,icFrom,icTo,formulaString,inputFrom,inputTo);
+		adcSensor = new AdcProc(sensor,pinNum,icFrom,icTo,new FormulaContainer(),inputFrom,inputTo);
 	}
 
 

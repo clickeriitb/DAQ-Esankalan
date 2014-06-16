@@ -3,6 +3,8 @@ package com.daq.sensors;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.daq.formula.FormulaContainer;
+
 public class AdcProc extends Sensor{
 
 	String pinNo;
@@ -11,9 +13,9 @@ public class AdcProc extends Sensor{
 	
 	
 	public AdcProc(String sensorName, String pinNo, 
-			float icRangeFrom, float icRangeTo, String formula, float inputRangeFrom,
+			float icRangeFrom, float icRangeTo, FormulaContainer fc, float inputRangeFrom,
 			float inputRangeTo) {
-		super(sensorName,formula);
+		super(sensorName,fc);
 		this.pinNo = pinNo;
 		this.icRangeFrom = icRangeFrom;
 		this.icRangeTo = icRangeTo;

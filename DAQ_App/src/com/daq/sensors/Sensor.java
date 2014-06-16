@@ -6,19 +6,21 @@ import org.json.JSONObject;
 
 import android.content.Context;
 
+import com.daq.formula.FormulaContainer;
 import com.idl.daq.SensorDetailFragment;
 
 public abstract class Sensor {
-	String sensorName,desc,formula;
+	String sensorName,desc;
 	int id;
 	SensorDetailFragment dataFrag;
+	FormulaContainer fc;
 
 	static private int sensorCount = 0;
 	
-	public Sensor(String sensorName,String formula) {
+	public Sensor(String sensorName,FormulaContainer fc) {
 		super();
 		this.sensorName = sensorName;
-		this.formula = formula;
+		this.fc = fc;
 		sensorCount++;
 		id = sensorCount;
 		dataFrag = new SensorDetailFragment();
@@ -40,12 +42,12 @@ public abstract class Sensor {
 		this.sensorName = sensorName;
 	}
 
-	public String getFormula() {
-		return formula;
+	public FormulaContainer getFormula() {
+		return fc;
 	}
 
-	public void setFormula(String formula) {
-		this.formula = formula;
+	public void setFormulaContainer(FormulaContainer fc) {
+		this.fc = fc;
 	}
 
 	public int getId() {

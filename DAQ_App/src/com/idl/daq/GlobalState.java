@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.daq.formula.Formula;
+import com.daq.formula.FormulaContainer;
 import com.daq.sensors.AdcProc;
 import com.daq.sensors.Sensor;
 import com.daq.sensors.UartProc;
@@ -18,10 +20,37 @@ public class GlobalState extends Application{
 	
 	boolean isUsb,isExiting;
 	USBEngine usb=null;
+	String protocol="",globalString;
 
 	ArrayList<Sensor> sensors;
 	
 	ArrayList<JSONObject> temp;
+	
+	FormulaContainer tempFc;
+	
+	public void initializeFc(){
+		tempFc = new  FormulaContainer();
+	}
+	
+	public void destroyFc(){
+		tempFc = null;
+	}
+	
+	public FormulaContainer getfc()
+	{
+		return tempFc;
+	}
+	
+	public void addToFc(Formula f)
+	{
+		tempFc.put(f.toString(), f);
+	}
+	
+	//returns the number of formulas for a sensor
+	public int getFormNum()
+	{
+		return tempFc.getFc().size();
+	}
 	
 	public GlobalState() {
 		super();
@@ -68,6 +97,10 @@ public class GlobalState extends Application{
 		sensors.add(u);
 	}
 	
+	public void addSensor(Sensor s){
+		sensors.add(s);
+	}
+	
 	public void clear(){
 		if(isExiting){
 			sensors.clear();
@@ -106,6 +139,27 @@ public class GlobalState extends Application{
 		return usb;
 	}
 
+	public String getProtocol()
+	{
+		return protocol;
+	}
+	
+	public void setProtocol(String p)
+	{
+		protocol = p;
+	}
+	
+	
+	public void setGlobalString(String s)
+	{
+		globalString = s;
+	}
+	
+	public String getGlobalString()
+	{
+		return globalString;
+	}
+	
 
 
 	private USBCallback usbCallB = new USBCallback(){

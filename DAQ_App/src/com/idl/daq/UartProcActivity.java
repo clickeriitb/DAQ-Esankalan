@@ -1,5 +1,6 @@
 package com.idl.daq;
 
+import com.daq.formula.FormulaContainer;
 import com.daq.sensors.UartProc;
 
 import android.app.Activity;
@@ -48,7 +49,7 @@ public class UartProcActivity extends Activity implements OnClickListener{
 		String formulaString = formula.getText().toString();
 		float baud = Float.parseFloat(baudRate.getText().toString());
 		
-		uartSensor = new UartProc(sensor, comm, pin1, pin2, formulaString, baud);
+		uartSensor = new UartProc(sensor, comm, pin1, pin2, new FormulaContainer(), baud);
 	}
 
 

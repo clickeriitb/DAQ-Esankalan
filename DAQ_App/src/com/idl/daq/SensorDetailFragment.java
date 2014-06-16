@@ -1,10 +1,14 @@
 package com.idl.daq;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.daq.formula.Formula;
 import com.daq.sensors.Sensor;
 
 import android.content.Context;
@@ -170,7 +174,16 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 		for(int i=data.size();i<t.size();++i){
 			try {
 				if(t.get(i).get("sensorName").equals(mySensor.getSensorName())){
-					data.add(mySensor.getSensorName() + " " + t.get(i).getDouble("data"));
+					Formula f = mySensor.getFormula().getFc().get("temperature");
+					f.setValue(t.get(i).getDouble("data"));
+					//f.getAllVariables().get(0).setValue(t.get(i).getDouble("data"));
+					gS.getfc().evaluate();
+					String s="";
+					for(Map.Entry<String, Formula> e : gS.getfc().getFc().entrySet()){
+						s+=e.getKey()+": "+e.getValue().getValue()+" ";
+					}
+					L.d(s);
+					data.add(mySensor.getSensorName() + " " + t.get(i).getDouble("data")+" "+s);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

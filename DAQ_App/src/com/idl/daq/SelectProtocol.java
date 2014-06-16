@@ -21,6 +21,7 @@ public class SelectProtocol extends Activity implements OnClickListener{
 	
 	Intent i;
 	Boolean ifUsb;
+	GlobalState gS;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,7 @@ public class SelectProtocol extends Activity implements OnClickListener{
 		procSubmit = (Button) findViewById(R.id.proc_button);
 		graph = (Button) findViewById(R.id.graph);
 
+		gS = (GlobalState) getApplicationContext();
 		
 		procSubmit.setOnClickListener(this);
 		
@@ -58,9 +60,11 @@ public class SelectProtocol extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 		String proc = String.valueOf(procSpinner.getSelectedItem());
 		JSONObject json = new JSONObject();
+		i = new Intent(getApplicationContext(),SensorFormActivity.class);
 		if(proc.equals("ADC")){
+			gS.setProtocol("ADC");
 			try {
-				i = new Intent(getApplicationContext(),AdcProcActivity.class);
+				
 				/*json.put("protocol1", "adc");
 				json.put("sensorName", "LM35");
 				json.put("pin", "P9_40");
@@ -71,8 +75,9 @@ public class SelectProtocol extends Activity implements OnClickListener{
 				e.printStackTrace();
 				L.e("adc err", e.toString());
 			}
-		}
-			else if(proc.equals("I2C")){
+		}else if(proc.equals("I2C")){
+				
+			gS.setProtocol("I2C");
 			try {
 				json.put("protocol1", "i2c");
 				json.put("sensorName", "MPU");
@@ -87,6 +92,8 @@ public class SelectProtocol extends Activity implements OnClickListener{
 				L.e("i2c err", e.toString());
 			}
 		}else if(proc.equals("UART")){
+			
+			gS.setProtocol("UART");
 			try {
 				i = new Intent(getApplicationContext(),UartProcActivity.class);
 				/*json.put("protocol1", "uart");
