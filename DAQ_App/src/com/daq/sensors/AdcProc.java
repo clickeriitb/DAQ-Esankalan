@@ -25,9 +25,9 @@ public class AdcProc extends Sensor{
 	public JSONObject getJSON(){
 		JSONObject json = new JSONObject();
 		try {
-			json.put("protocol1", "adc");
+			json.put("protocol", "adc");
 			json.put("pin", pinNo);
-			json.put("sensorName", sensorName);
+			json.put("sensor_code", sensorName);
 			json.put("icRangeFrom", icRangeFrom);
 			json.put("icRangeTo", icRangeTo);
 			json.put("inputRangeFrom", inputRangeFrom);

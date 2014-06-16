@@ -145,9 +145,13 @@ public class SensorListActivity extends ActionBarActivity implements
 //			if(mySFrag!=null)
 //			mySFrag.loadData();
 			L.d("Start");
-			JSONObject json = new JSONObject();
+			//JSONObject json = new JSONObject();
+			JSONObject json = mySensor.getJSON();
 			try {
 				json.put("objId", "start");
+				json.put("rate", 0.5);
+				json.put("quantity", "temperature");
+				json.put("isLogging", true);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

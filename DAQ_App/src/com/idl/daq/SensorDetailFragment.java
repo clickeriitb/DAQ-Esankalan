@@ -124,21 +124,21 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 			
 			lv = (ListView) rootView.findViewById(R.id.dataList);
 			data = new ArrayList<String>();
-			a = new ArrayAdapter<String>(c,android.R.layout.simple_list_item_1,data){
-
-		        @Override
-		        public View getView(int position, View convertView,
-		                ViewGroup parent) {
-		            View view =super.getView(position, convertView, parent);
-
-		            TextView textView=(TextView) view.findViewById(android.R.id.text1);
-
-		            /*YOUR CHOICE OF COLOR*/
-		            textView.setTextColor(Color.BLACK);
-
-		            return view;
-		        }
-		    };
+			a = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,data);//{
+//
+//		        @Override
+//		        public View getView(int position, View convertView,
+//		                ViewGroup parent) {
+//		            View view =super.getView(position, convertView, parent);
+//
+//		            TextView textView=(TextView) view.findViewById(android.R.id.text1);
+//
+//		            /*YOUR CHOICE OF COLOR*/
+//		            textView.setTextColor(Color.BLACK);
+//
+//		            return view;
+//		        }
+//		    };
 			lv.setAdapter(a);
 //			lv.post(new Runnable(){
 //
