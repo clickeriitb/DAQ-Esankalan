@@ -151,12 +151,16 @@ public class SensorListActivity extends ActionBarActivity implements
 				json.put("objId", "start");
 				json.put("rate", 0.5);
 				json.put("quantity", "temperature");
-				json.put("isLogging", true);
+				json.put("isLogging", 1);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			mEngine.write(json);
+			if(gS.isUsb){
+				mEngine.write(json);
+			}else{
+				gS.socket.emit("start", json);
+			}
 			
 		} else if(id==R.id.action_stop){
 			L.d("Stop");
@@ -167,7 +171,11 @@ public class SensorListActivity extends ActionBarActivity implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			mEngine.write(json);
+			if(gS.isUsb){
+				mEngine.write(json);
+			}else{
+				gS.socket.emit("stop", json);
+			}
 		}
 			return super.onOptionsItemSelected(item);
 	}

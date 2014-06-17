@@ -321,7 +321,7 @@ public class USBEngine {
 //					}
 						
 						
-						json.put("rate", 1000);
+						json.put("rate", 1);
 						 
 						byte[] msgBuff;
 						msgBuff = json.toString().getBytes("UTF-8");

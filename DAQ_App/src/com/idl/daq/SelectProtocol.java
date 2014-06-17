@@ -16,7 +16,7 @@ import android.widget.Spinner;
 public class SelectProtocol extends Activity implements OnClickListener{
 
 	private Spinner procSpinner;
-	private Button procSubmit,graph;
+	private Button procSubmit,graph,reconnect;
 	private UsbManager mUsbManager;
 	
 	Intent i;
@@ -32,6 +32,7 @@ public class SelectProtocol extends Activity implements OnClickListener{
 		
 		procSpinner = (Spinner) findViewById(R.id.protocol_spinner);
 		procSubmit = (Button) findViewById(R.id.proc_button);
+		reconnect = (Button) findViewById(R.id.reconnect);
 		graph = (Button) findViewById(R.id.graph);
 
 		gS = (GlobalState) getApplicationContext();
@@ -42,7 +43,14 @@ public class SelectProtocol extends Activity implements OnClickListener{
 //		ifUsb = getIntent().getExtras().getBoolean("connection");
 				
 	
-
+		reconnect.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				gS.startSocket();
+			}
+		});
 	
 	graph.setOnClickListener(new View.OnClickListener() {
 		

@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
 import android.os.ParcelFileDescriptor;
+import android.widget.Toast;
 
 public class USBInput extends IntentService{
 	
@@ -77,6 +78,7 @@ public class USBInput extends IntentService{
 		while (!usb.mQuit.get()) {
 			try {
 				message = "";
+				//Toast.makeText(gS, "input", Toast.LENGTH_SHORT).show();
 				byte[] buf = new byte[BUFFER_SIZE];
 				//message = dis.readUTF();
 				L.d("hi");

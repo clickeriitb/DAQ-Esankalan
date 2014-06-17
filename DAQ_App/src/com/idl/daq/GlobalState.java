@@ -1,8 +1,11 @@
 
 package com.idl.daq;
 
+import io.socket.SocketIO;
+
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,6 +18,7 @@ import com.idl.daq.USBEngine.USBCallback;
 
 import android.app.Application;
 import android.content.Intent;
+import android.widget.Toast;
 
 public class GlobalState extends Application{
 	
@@ -27,6 +31,9 @@ public class GlobalState extends Application{
 	ArrayList<JSONObject> temp;
 	
 	FormulaContainer tempFc;
+	
+	SocketIO socket;
+	String ip="192.168.1.145:3000/wifi";
 	
 	public void initializeFc(){
 		tempFc = new  FormulaContainer();
@@ -160,6 +167,12 @@ public class GlobalState extends Application{
 		return globalString;
 	}
 	
+	
+	public void startSocket(){
+		Intent socket_intent = new Intent(getApplicationContext(), SocketLoader.class);
+		startService(socket_intent);
+		L.d("Started socket");
+	}
 
 
 	private USBCallback usbCallB = new USBCallback(){
@@ -181,9 +194,11 @@ public class GlobalState extends Application{
 
 		@Override
 		public void onDataRecieved(String message) {
+			//Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
 			L.d("received message : %s", message);
 			try {
-				temp.add(new JSONObject(message));
+				JSONArray j = new JSONArray(message);
+				temp.add(j.getJSONObject(0));
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -208,7 +223,7 @@ public class GlobalState extends Application{
 			startService(i);
 		}
 		
-		
+	
 		
 	};
 	

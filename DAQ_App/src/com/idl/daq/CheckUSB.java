@@ -31,7 +31,9 @@ public class CheckUSB extends Activity{
 			gS.initiateUSB();
 		} else{
 			L.d("Wifi");
-			//gS.setUsb(false);
+			gS.setUsb(false);
+			L.d(gS.usb);
+			gS.startSocket();
 		}
 //		Intent i = new Intent(getApplicationContext(),USBInput.class);
 //		startService(i);
