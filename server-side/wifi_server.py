@@ -2,9 +2,11 @@
 from socketio import socketio_manage
 from socketio.server import SocketIOServer
 from socketio.namespace import BaseNamespace
-from request_class import Request_Class 
 from gevent.event import Event
 
+
+#Import the class to create general objects
+from request_class import Request_Class 
 
 import os
 import json
@@ -30,6 +32,11 @@ class Wifi_Namespace(BaseNamespace):
     def on_send(msg_string):
         Wifi_Namespace.static_wifi_namespace.emit('reading',msg_string)
 
+
+    #function to print errors
+    def on_error(error_msg):
+	Wifi_Namespace.static_wifi_namespace.emit('error',error_msg)
+
     # initialize method called right after __init__ of the class. The instance is created when the client requests for a connection
     def initialize(self):
         # referrring the self object to the static object so that it can be used to send data to client without request
@@ -45,7 +52,12 @@ class Wifi_Namespace(BaseNamespace):
         global_module.isConnected = True
 
         # connect to the database to make it available to read for all objects
-        log.connect_database()
+        try:
+            log.connect_database()
+	except:
+	    e_msg = "Unable to connect to the logging database"
+	    print e_msg
+	    global_module.wifi_namespace_reference.on_error(e_msg);
         
     # the method is called when the connection with the client is broken in any manner whatsoever
     def disconnect(self, *args, **kwargs):
@@ -75,8 +87,13 @@ class Wifi_Namespace(BaseNamespace):
         pos = 0;
         for x in global_module.logged:
             if x.code == decoded["sensor_code"] and x.quantity == decoded["quantity"]:
-                x.stop()
-                global_module.logged.pop(pos)
+                try:
+                    x.stop()
+                    global_module.logged.pop(pos)
+		except:
+		    e_msg = "Sorry! Unable to stop the ongoing logging of sensor" + decoded["sensor_code"]
+		    print e_msg
+		    global_module.wifi_namespace_reference.on_error(e_msg);
             pos = pos + 1;        
         global_module.current_session.append(Request_Class(jsonObj))
 
@@ -86,7 +103,13 @@ class Wifi_Namespace(BaseNamespace):
     def on_stop(self,jsonObj):
         global_module.isConnected = False
         for x in global_module.current_session:
-            x.stop()
+            try:
+                x.stop()
+		print "Data acquisition stopped"
+	    except:
+		e_msg = "Sorry! Unable to stop the Data Aquisition of this sensor"
+		print e_msg
+		global_module.wifi_namespace_reference.on_error(e_msg);
         print "Data acquisition stopped"
 
     def on_logStop(self,jsonObj):
@@ -95,9 +118,14 @@ class Wifi_Namespace(BaseNamespace):
         pos = 0;
         for x in global_module.logged:
             if x.code == decoded["sensor_code"] and x.quantity == decoded["quantity"]:
-                x.stop()
-                global_module.logged.pop(pos)
-            pos = pos + 1;
+                try:
+		        x.stop()
+		        global_module.logged.pop(pos)
+		except:
+			e_msg = "Sorry! Unable to stop the Data Logging of this sensor"
+			print e_msg
+			global_module.wifi_namespace_reference.on_error(e_msg)
+            pos = pos + 1
 
 def connect_wifi(environ, start_response):
     global_module.wifi_namespace_reference = Wifi_Namespace
@@ -106,11 +134,16 @@ def connect_wifi(environ, start_response):
 
 
 # socket io object made which starts a server at port 3000
-global_module.sio_server = SocketIOServer(('', 3000),connect_wifi,policy_server=False)
-#made to listen
-try:
-	global_module.sio_server.serve_forever()
-except KeyboardInterrupt:
-	global_module.sio_server.stop()
+def activate():
+	try:
+    	    global_module.sio_server = SocketIOServer(('', 3000),connect_wifi,policy_server=False)
+	except:
+	    e_msg = "An error occured in starting the server on port 3000"
+	    print e_msg
+		#made to listen
+	try:
+		global_module.sio_server.serve_forever()
+	except KeyboardInterrupt:
+		global_module.sio_server.stop()
 
  
