@@ -1,14 +1,20 @@
 import json
 
+#imports for respective protocol classes
 from uarty import Uart
 from adc import Adc
 from i2c1 import I2c
 
+import global_module
+
 class Request_Class:
 
 	def __init__(self,jsonReq):
-		json_string  = json.dumps(jsonReq)
-		decoded = json.loads(json_string)
+		if global_module.mode == 0:
+			json_string  = json.dumps(jsonReq)
+			decoded = json.loads(json_string)
+		else:
+			decoded = json.loads(jsonReq)
 		self.protocol = decoded["protocol"]
 		self.json = jsonReq;
 		self.quantity = decoded["quantity"]

@@ -1,6 +1,6 @@
 import json
 
-#from uart_log import Uart
+from uart_log import Uart
 from adc_log import Adc
 #from i2c_log import I2c
 
@@ -18,8 +18,8 @@ class Log_Class:
 	def log_sensor(self):
 		if self.protocol == "adc":
 			self.obj = Adc(self.json);
-		#elif self.protocol == "uart":
-			#self.obj = Uart(self.json);
+		elif self.protocol == "uart":
+			self.obj = Uart(self.json);
 		#elif self.protocol == "i2c":
 			#self.obj = I2c(self.json);
 	
