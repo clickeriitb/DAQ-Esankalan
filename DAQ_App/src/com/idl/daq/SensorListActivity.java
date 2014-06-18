@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import com.idl.daq.USBEngine.USBCallback;
 import com.daq.sensors.Sensor;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -13,10 +15,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.EditText;
 
 /**
  * An activity representing a list of Sensors. This activity has different
@@ -41,76 +46,76 @@ public class SensorListActivity extends ActionBarActivity implements
 	 * device.
 	 */
 	private boolean mTwoPane;
-	
+
 	private Sensor mySensor;
 	private SensorDetailFragment mySFrag;
 	private GlobalState gS;
 	private USBEngine mEngine = null;
 	private String currentFragment;
-	
-	//Action bar containing ADD, START, STOP 
+
+	// Action bar containing ADD, START, STOP
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    // Inflate the menu items for use in the action bar
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.sensors_actions, menu);
-	    return super.onCreateOptionsMenu(menu);
+		// Inflate the menu items for use in the action bar
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.sensors_actions, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
 
-//	@Override
-//	protected void onStart() {
-//		// TODO Auto-generated method stub
-//
-//		if (findViewById(R.id.sensor_detail_container) != null) {
-//			// The detail container view will be present only in the
-//			// large-screen layouts (res/values-large and
-//			// res/values-sw600dp). If this view is present, then the
-//			// activity should be in two-pane mode.
-//			mTwoPane = true;
-//			L.d("Two Pane");
-//			// In two-pane mode, list itemstouched should be given the
-//			// 'activated' state when touched.
-//			((SensorListFragment) getSupportFragmentManager().findFragmentById(
-//					R.id.sensor_list)).setActivateOnItemClick(true);
-//		}
-//		else
-//			L.d("Not two pane");
-//
-//		super.onStart();
-//	}
+	// @Override
+	// protected void onStart() {
+	// // TODO Auto-generated method stub
+	//
+	// if (findViewById(R.id.sensor_detail_container) != null) {
+	// // The detail container view will be present only in the
+	// // large-screen layouts (res/values-large and
+	// // res/values-sw600dp). If this view is present, then the
+	// // activity should be in two-pane mode.
+	// mTwoPane = true;
+	// L.d("Two Pane");
+	// // In two-pane mode, list itemstouched should be given the
+	// // 'activated' state when touched.
+	// ((SensorListFragment) getSupportFragmentManager().findFragmentById(
+	// R.id.sensor_list)).setActivateOnItemClick(true);
+	// }
+	// else
+	// L.d("Not two pane");
+	//
+	// super.onStart();
+	// }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//layout in which details are shown at the side of item selected
+		// layout in which details are shown at the side of item selected
 		setContentView(R.layout.activity_sensor_twopane);
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-//		if (findViewById(R.id.sensor_detail_container) != null) {
-			// The detail container view will be present only in the
-			// large-screen layouts (res/values-large and
-			// res/values-sw600dp). If this view is present, then the
-			// activity should be in two-pane mode.
-			mTwoPane = true;
-			currentFragment="";
-			L.d("Two Pane");
-			// In two-pane mode, list items should be given the
-			// 'activated' state when touched.
-			((SensorListFragment) getSupportFragmentManager().findFragmentById(
-					R.id.sensor_list)).setActivateOnItemClick(true);
-			//L.d("handling intent action: " + intent.getAction());
-//			
-//			if (mEngine == null) {
-//				mEngine = new USBEngine(getApplicationContext(), mCallback);
-//			}
-//			mEngine.onNewIntent();
-			gS =(GlobalState) getApplicationContext();
-			mEngine = gS.getUsb();
-			
-//		}
-//		else
-//			L.d("Not two pane");
+		// if (findViewById(R.id.sensor_detail_container) != null) {
+		// The detail container view will be present only in the
+		// large-screen layouts (res/values-large and
+		// res/values-sw600dp). If this view is present, then the
+		// activity should be in two-pane mode.
+		mTwoPane = true;
+		currentFragment = "";
+		L.d("Two Pane");
+		// In two-pane mode, list items should be given the
+		// 'activated' state when touched.
+		((SensorListFragment) getSupportFragmentManager().findFragmentById(
+				R.id.sensor_list)).setActivateOnItemClick(true);
+		// L.d("handling intent action: " + intent.getAction());
+		//
+		// if (mEngine == null) {
+		// mEngine = new USBEngine(getApplicationContext(), mCallback);
+		// }
+		// mEngine.onNewIntent();
+		gS = (GlobalState) getApplicationContext();
+		mEngine = gS.getUsb();
+
+		// }
+		// else
+		// L.d("Not two pane");
 
 		// TODO: If exposing deep links into your app, handle intents here.
 	}
@@ -129,40 +134,77 @@ public class SensorListActivity extends ActionBarActivity implements
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
 		}
-		//if ADD button clicked(to add new sensor)
-		else if(id==R.id.action_add){
-			Intent i = new Intent(getApplicationContext(),SelectProtocol.class);
+		// if ADD button clicked(to add new sensor)
+		else if (id == R.id.action_add) {
+			Intent i = new Intent(getApplicationContext(), SelectProtocol.class);
 			startActivity(i);
-			//gS.setExiting(false);
+			// gS.setExiting(false);
 			finish();
-		} 
-		
-		else if(id==R.id.action_start){
-//			if (mEngine != null) {
-//				mEngine.write(mySensor.getJSON());
-//				
-//			}
-//			if(mySFrag!=null)
-//			mySFrag.loadData();
+		}
+
+		else if (id == R.id.action_start) {
+			// if (mEngine != null) {
+			// mEngine.write(mySensor.getJSON());
+			//
+			// }
+			// if(mySFrag!=null)
+			// mySFrag.loadData();
 			L.d("Start");
-			//JSONObject json = new JSONObject();
-			JSONObject json = mySensor.getJSON();
-			try {
-				json.put("objId", "start");
-				json.put("rate", 0.5);
-				json.put("quantity", "temperature");
-				json.put("isLogging", 1);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if(gS.isUsb){
-				mEngine.write(json);
-			}else{
-				gS.socket.emit("start", json);
-			}
-			
-		} else if(id==R.id.action_stop){
+			// JSONObject json = new JSONObject();
+
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+					this);
+			LayoutInflater inflater = this.getLayoutInflater();
+			final View v = getLayoutInflater().inflate(R.layout.dialog_start, null);
+
+			L.d("alert starting");
+			alertDialogBuilder
+					.setView(v)
+					.setCancelable(false)
+					.setPositiveButton("Start Now",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									EditText rate = (EditText) v.findViewById(R.id.edit_rate);
+									CheckBox logging = (CheckBox) v.findViewById(R.id.check_logging);
+									JSONObject json = mySensor.getJSON();
+									try {
+										json.put("objId", "start");
+										json.put("rate", rate.getText().toString());
+												
+										json.put("quantity", "temperature");
+										json.put("isLogging",
+												logging.isChecked() ? 1 : 0);
+									} catch (JSONException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									if (gS.isUsb) {
+										mEngine.write(json);
+									} else {
+										gS.socket.emit("start", json);
+									}
+								}
+							})
+					.setNegativeButton("Cancel",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+
+								}
+							});
+
+			AlertDialog alertDialog = alertDialogBuilder.create();
+			alertDialog.show();
+			L.d("alert started");
+
+		} else if (id == R.id.action_stop) {
 			L.d("Stop");
 			JSONObject json = new JSONObject();
 			try {
@@ -171,13 +213,13 @@ public class SensorListActivity extends ActionBarActivity implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if(gS.isUsb){
+			if (gS.isUsb) {
 				mEngine.write(json);
-			}else{
+			} else {
 				gS.socket.emit("stop", json);
 			}
 		}
-			return super.onOptionsItemSelected(item);
+		return super.onOptionsItemSelected(item);
 	}
 
 	/**
@@ -185,84 +227,85 @@ public class SensorListActivity extends ActionBarActivity implements
 	 * the item with the given ID was selected.
 	 */
 	@Override
-	public void onItemSelected(Sensor s,int position) {
+	public void onItemSelected(Sensor s, int position) {
 		mySensor = s;
 		mySFrag = mySensor.getDataFrag(getApplicationContext());
 		if (mTwoPane) {
 			// In two-pane mode, show the detail view in this activity by
 			// adding or replacing the detail fragment using a
 			// fragment transaction.
-		//	if(!mySFrag.isVisible())
-		//	{
-				//Bundle arguments = new Bundle();
-				//arguments.putString("JSON",s.getJSON().toString());
-				//SensorDetailFragment fragment = s.getDataFrag(this);
-				L.d(mySFrag.isAdded());
-				L.d(mySFrag.isVisible());
-				String tabId = s.getSensorName();
-				//mySFrag.setArguments(arguments);
-				L.d("Replacing fragment");
-				FragmentManager fm = getSupportFragmentManager();
-				FragmentTransaction t = fm.beginTransaction();
-				
-//				if (fm.findFragmentByTag(tabId) == null) {
-//					Log.e("update :", "replace"+tabId);
-//					L.d("position : " + position);
-//					if(position%2==0){
-//					fm.beginTransaction()
-//							.replace(R.id.sensor_detail_container, mySFrag, tabId)
-//							.commit();
-//					}else{
-//						fm.beginTransaction()
-//						.replace(R.id.sensor_detail_container2, mySFrag, tabId)
-//						.commit();
-//					}
-//				}
-				
-				if(fm.findFragmentByTag(tabId) == null){
-					t.add(R.id.sensor_detail_container,mySFrag, tabId);
-					
-				}
-				if(!currentFragment.isEmpty()){
-					L.d("Hiding " + currentFragment);
-					t.hide(fm.findFragmentByTag(currentFragment));
-				}
-				t.show(mySFrag);
-				currentFragment=tabId;
-				t.commit();
-//				FragmentTransaction t = getSupportFragmentManager().beginTransaction();
-//				t.replace(R.id.sensor_detail_container, mySFrag);
-//				t.addToBackStack(null);
-//				t.commit();
-				L.d("Fragment Replaced");
-		//	}
+			// if(!mySFrag.isVisible())
+			// {
+			// Bundle arguments = new Bundle();
+			// arguments.putString("JSON",s.getJSON().toString());
+			// SensorDetailFragment fragment = s.getDataFrag(this);
+			L.d(mySFrag.isAdded());
+			L.d(mySFrag.isVisible());
+			String tabId = s.getSensorName();
+			// mySFrag.setArguments(arguments);
+			L.d("Replacing fragment");
+			FragmentManager fm = getSupportFragmentManager();
+			FragmentTransaction t = fm.beginTransaction();
+
+			// if (fm.findFragmentByTag(tabId) == null) {
+			// Log.e("update :", "replace"+tabId);
+			// L.d("position : " + position);
+			// if(position%2==0){
+			// fm.beginTransaction()
+			// .replace(R.id.sensor_detail_container, mySFrag, tabId)
+			// .commit();
+			// }else{
+			// fm.beginTransaction()
+			// .replace(R.id.sensor_detail_container2, mySFrag, tabId)
+			// .commit();
+			// }
+			// }
+
+			if (fm.findFragmentByTag(tabId) == null) {
+				t.add(R.id.sensor_detail_container, mySFrag, tabId);
+
+			}
+			if (!currentFragment.isEmpty()) {
+				L.d("Hiding " + currentFragment);
+				t.hide(fm.findFragmentByTag(currentFragment));
+			}
+			t.show(mySFrag);
+			currentFragment = tabId;
+			t.commit();
+			// FragmentTransaction t =
+			// getSupportFragmentManager().beginTransaction();
+			// t.replace(R.id.sensor_detail_container, mySFrag);
+			// t.addToBackStack(null);
+			// t.commit();
+			L.d("Fragment Replaced");
+			// }
 		}
-//		} else {
-//			// In single-pane mode, simply start the detail activity
-//			// for the selected item ID.
-//			Intent detailIntent = new Intent(this, SensorDetailActivity.class);
-//			detailIntent.putExtra("JSON",s.getJSON().toString());
-//			startActivity(detailIntent);
-//		}
+		// } else {
+		// // In single-pane mode, simply start the detail activity
+		// // for the selected item ID.
+		// Intent detailIntent = new Intent(this, SensorDetailActivity.class);
+		// detailIntent.putExtra("JSON",s.getJSON().toString());
+		// startActivity(detailIntent);
+		// }
 	}
 
 	@Override
 	public GlobalState getGlobalState() {
 		// TODO Auto-generated method stub
-		gS =(GlobalState) getApplicationContext();
+		gS = (GlobalState) getApplicationContext();
 		return gS;
 	}
-	
-//	@Override
-//	protected void onNewIntent(Intent intent) {
-//		L.d("handling intent action: " + intent.getAction());
-//		if (mEngine == null) {
-//			mEngine = new AccessoryEngine(getApplicationContext(), mCallback);
-//		}
-//		mEngine.onNewIntent(intent);
-//		super.onNewIntent(intent);
-//	}
-	
+
+	// @Override
+	// protected void onNewIntent(Intent intent) {
+	// L.d("handling intent action: " + intent.getAction());
+	// if (mEngine == null) {
+	// mEngine = new AccessoryEngine(getApplicationContext(), mCallback);
+	// }
+	// mEngine.onNewIntent(intent);
+	// super.onNewIntent(intent);
+	// }
+
 	private final USBCallback mCallback = new USBCallback() {
 		@Override
 		public void onDeviceDisconnected() {
@@ -282,11 +325,11 @@ public class SensorListActivity extends ActionBarActivity implements
 		@Override
 		public void onDataRecieved(String message) {
 			L.d("received message : %s", message);
-		//	values.add("BBB : " + message);
-		//	arrayAdapter.notifyDataSetChanged();
-			//showToast(message);
-//			for(int i=0;i<data.length;++i)
-//			L.d("byte %d : %d ",i,data[i]);
+			// values.add("BBB : " + message);
+			// arrayAdapter.notifyDataSetChanged();
+			// showToast(message);
+			// for(int i=0;i<data.length;++i)
+			// L.d("byte %d : %d ",i,data[i]);
 		}
 
 		@Override
@@ -298,17 +341,17 @@ public class SensorListActivity extends ActionBarActivity implements
 		@Override
 		public void startUSBInput() {
 			// TODO Auto-generated method stub
-			
+
 		}
 	};
-	
-//	@Override
-//	protected void onDestroy() {
-//		L.d("On destroy called");
-//		//mEngine.onDestroy();
-//		mEngine = null;
-//		gS.clear();
-//		L.d("Cleared");
-//		super.onDestroy();
-//	}
+
+	// @Override
+	// protected void onDestroy() {
+	// L.d("On destroy called");
+	// //mEngine.onDestroy();
+	// mEngine = null;
+	// gS.clear();
+	// L.d("Cleared");
+	// super.onDestroy();
+	// }
 }
