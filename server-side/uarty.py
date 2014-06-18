@@ -5,47 +5,80 @@ import json
 import global_module
 import datetime
 import threading
-import time
+from time import sleep
 
 class Uart() :
-	number = 0;
 	def __init__(self,jsonObj):
-		json_string = json.dumps(jsonObj)
-		decoded = json.loads(json_string)
+		if global_module.mode == 0:
+			json_string  = json.dumps(jsonObj)
+			decoded = json.loads(json_string)
+		else:
+			decoded = json.loads(jsonObj)
+		self.code = decoded["sensor_code"]
+		self.quantity = decoded["quantity"]
+		self.isLogging = decoded["isLogging"]
 		self.rate =  decoded["rate"];
-		self.protocol = decoded["protocol1"];
-		#self.baudrate = decoded["baudrate"]
-		self.byte1 = "8"#decoded["byte1"]
-		self.command = "31"
-		self.pin = "UART1";
-		self.numb = Uart.number;
-		Uart.number = Uart.number + 1;
-		self.arr = [];
-		UART.setup(self.pin)
-		self.out=''
-		self.serial_port = serial.Serial(port = "/dev/ttyO1", baudrate = int("9600",10))
-		#self.serial_port.close()
-		self.serial_port.open()
+		self.protocol = decoded["protocol"];
+		self.baudrate = decoded["baudrate"]
+		self.byte = decoded["byte"]
+		self.command = str(decoded["command"])
+		self.pin = decoded["pin"]
+
+		try:	
+		        self.log_file = open('./logs/' + decoded["sensor_code"] + "_" + decoded["quantity"] + ".txt", 'a')
+		except:
+			e_msg = "Sorry! Unable to request logging for this Uart protocol sensor"
+			print e_msg
+			if global_mode == 0:
+			    global_module.wifi_namespace_reference.on_error(e_msg)
+			else:
+			    global_module.ep_out.write(e_msg.encode('utf-8'),timeout=0)
+		
 		self.stop = threading.Event()
 		self.sensor_thread = threading.Thread(target = self.task)
 		self.sensor_thread.start()
 		
-		
-#txt = sys.argv[1]
-#things needed for uart
 
 	def task(self):
+		UART.setup(self.pin)
+		self.out=''
+		self.serial_port = serial.Serial(port = "/dev/ttyO1", baudrate = self.baudrate)
+		self.serial_port.open()
 		while not self.stop.isSet():
-		#for i in range(1,100):
-			self.serial_port.write('1') #''.join([chr(int(''.join(c), 16)) for c in zip(self.command[0::2],self.command[1::2])]))
-			self.out = self.serial_port.read(8)
-			now = datetime.datetime.now()
-			print self.out + " : " + self.protocol + str(self.numb) + " : %d : %d : %d \n" %(now.minute,now.second,now.microsecond)
-			time.sleep(0.25);
+			try:
+				self.serial_port.write(''.join([chr(int(''.join(c), 16)) for c in zip(self.command[0::2],self.command[1::2])]))
+				self.out = self.serial_port.read(self.byte)
+				now = datetime.datetime.now()
+				val = str(self.out) + ":" + str(now.minute) + ":" + str(now.second) + ":" + str(now.microsecond)
+				print val
+				data = [{'data':val,'sensor_code':self.sensor_code}]
+				string_data = json.dumps(data)
+				if global_mode == 0:
+			            global_module.wifi_namespace_reference.on_send(data)
+				else:
+				    global_module.ep_out.write(string_data.encode('utf-8'),timeout=0)
+				if self.isLogging:
+					log_file.write(val)
+				time.sleep(0.25)
+			except:
+				e_msg = "Sorry! Unable to read UART data"
+				print e_msg
+				if global_mode == 0:
+			            global_module.wifi_namespace_reference.on_error(e_msg)
+				else:
+				    global_module.ep_out.write(e_msg.encode('utf-8'),timeout=0)
 		 
 
 	def stopRead(self):
+		self.log_file.close();
 		self.stop.set();
-		if self.sensor_thread.isAlive():
-			self.sensor_thread.join();
-#hex - acscii - string
+		try: 
+			if self.sensor_thread.isAlive():
+				self.sensor_thread.join();
+		except:
+			e_msg = "Sorry! Unable to end the read thread for this UART protocol sensor"
+			print e_msg
+			if global_mode == 0:
+			    global_module.wifi_namespace_reference.on_error(e_msg)
+			else:
+			    global_module.ep_out.write(e_msg.encode('utf-8'),timeout=0)
