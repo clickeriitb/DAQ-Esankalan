@@ -33,7 +33,7 @@ class Adc() :
 			val = str(value) + " : " + str(now.minute) + " : " + str(now.second) + " : " + str(now.microsecond)+"\n"
 			if self.isLogging:
 				self.log_file.write(val)
-			sleep(1);
+			sleep(this.rate);
 		 
 	def stopRead(self):
 		print "log closed"
