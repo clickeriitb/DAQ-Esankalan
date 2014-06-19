@@ -17,6 +17,20 @@ import os
 import socket
 import struct
 
+#function to convert hex address extracted from the lsusb command to base 10 integer
+def convertToInt(hexAddr):
+	position,value,ch = 1,0,0
+	
+	for i in reversed(hexAddr):
+		ch = ord(i)
+		if ch > 57 :
+			value += (ch-97+10)*position
+		else : 
+			value += (ch-48)*position
+		position = position*16
+		
+	return value
+
 #lsusb command that returns product ids' and vendor ids' of all connected usb devices
 findUsb = subprocess.Popen(["lsusb"],stdout = subprocess.PIPE)
  
@@ -26,7 +40,7 @@ ids = []
 
 for x in range(len(usb_list) - 1):
 	fields = usb_list[x].split(' ')
-    point = fields[5]
+	point = fields[5]
 	ids = point.split(':')
 	print ids[0]
 	print ids[1]
