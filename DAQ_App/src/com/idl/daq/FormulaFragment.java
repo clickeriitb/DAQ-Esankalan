@@ -22,7 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class FormFragment extends Fragment implements OnClickListener {
+public class FormulaFragment extends Fragment implements OnClickListener {
 	
 	private View rootView;
 	private String name,expression;
@@ -51,7 +51,7 @@ public class FormFragment extends Fragment implements OnClickListener {
 	
 	
 	
-	public FormFragment() {
+	public FormulaFragment() {
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -65,7 +65,7 @@ public class FormFragment extends Fragment implements OnClickListener {
 			throw new IllegalStateException(
 					"Activity must implement fragment's callbacks.");
 		}
-
+		setRetainInstance(true);
 		formCallbacks = (Callbacks) activity;
 		Log.e("form callbacks", "callbacks defined");
 	}
@@ -143,9 +143,7 @@ public class FormFragment extends Fragment implements OnClickListener {
 //								startActivity(i);
 								name = fname.getText().toString();
 								expression = gS.getGlobalString();
-								Log.e("formmmmmmmmmmmmmmmmmmm",gS.getProtocol() + " "  + name + " " + expression);
 								formCallbacks.getFormula(name,expression);
-								Log.e("formmmmmmmmmmmmmmmmmmm",gS.getProtocol());
 								formCallbacks.openFormula("new");
 							}
 						  })
@@ -153,11 +151,9 @@ public class FormFragment extends Fragment implements OnClickListener {
 							public void onClick(DialogInterface dialog,int id) {
 								//getFormula();
 								//formCallbacks.getFormula(name,expression);
-								Log.e("formmmmmmmmmmmmmmmmmmm",gS.getProtocol());
 								name = fname.getText().toString();
 								expression = gS.getGlobalString();
 								formCallbacks.getFormula(name,expression);
-								Log.e("formmmmm",gS.getProtocol());
 								formCallbacks.showProtocolForm();
 								Log.e("show protocol called",gS.getProtocol());
 							}
