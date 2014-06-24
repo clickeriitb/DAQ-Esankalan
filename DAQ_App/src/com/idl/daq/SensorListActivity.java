@@ -170,22 +170,33 @@ public class SensorListActivity extends ActionBarActivity implements
 									// TODO Auto-generated method stub
 									EditText rate = (EditText) v.findViewById(R.id.edit_rate);
 									CheckBox logging = (CheckBox) v.findViewById(R.id.check_logging);
+									EditText min = (EditText) v.findViewById(R.id.minThresh);
+									EditText max = (EditText) v.findViewById(R.id.maxThresh);
 									JSONObject json = mySensor.getJSON();
 									try {
 										json.put("objId", "start");
-										json.put("rate", rate.getText().toString());
-												
+										String r = rate.getText().toString();
+//										if(r.isEmpty()){
+//											json.put("rate", 1000);
+//										}else{
+//											json.put("rate", Integer.parseInt(r));
+//										}
+										json.put("rate", 1000);
+										mySensor.setThresh(Double.parseDouble(min.getText().toString()), Double.parseDouble(max.getText().toString()));		
 										json.put("quantity", "temperature");
 										json.put("isLogging",
 												logging.isChecked() ? 1 : 0);
 									} catch (JSONException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
+			
 									}
 									if (gS.isUsb) {
 										mEngine.write(json);
+										L.d(json.toString());
 									} else {
 										gS.socket.emit("start", json);
+										L.d(json.toString());
 									}
 								}
 							})
@@ -206,7 +217,7 @@ public class SensorListActivity extends ActionBarActivity implements
 
 		} else if (id == R.id.action_stop) {
 			L.d("Stop");
-			JSONObject json = new JSONObject();
+			JSONObject json = mySensor.getJSON();
 			try {
 				json.put("objId", "stop");
 			} catch (JSONException e) {
