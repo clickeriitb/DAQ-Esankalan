@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.daq.formula.Formula;
 import com.daq.sensors.AdcProc;
 import com.daq.sensors.Sensor;
+import com.daq.sensors.UartProc;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,13 +19,13 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SensorFormActivity extends FragmentActivity implements AdcFragment.Callbacks, FormFragment.Callbacks, ExpressionFragment.Callbacks{
+public class SensorFormActivity extends FragmentActivity implements AdcFragment.Callbacks, FormulaFragment.Callbacks, ExpressionFragment.Callbacks, UartFragment.Callbacks{
 
 	GlobalState gS;
 	String protocol,initialSpinnerValue;
 	FragmentManager fm;
 	FragmentTransaction t;
-	Fragment newFrag=null,oldFrag=null,f,p,g,u;
+	Fragment newFrag=null,oldFrag=null;
 	private ArrayList<String> varList;
 	private HashMap<String, Formula> allVar;
 	
@@ -41,18 +42,16 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 		if(protocol.equals("ADC")){
 			if(fm.findFragmentByTag(protocol) == null){
 				newFrag = new AdcFragment();
-				t.add(R.id.sensor_form_container,newFrag, protocol);
-				t.show(newFrag);
 			}
 		}else if(protocol.equals("UART")){
-//			if(fm.findFragmentByTag(protocol) == null){
-//				t.add(R.id.sensor_detail_container,new UartFragment(), protocol);
-//			}
-			/*Under Development*/
+			if(fm.findFragmentByTag(protocol) == null){
+					newFrag = new UartFragment();
+			}
 		}else if(protocol.equals("I2C")){
 			/*Under Development*/
 		}
-		
+		t.add(R.id.sensor_form_container,newFrag, protocol);
+		t.show(newFrag);
 		t.commit();
 		
 	}
@@ -70,7 +69,7 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 			if(fm.findFragmentByTag("formula")!=null){
 				t.remove(fm.findFragmentByTag("formula"));
 			}
-			newFrag = new FormFragment();
+			newFrag = new FormulaFragment();
 			Log.e("new form fragment", "created");
 			t.add(R.id.sensor_form_container,newFrag, "formula");
 		}
@@ -98,11 +97,9 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 	@Override
 	public void makeSensor(Sensor a) {
 		// TODO Auto-generated method stub
-		if(protocol.equals("ADC")){
 			gS.addSensor(a);
 			Intent i = new Intent(getApplicationContext(),SensorListActivity.class);
 			startActivity(i);
-		}
 		
 	}
 
@@ -143,7 +140,6 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 		FragmentTransaction t=fm.beginTransaction();
 		oldFrag=newFrag;
 		t.hide(oldFrag);
-		//newFrag=fm.findFragmentByTag(protocol);
 		Log.d("old sensor form retained", "adc");
 		
 		newFrag = fm.findFragmentByTag(protocol);
@@ -151,16 +147,6 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 		TextView tv = (TextView) findViewById(R.id.formula);
 		tv.setText(gS.getGlobalString());
 		t.show(newFrag);
-		if(protocol.equals("UART")){
-//			if(fm.findFragmentByTag(protocol) == null){
-//				t.add(R.id.sensor_detail_container,u, protocol);
-			/*Under Development*/ 
-			Log.d("old sensor form retained", "uart");
-		}else if(protocol.equals("I2C")){
-			/*Under Development*/
-			Log.d("old sensor form retained", "");
-		}
-		
 		t.commit();
 	}
 
@@ -174,6 +160,21 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 	public void addToVariableList(ArrayList<String> varlist) {
 		// TODO Auto-generated method stub
 		varList = varlist;
+	}
+
+	@Override
+	public void makeSensor(UartProc a) {
+		// TODO Auto-generated method stub
+		gS.addSensor(a);
+		Intent i = new Intent(getApplicationContext(),SensorListActivity.class);
+		startActivity(i);
+	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		
+		super.onBackPressed();
 	}
 
 	
