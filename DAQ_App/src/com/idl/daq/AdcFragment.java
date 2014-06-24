@@ -22,11 +22,11 @@ import android.widget.TextView;
 public class AdcFragment extends Fragment implements OnClickListener{
 	
 	private View rootView;
-	private EditText sensorName,pinNo,icRangeFrom,icRangeTo,inputRangeFrom,inputRangeTo;
+	private EditText sensorName,pinNo,icRangeFrom,icRangeTo,inputRangeFrom,inputRangeTo,Quantity,Unit;
 	private Button submit,formula_adc;
 	private TextView formula;
 	
-	private String sensor,pinNum,formulaString;
+	private String sensor,pinNum,formulaString,quantity,unit;
 	private float icFrom,icTo,inputFrom,inputTo;
 	private Boolean err;
 	
@@ -74,7 +74,7 @@ public class AdcFragment extends Fragment implements OnClickListener{
 					"Activity must implement fragment's callbacks.");
 		}
 		
-		
+		setRetainInstance(true);
 		L.d("adc fragment attached!");
 		adcCallbacks = (Callbacks) activity;
 	}
@@ -83,11 +83,13 @@ public class AdcFragment extends Fragment implements OnClickListener{
 		// TODO Auto-generated method stub
 		sensorName = (EditText) rootView.findViewById(R.id.sensor_name);
 		pinNo = (EditText) rootView.findViewById(R.id.pin_no);
-		icRangeFrom= (EditText) rootView.findViewById(R.id.ic_range1);
-		icRangeTo = (EditText) rootView.findViewById(R.id.ic_range2);
+		icRangeFrom= (EditText) rootView.findViewById(R.id.range1);
+		icRangeTo = (EditText) rootView.findViewById(R.id.range2);
 		formula = (TextView) rootView.findViewById(R.id.formula);
 		inputRangeFrom= (EditText) rootView.findViewById(R.id.input_range1);
 		inputRangeTo = (EditText) rootView.findViewById(R.id.input_range2);
+		Quantity = (EditText) rootView.findViewById(R.id.quantity_name);
+		Unit = (EditText) rootView.findViewById(R.id.unit_adc);
 		
 		submit = (Button) rootView.findViewById(R.id.submit);
 		formula_adc = (Button) rootView.findViewById(R.id.formula_adc);
@@ -102,6 +104,8 @@ public class AdcFragment extends Fragment implements OnClickListener{
 		sensor = sensorName.getText().toString();
 		pinNum = pinNo.getText().toString();
 		formulaString = formula.getText().toString();
+		quantity = Quantity.getText().toString();
+		unit = Unit.getText().toString();
 		try {
 			icFrom = Float.parseFloat(icRangeFrom.getText().toString());
 			icTo = Float.parseFloat(icRangeTo.getText().toString());
@@ -112,7 +116,7 @@ public class AdcFragment extends Fragment implements OnClickListener{
 			err=true;
 		}
 		
-		adcSensor = new AdcProc(sensor,pinNum,icFrom,icTo,gS.getfc(),inputFrom,inputTo);
+		adcSensor = new AdcProc(sensor,quantity,unit,pinNum,icFrom,icTo,gS.getfc(),inputFrom,inputTo);
 	}
 
 	@Override
@@ -139,14 +143,22 @@ public class AdcFragment extends Fragment implements OnClickListener{
 		//when formula button clicked
 		else
 		{
-			L.d("opening formula");
-			//name of output parameter is sent as argument
-			FormulaContainer fc = gS.getfc();
-			Formula f = new Formula("temperature","temperature");
-			Variable x = Variable.make("temperature");
-			f.addVariable(x);
-			fc.put("temperature", f);
-			adcCallbacks.openFormula("temperature");
+			quantity = Quantity.getText().toString();
+			if(quantity.isEmpty()){
+				adcCallbacks.makeToast("Enter quantity");
+				
+			}else{
+				L.d("opening formula");
+				//name of output parameter is sent as argument
+				FormulaContainer fc = gS.getfc();
+				Formula f = new Formula(quantity,quantity);
+				Variable x = Variable.make(quantity);
+				f.addVariable(x);
+				fc.put(quantity, f);
+				adcCallbacks.openFormula(quantity);
+			}
+			
+			
 		}
 	}
 
