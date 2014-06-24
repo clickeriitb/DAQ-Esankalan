@@ -42,7 +42,6 @@ class Uart() :
 					log_file.write(val)
 				time.sleep(self.rate)
 
-
 	def stopRead(self):
 		print "log closed"
 		self.log_file.close();

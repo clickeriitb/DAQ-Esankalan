@@ -11,7 +11,7 @@ class Adc() :
 		print type(self)
 		json_string = json.dumps(jsonObj)
 		decoded = json.loads(json_string)
-		self.rate =  decoded["rate"];
+		self.rate =  decoded["rate"]/1000;
 		self.protocol = decoded["protocol"]
 		self.pin = decoded["pin"];
 		self.code = decoded["sensor_code"]
@@ -33,7 +33,7 @@ class Adc() :
 			val = str(value) + " : " + str(now.minute) + " : " + str(now.second) + " : " + str(now.microsecond)+"\n"
 			if self.isLogging:
 				self.log_file.write(val)
-			sleep(this.rate);
+			sleep(self.rate);
 		 
 	def stopRead(self):
 		print "log closed"

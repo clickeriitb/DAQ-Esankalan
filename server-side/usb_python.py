@@ -33,7 +33,7 @@ def convertToInt(hexAddr):
 		
 	return value
 
-def read_request(sensor_code,quantity):
+def read_request(msg,sensor_code,quantity):
 	for x in global_module.logged:
 	    #destroy the logging if it is happening for that sensor
 	    if x.code == sensor_code and x.quantity == quantity:
@@ -45,8 +45,8 @@ def read_request(sensor_code,quantity):
 		    print e_msg
 		    writer(e_msg)
             pos = pos + 1; 
-		#generate a request Class object and append it to the current session       
-		global_module.current_session.append(Request_Class(msg))
+	#generate a request Class object and append it to the current session       
+	global_module.current_session.append(Request_Class(msg))
 
 def stop_read(sensor_code):
 	for x in global_module.current_session:
@@ -101,7 +101,7 @@ def reader():
 			if decoded["objId"] == "start":
 				print decoded["protocol"]
 				print decoded["sensor_code"]
-				read_request(decoded["sensor_code"],decoded["quantity"]);
+				read_request(msg,decoded["sensor_code"],decoded["quantity"]);
 			elif decoded["objId"] == "stop":
 				stop_read(decoded["sensor_code"])
 			elif decoded["objId"] == "logStop":

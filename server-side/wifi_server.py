@@ -32,7 +32,7 @@ class Wifi_Namespace(BaseNamespace):
     def on_send(msg_string):
         Wifi_Namespace.static_wifi_namespace.emit('reading',msg_string)
 
-
+    @staticmethod
     #function to print errors
     def on_error(error_msg):
 	Wifi_Namespace.static_wifi_namespace.emit('error',error_msg)
@@ -102,6 +102,7 @@ class Wifi_Namespace(BaseNamespace):
 
     def on_stop(self,jsonObj):
         global_module.isConnected = False
+        pos = 0;
         for x in global_module.current_session:
             try:
                 x.stop()

@@ -3,7 +3,7 @@ import json
 #imports for respective protocol classes
 from uarty import Uart
 from adc import Adc
-from i2c1 import I2c
+from i2c import I2c
 
 import global_module
 
