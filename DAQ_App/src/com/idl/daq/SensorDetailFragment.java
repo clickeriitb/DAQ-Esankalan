@@ -128,21 +128,29 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 			
 			lv = (ListView) rootView.findViewById(R.id.dataList);
 			data = new ArrayList<String>();
-			a = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,data);//{
-//
-//		        @Override
-//		        public View getView(int position, View convertView,
-//		                ViewGroup parent) {
-//		            View view =super.getView(position, convertView, parent);
-//
-//		            TextView textView=(TextView) view.findViewById(android.R.id.text1);
-//
-//		            /*YOUR CHOICE OF COLOR*/
-//		            textView.setTextColor(Color.BLACK);
-//
-//		            return view;
-//		        }
-//		    };
+			a = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,data){
+				@Override
+		        public View getView(int position, View convertView,
+		                ViewGroup parent) {
+		            View view =super.getView(position, convertView, parent);
+
+		            TextView textView=(TextView) view.findViewById(android.R.id.text1);
+		            String temp = textView.getText().toString();
+		            String[] val = temp.split(" ");
+		            String[] val2 = val[0].split(":");
+		            double d = Double.parseDouble(val2[1]);
+		            /*YOUR CHOICE OF COLOR*/
+		            if(d < mySensor.getMinThresh()){
+		            	textView.setTextColor(Color.BLUE);
+		            }else if(d > mySensor.getMaxThresh()){
+		            	textView.setTextColor(Color.RED);
+		            }else{
+		            	textView.setTextColor(Color.BLACK);
+		            }
+
+		            return view;
+		        }
+		    };
 			lv.setAdapter(a);
 //			lv.post(new Runnable(){
 //
@@ -173,22 +181,29 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 		t = gS.getTemp();
 		for(int i=data.size();i<t.size();++i){
 			try {
-				
-				
-				
 				if(t.get(i).get("sensor_code").equals(mySensor.getSensorName())){
-					Formula f = mySensor.getFormula().getFc().get("temperature");
-					String info = t.get(i).getString("data");
-					String[] r = info.split(":");
-					f.setValue(Double.parseDouble(r[0]));
+					Formula f = mySensor.getFormula().getFc().get(mySensor.getQuantity());
+					String value = t.get(i).getString("data");
+					String date = t.get(i).getString("date");
+					//String[] r = info.split(":");
+					//L.d(r.length);
+					L.d(value+" "+date);
+					f.setValue(Double.parseDouble(value));
 					//f.getAllVariables().get(0).setValue(t.get(i).getDouble("data"));
+//					try {
+//						f.setValue(t.get(i).getDouble("data"));
+//					} catch (Exception e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
 					gS.getfc().evaluate();
 					String s="";
 					for(Map.Entry<String, Formula> e : gS.getfc().getFc().entrySet()){
-						s=e.getKey()+": "+e.getValue().getValue()+" ";
+						s=e.getValue().getValue()+"";
 					}
 					L.d(s);
-					data.add(mySensor.getSensorName() + ": " +info+" "+s);
+					data.add(mySensor.getId()+":"+s+" Time:"+date);
+					//data.add(t.get(i).getDouble("data")+"");
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
