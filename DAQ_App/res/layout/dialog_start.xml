@@ -22,6 +22,7 @@
             android:id="@+id/edit_rate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="1000"
             android:inputType="number" >
 
             <requestFocus />
@@ -33,5 +34,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Logging" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/minThresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Min"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/maxThresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Max"
+            android:inputType="numberDecimal" />
+    </LinearLayout>
 
 </LinearLayout>
