@@ -14,6 +14,8 @@ public abstract class Sensor {
 	int id;
 	SensorDetailFragment dataFrag;
 	FormulaContainer fc;
+	
+	double minThresh,maxThresh;
 
 	static private int sensorCount = 0;
 	
@@ -61,8 +63,20 @@ public abstract class Sensor {
 		return dataFrag;
 	}
 	
+	public void setThresh(double min,double max){
+		minThresh = min;
+		maxThresh = max;
+	}
+
+	public double getMinThresh() {
+		return minThresh;
+	}
+
+	public double getMaxThresh() {
+		return maxThresh;
+	}
 	
-	
+	public abstract String getQuantity();
 	
 	
 }
