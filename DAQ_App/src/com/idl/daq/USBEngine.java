@@ -321,7 +321,7 @@ public class USBEngine {
 //					}
 						
 						
-						json.put("rate", 1);
+					//	json.put("rate", 1);
 						 
 						byte[] msgBuff;
 						msgBuff = json.toString().getBytes("UTF-8");
@@ -329,12 +329,12 @@ public class USBEngine {
 						mOutputStream.write(msgBuff);
 						//sendButton.setEnabled(false);
 			}
-				catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-							
-					
-				} catch (UnsupportedEncodingException e1) {
+//				catch (JSONException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//							
+//				}	
+			 catch (UnsupportedEncodingException e1) {
 					// TODO Auto-generated catch block
 					L.e("Cannot send message : %s",json);
 				} catch (IOException e) {
