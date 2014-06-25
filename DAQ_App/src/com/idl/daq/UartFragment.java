@@ -1,12 +1,19 @@
 package com.idl.daq;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.daq.db.UartDbHelper;
 import com.daq.formula.Formula;
 import com.daq.formula.FormulaContainer;
 import com.daq.sensors.UartProc;
 
 import expr.Variable;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -29,8 +36,13 @@ public class UartFragment extends Fragment implements OnClickListener{
 	private Boolean err;
 	GlobalState gS;
 	
+	private String subprotocol;
+	
 	private UartProc uartSensor;
 
+	private Cursor c=null;
+	
+	UartDbHelper mUartHelper;
 
 	private Callbacks uartCallbacks;
 	
@@ -43,6 +55,8 @@ public class UartFragment extends Fragment implements OnClickListener{
 		public void makeSensor(UartProc a);
 		
 		public Context getContext();
+		
+		public Cursor getCursor();
 	}
 
 	@Override
@@ -53,8 +67,84 @@ public class UartFragment extends Fragment implements OnClickListener{
 		defineAttributes();
 		submit.setOnClickListener(this);
 		formula_uart.setOnClickListener(this);
+		
+		if (c != null) {
+			autoFillForm();
+		}
+		
+		//value will come from pin selection
+		subprotocol = "UART1";
+		
 		return rootView;
 	}
+	
+	private void autoFillForm() {
+		// TODO Auto-generated method stub
+		long row_id;
+		if (c.moveToFirst()) {
+			SensorName.setText(c.getString(c
+					.getColumnIndex(UartDbHelper.UART_SENSOR_CODE)));
+			Quantity.setText(c.getString(c
+					.getColumnIndex(UartDbHelper.UART_QUANTITY)));	
+			Unit.setText(c.getString(c.getColumnIndex(UartDbHelper.UART_UNIT)));
+			PinOne.setText(c.getString(c
+					.getColumnIndex(UartDbHelper.UART_PIN_RX)));
+			PinTwo.setText(c.getString(c
+					.getColumnIndex(UartDbHelper.UART_PIN_TX)));
+			BaudRate.setText(c.getFloat(c
+					.getColumnIndex(UartDbHelper.UART_BAUD_RATE)) + "");
+			Command.setText(c.getFloat(c
+					.getColumnIndex(UartDbHelper.UART_COMMAND)) + "");
+			Byte.setText(c.getString(c.getColumnIndex(UartDbHelper.UART_BYTES))
+					+ "");
+			row_id = c.getLong(c.getColumnIndex(UartDbHelper.UART_KEY));
+			L.d(row_id + "");
+			autoFillFormula(row_id);
+		}
+
+	}
+	
+	private void autoFillFormula(long row_id) {
+		// TODO Auto-generated method stub
+		Cursor c = mUartHelper.getSqlDB().query(
+				UartDbHelper.UART_FORMULA_TABLE_NAME, null,
+				UartDbHelper.UART_FORMULA_SENSOR + "=?",
+				new String[] { row_id + "" }, null, null, null);
+		if (c.moveToFirst()) {
+			gS.initializeFc();
+			FormulaContainer tempFc = gS.getfc();
+			Formula f;
+			do {
+				f = getFormula(c, tempFc);
+				L.d(f.getFormulaString());
+				tempFc.put(f.toString(), f);
+			} while (c.moveToNext());
+			Formula.setText(f.getFormulaString());
+		}
+	}
+	
+	private Formula getFormula(Cursor c, FormulaContainer tempFc) {
+		// TODO Auto-generated method stub
+		String name = c.getString(c
+				.getColumnIndex(UartDbHelper.UART_FORMULA_NAME));
+		String expression = c.getString(c
+				.getColumnIndex(UartDbHelper.UART_FORMULA_EXPRESSION));
+		String variables = c.getString(c
+				.getColumnIndex(UartDbHelper.UART_FORMULA_VARIABLES));
+		Formula f = new Formula(name, expression);
+		if (variables.isEmpty()) {
+			Variable x = Variable.make(name);
+			f.addVariable(x);
+		} else {
+			String[] variableList = variables.split(":");
+			HashMap<String, Formula> allVars = tempFc.getFc();
+			for (int i=0;i<variableList.length-1;++i) {
+				f.addToHashMap(variableList[i], allVars.get(variableList[i]));
+			}
+		}
+		return f;
+	}
+	
 	
 	@Override
 	public void onAttach(Activity activity) {
@@ -86,6 +176,8 @@ public class UartFragment extends Fragment implements OnClickListener{
 				formula_uart = (Button) rootView.findViewById(R.id.formula_uart);
 				
 				gS = (GlobalState) uartCallbacks.getContext();
+				c = uartCallbacks.getCursor();
+				mUartHelper = gS.getUartDbHelper();
 		
 	}
 	
@@ -107,7 +199,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 			err=true;
 		}
 		
-		uartSensor = new UartProc(sensor,pin1,pin2,gS.getfc(),baud,command,quantity,byteValue);
+		uartSensor = new UartProc(sensor,pin1,pin2, subprotocol, gS.getfc(),baud,command,quantity,byteValue);
 	}
 
 
@@ -129,6 +221,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 					//else sensor object created
 					else
 					{
+						updateDatabase();
 						uartCallbacks.makeSensor(uartSensor);
 					}
 				}
@@ -137,9 +230,14 @@ public class UartFragment extends Fragment implements OnClickListener{
 				else
 				{
 					quantity = Quantity.getText().toString();
-					if(quantity.isEmpty())
+					sensor = SensorName.getText().toString();
+					
+					if(quantity.isEmpty() || sensor.isEmpty())
 					{
-						uartCallbacks.makeToast("Enter name of the quantity");
+						if (sensor.isEmpty())
+							uartCallbacks.makeToast("Enter sensor name");
+						else
+							uartCallbacks.makeToast("Enter quantity");
 					}
 					else{
 						L.d("opening formula");
@@ -153,6 +251,81 @@ public class UartFragment extends Fragment implements OnClickListener{
 					}
 				}
 		
+	}
+	
+	private void updateDatabase() {
+		// TODO Auto-generated method stub
+		SQLiteDatabase db = mUartHelper.getSqlDB();
+		long newRowId;
+		Cursor c;
+
+		String query = "SELECT * FROM " + UartDbHelper.UART_TABLE_NAME
+				+ " WHERE " + UartDbHelper.UART_SENSOR_CODE + " = '"
+				+ SensorName.getText().toString() + "' AND "
+				+ UartDbHelper.UART_QUANTITY + " = '"
+				+ Quantity.getText().toString() + "' AND "
+				+ UartDbHelper.UART_UNIT + " = '" + Unit.getText().toString()
+				+ "';";
+		// c = mAdcHelper.getSqlDB().query(
+		// AdcDbHelper.ADC_TABLE_NAME,
+		// null,
+		// AdcDbHelper.ADC_SENSOR_CODE + "=? AND "
+		// + AdcDbHelper.ADC_QUANTITY + "=? AND " + AdcDbHelper.ADC_UNIT +
+		// "=? ",
+		// new String[] { sensorName.getText().toString(),
+		// Quantity.getText().toString(), Unit.getText().toString() }, null,
+		// null, null);
+		// L.d(query);
+		c = db.rawQuery(query, null);
+		L.d(" c move to first " + c.moveToFirst());
+
+		ContentValues values = new ContentValues();
+		values.put(UartDbHelper.UART_SENSOR_CODE, SensorName.getText().toString());
+		values.put(UartDbHelper.UART_QUANTITY, Quantity.getText().toString());
+		values.put(UartDbHelper.UART_UNIT, Unit.getText().toString());
+		values.put(UartDbHelper.UART_PIN_RX, PinOne.getText().toString());
+		values.put(UartDbHelper.UART_PIN_TX, PinTwo.getText().toString());
+		values.put(UartDbHelper.UART_BAUD_RATE, BaudRate.getText().toString());
+		values.put(UartDbHelper.UART_BYTES, Byte.getText().toString());
+		values.put(UartDbHelper.UART_COMMAND, Command.getText().toString());
+
+		if (c.moveToFirst()) {
+			newRowId = c.getLong(c.getColumnIndex(UartDbHelper.UART_KEY));
+			db.update(UartDbHelper.UART_TABLE_NAME, values, "_id" + "="
+					+ newRowId, null);
+			L.d("deleting "
+					+ db.delete(UartDbHelper.UART_FORMULA_TABLE_NAME,
+							UartDbHelper.UART_FORMULA_SENSOR + "=?",
+							new String[] { String.valueOf(newRowId) }) + "");
+
+		} else {
+			newRowId = db.insert(UartDbHelper.UART_TABLE_NAME, null, values);
+			L.d("new row added "+newRowId);
+		}
+		updateFormula(newRowId, db);
+	}
+	
+	private void updateFormula(long newRowId, SQLiteDatabase db) {
+		// TODO Auto-generated method stub
+
+		L.d(gS.getfc()+"");
+		HashMap<String, Formula> fc = gS.getfc().getFc();
+		String name, expression, variables;
+		ContentValues values;
+		for (Map.Entry<String, Formula> e : fc.entrySet()) {
+			name = e.getValue().toString();
+			expression = e.getValue().getExpression();
+			variables = "";
+			for (Variable var : e.getValue().getAllVariables()) {
+				variables += var.toString() + ":";
+			}
+			values = new ContentValues();
+			values.put(UartDbHelper.UART_FORMULA_NAME, name);
+			values.put(UartDbHelper.UART_FORMULA_EXPRESSION, expression);
+			values.put(UartDbHelper.UART_FORMULA_VARIABLES, variables);
+			values.put(UartDbHelper.UART_FORMULA_SENSOR, newRowId);
+			db.insert(UartDbHelper.UART_FORMULA_TABLE_NAME, null, values);
+		}
 	}
 	
 	
