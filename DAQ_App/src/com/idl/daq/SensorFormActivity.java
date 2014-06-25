@@ -16,19 +16,23 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SensorFormActivity extends FragmentActivity implements AdcFragment.Callbacks, FormulaFragment.Callbacks, ExpressionFragment.Callbacks, UartFragment.Callbacks{
+public class SensorFormActivity extends FragmentActivity implements
+		AdcFragment.Callbacks, FormulaFragment.Callbacks,
+		ExpressionFragment.Callbacks, UartFragment.Callbacks, PinSelectFragmentAdc.Callbacks {
 
 	GlobalState gS;
-	String protocol,initialSpinnerValue;
+	String protocol, initialSpinnerValue;
 	FragmentManager fm;
 	FragmentTransaction t;
-	Fragment newFrag=null,oldFrag=null;
+	Fragment newFrag = null, oldFrag = null;
 	private ArrayList<String> varList;
 	private HashMap<String, Formula> allVar;
-	
+	String pinData = "";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -39,41 +43,41 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 		gS.initializeFc();
 		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction t = fm.beginTransaction();
-		if(protocol.equals("ADC")){
-			if(fm.findFragmentByTag(protocol) == null){
+		if (protocol.equals("ADC")) {
+			if (fm.findFragmentByTag(protocol) == null) {
 				newFrag = new AdcFragment();
 			}
-		}else if(protocol.equals("UART")){
-			if(fm.findFragmentByTag(protocol) == null){
-					newFrag = new UartFragment();
+		} else if (protocol.equals("UART")) {
+			if (fm.findFragmentByTag(protocol) == null) {
+				newFrag = new UartFragment();
 			}
-		}else if(protocol.equals("I2C")){
-			/*Under Development*/
+		} else if (protocol.equals("I2C")) {
+			/* Under Development */
 		}
-		t.add(R.id.sensor_form_container,newFrag, protocol);
+		t.add(R.id.sensor_form_container, newFrag, protocol);
 		t.show(newFrag);
 		t.commit();
-		
+
 	}
 
 	@Override
 	public void openFormula(String s) {
 		// TODO Auto-generated method stub
-		//gS.setGlobalString(s); 
+		// gS.setGlobalString(s);
 		Log.e("eeeeeeee", "not started");
 		oldFrag = newFrag;
 		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction t = fm.beginTransaction();
-		//if method called after protocol selection or "add new formula" dialog box new fragment created
-		if(fm.findFragmentByTag("formula")==null || !s.equals("back")){
-			if(fm.findFragmentByTag("formula")!=null){
+		// if method called after protocol selection or "add new formula" dialog
+		// box new fragment created
+		if (fm.findFragmentByTag("formula") == null || !s.equals("back")) {
+			if (fm.findFragmentByTag("formula") != null) {
 				t.remove(fm.findFragmentByTag("formula"));
 			}
 			newFrag = new FormulaFragment();
 			Log.e("new form fragment", "created");
-			t.add(R.id.sensor_form_container,newFrag, "formula");
-		}
-		else{
+			t.add(R.id.sensor_form_container, newFrag, "formula");
+		} else {
 			Log.e("old formula screen shown", "old fragment retained");
 			newFrag = fm.findFragmentByTag("formula");
 			Log.e("string glbal", gS.getGlobalString());
@@ -81,10 +85,10 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 			ex.setText("");
 			ex.setText(gS.getGlobalString());
 		}
-		Log.e("add","added");
+		Log.e("add", "added");
 		t.hide(oldFrag);
 		t.show(newFrag);
-		Log.e("commit","commitment");
+		Log.e("commit", "commitment");
 		t.commit();
 	}
 
@@ -97,10 +101,10 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 	@Override
 	public void makeSensor(Sensor a) {
 		// TODO Auto-generated method stub
-			gS.addSensor(a);
-			Intent i = new Intent(getApplicationContext(),SensorListActivity.class);
-			startActivity(i);
-		
+		gS.addSensor(a);
+		Intent i = new Intent(getApplicationContext(), SensorListActivity.class);
+		startActivity(i);
+
 	}
 
 	@Override
@@ -112,11 +116,10 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 		oldFrag = newFrag;
 		t.hide(oldFrag);
 		newFrag = new ExpressionFragment();
-		t.add(R.id.sensor_form_container,newFrag, "expression");
+		t.add(R.id.sensor_form_container, newFrag, "expression");
 		t.show(newFrag);
 		t.commit();
 	}
-
 
 	@Override
 	public void getFormula(String name, String expression) {
@@ -124,28 +127,24 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 		Log.e("entered getformula", "jkhjh");
 		allVar = gS.getfc().getFc();
 		Formula formula = new Formula(name, expression);
-		for(String str : varList)
-		{
-				formula.addToHashMap(str, allVar.get(str));				
-		}
+		for (String str : varList)
+			formula.addToHashMap(str, allVar.get(str));
 		gS.addToFc(formula);
-		
+
 	}
 
 	@Override
 	public void showProtocolForm() {
 		// TODO Auto-generated method stub
-		
-		FragmentManager fm=getSupportFragmentManager();
-		FragmentTransaction t=fm.beginTransaction();
-		oldFrag=newFrag;
+
+		FragmentManager fm = getSupportFragmentManager();
+		FragmentTransaction t = fm.beginTransaction();
+		oldFrag = newFrag;
 		t.hide(oldFrag);
 		Log.d("old sensor form retained", "adc");
-		
+
 		newFrag = fm.findFragmentByTag(protocol);
-		
-		TextView tv = (TextView) findViewById(R.id.formula);
-		tv.setText(gS.getGlobalString());
+
 		t.show(newFrag);
 		t.commit();
 	}
@@ -166,16 +165,56 @@ public class SensorFormActivity extends FragmentActivity implements AdcFragment.
 	public void makeSensor(UartProc a) {
 		// TODO Auto-generated method stub
 		gS.addSensor(a);
-		Intent i = new Intent(getApplicationContext(),SensorListActivity.class);
+		Intent i = new Intent(getApplicationContext(), SensorListActivity.class);
 		startActivity(i);
 	}
 
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
-		
+
 		super.onBackPressed();
 	}
 
+	@Override
+	public void openPinSelection() {
+		// TODO Auto-generated method stub
+		FragmentManager fm = getSupportFragmentManager();
+		FragmentTransaction t = fm.beginTransaction();
+		oldFrag = newFrag;
+		t.hide(oldFrag);
+		newFrag = new PinSelectFragmentAdc();
+		t.add(R.id.sensor_form_container, newFrag, "pin_select");
+		t.show(newFrag);
+		t.commit();
+	}
+
+	@Override
+	public void sendSelectedPins(String s) {
+		// TODO Auto-generated method stub
+		pinData = s;
+	}
+
+	@Override
+	public String getPindata() {
+		// TODO Auto-generated method stub
+		return pinData;
+	}
+
+	@Override
+	public void openForm() {
+		// TODO Auto-generated method stub
+		FragmentManager fm = getSupportFragmentManager();
+		FragmentTransaction t = fm.beginTransaction();
+		oldFrag = newFrag;
+		t.hide(oldFrag);
+		newFrag = fm.findFragmentByTag("ADC");
+		t.show(newFrag);
+		t.commit();
+		TextView pin_view = (TextView) findViewById(R.id.pin_no);
+		pin_view.setText(pinData);
+	}
+
 	
+
 }
