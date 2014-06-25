@@ -5,6 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="protocol_prompt">Choose Protocol</string>
+    <string name="search_hint">Enter Code/Quantity</string>
 
     <string-array name="protocols">
         <item>ADC</item>
@@ -19,7 +20,6 @@
     <string name="action_start">START</string>
     <string name="action_stop">STOP</string>
     <string name="select_variable">Select a Variable</string>
-    
     <string name="math_function">enter a math function f(x)</string>
     <string name="two">2</string>
     <string name="three">3</string>
