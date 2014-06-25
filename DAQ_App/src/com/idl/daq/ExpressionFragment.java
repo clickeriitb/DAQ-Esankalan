@@ -459,7 +459,8 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				String proc = variableListHolder.getItemAtPosition(position).toString();
+				String proc = variableListHolder.getItemAtPosition(position)
+						.toString();
 
 				if (!list.contains(proc)) {
 					list.add(proc);
@@ -504,41 +505,6 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-
-		if (v.getId() == R.id.submit) {
-
-			express = mathExpression.getText().toString();
-			err = true;
-			Expr expr = null;
-			try {
-				expr = Parser.parse(express);
-				Log.e("evaluate", expr.toString());
-			}
-
-			catch (SyntaxException e) {
-				System.err.println(e.explain());
-				Toast.makeText(gS, "Enter valid expression", Toast.LENGTH_SHORT)
-						.show();
-				err = false;
-			}
-
-			if (err) {
-				// i = getIntent();
-				// String name = i.getStringExtra("temp_name");
-				gS.setGlobalString(mathExpression.getText().toString());
-				Log.e("string", gS.getGlobalString());
-				expressionCallbacks.addToVariableList(list);
-				// Log.e("globalstring",mathExpression.getText().toString());
-				expressionCallbacks.openFormula("back");
-				// Log.e("formula opened","");
-				// i = new Intent(getApplicationContext(),Form.class);
-				// i.putExtra("expr", express);
-				// i.putStringArrayListExtra("var_list", list);
-				// i.putExtra("temp_name", name);
-				// startActivity(i);
-
-			}
-		}
 
 	}
 
