@@ -35,7 +35,7 @@
     <string name="multiply">*</string>
     <string name="division">/</string>
     <string name="one">1</string>
-    <string name="logrithm">log</string>
+    <string name="logarithm">log</string>
     <string name="exponential">exp</string>
     <string name="natural_log">ln</string>
     <string name="power">^</string>
@@ -46,6 +46,6 @@
     <string name="parenthesis2">)</string>
     <string name="square_root">sqrt</string>
     <string name="submit">ok</string>
-    
+    <string name="spinner_prompt">Variable Name</string>
 
 </resources>
