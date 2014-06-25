@@ -474,32 +474,6 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			}
 		});
 
-		// @Override
-		// public void onItemSelected(AdapterView<?> adapterView,
-		// View view, int i, long id) {
-		// // TODO Auto-generated method stub
-		// String proc = String.valueOf(variableListHolder
-		// .getSelectedItem());
-		//
-		// if (!proc.equals("Select a Variable")
-		// && !list.contains(proc)) {
-		// list.add(proc);
-		// }
-		// if (!proc.equals("Select a Variable")) {
-		// userInput.add(index, proc);
-		// mathExpression.append(userInput.get(index));
-		// index++;
-		// variableListHolder.setSelection(0);
-		//
-		// }
-		// }
-		//
-		// @Override
-		// public void onNothingSelected(AdapterView<?> parent) {
-		// // TODO Auto-generated method stub
-		//
-		// }
-		// });
 	}
 
 	@Override
