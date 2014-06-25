@@ -8,19 +8,12 @@ import com.daq.formula.FormulaContainer;
 public class AdcProc extends Sensor{
 
 	String pinNo,unit,quantity;
-	float icRangeFrom,icRangeTo,inputRangeFrom,inputRangeTo;
-	
 	
 	
 	public AdcProc(String sensorName,String quantity, String unit, String pinNo, 
-			float icRangeFrom, float icRangeTo, FormulaContainer fc, float inputRangeFrom,
-			float inputRangeTo) {
+			FormulaContainer fc) {
 		super(sensorName,fc);
 		this.pinNo = pinNo;
-		this.icRangeFrom = icRangeFrom;
-		this.icRangeTo = icRangeTo;
-		this.inputRangeFrom = inputRangeFrom;
-		this.inputRangeTo = inputRangeTo;
 		this.unit=unit;
 		this.quantity=quantity;
 	}
@@ -32,10 +25,6 @@ public class AdcProc extends Sensor{
 			json.put("protocol", "adc");
 			json.put("pin", pinNo);
 			json.put("sensor_code", sensorName);
-			json.put("icRangeFrom", icRangeFrom);
-			json.put("icRangeTo", icRangeTo);
-			json.put("inputRangeFrom", inputRangeFrom);
-			json.put("inputRangeTo", inputRangeTo);
 			json.put("quantity", quantity);
 			
 		} catch (JSONException e) {
