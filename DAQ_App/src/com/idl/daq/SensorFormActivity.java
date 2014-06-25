@@ -3,11 +3,6 @@ package com.idl.daq;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.daq.formula.Formula;
-import com.daq.sensors.AdcProc;
-import com.daq.sensors.Sensor;
-import com.daq.sensors.UartProc;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,9 +11,12 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.daq.formula.Formula;
+import com.daq.sensors.Sensor;
+import com.daq.sensors.UartProc;
 
 public class SensorFormActivity extends FragmentActivity implements
 		AdcFragment.Callbacks, FormulaFragment.Callbacks,
@@ -26,8 +24,8 @@ public class SensorFormActivity extends FragmentActivity implements
 
 	GlobalState gS;
 	String protocol, initialSpinnerValue;
-	FragmentManager fm;
-	FragmentTransaction t;
+	FragmentManager fragmentManager;
+	FragmentTransaction fragmentTransaction;
 	Fragment newFrag = null, oldFrag = null;
 	private ArrayList<String> varList;
 	private HashMap<String, Formula> allVar;
@@ -111,14 +109,7 @@ public class SensorFormActivity extends FragmentActivity implements
 	public void createExpression() {
 		// TODO Auto-generated method stub
 		gS.setGlobalString("temperature");
-		FragmentManager fm = getSupportFragmentManager();
-		FragmentTransaction t = fm.beginTransaction();
-		oldFrag = newFrag;
-		t.hide(oldFrag);
-		newFrag = new ExpressionFragment();
-		t.add(R.id.sensor_form_container, newFrag, "expression");
-		t.show(newFrag);
-		t.commit();
+		addNewFragment(new ExpressionFragment(), "expression", -1, -1);
 	}
 
 	@Override
@@ -136,17 +127,7 @@ public class SensorFormActivity extends FragmentActivity implements
 	@Override
 	public void showProtocolForm() {
 		// TODO Auto-generated method stub
-
-		FragmentManager fm = getSupportFragmentManager();
-		FragmentTransaction t = fm.beginTransaction();
-		oldFrag = newFrag;
-		t.hide(oldFrag);
-		Log.d("old sensor form retained", "adc");
-
-		newFrag = fm.findFragmentByTag(protocol);
-
-		t.show(newFrag);
-		t.commit();
+		showOldFragment(protocol, -1, -1);
 	}
 
 	@Override
@@ -179,14 +160,10 @@ public class SensorFormActivity extends FragmentActivity implements
 	@Override
 	public void openPinSelection() {
 		// TODO Auto-generated method stub
-		FragmentManager fm = getSupportFragmentManager();
-		FragmentTransaction t = fm.beginTransaction();
-		oldFrag = newFrag;
-		t.hide(oldFrag);
-		newFrag = new PinSelectFragmentAdc();
-		t.add(R.id.sensor_form_container, newFrag, "pin_select");
-		t.show(newFrag);
-		t.commit();
+		Fragment fragment = null;
+		if(protocol == "ADC")
+			fragment = new PinSelectFragmentAdc();
+		addNewFragment(fragment, protocol + "_pin", R.anim.vertical_up_in,R.anim.vertical_up_out);
 	}
 
 	@Override
@@ -204,17 +181,51 @@ public class SensorFormActivity extends FragmentActivity implements
 	@Override
 	public void openForm() {
 		// TODO Auto-generated method stub
-		FragmentManager fm = getSupportFragmentManager();
-		FragmentTransaction t = fm.beginTransaction();
-		oldFrag = newFrag;
-		t.hide(oldFrag);
-		newFrag = fm.findFragmentByTag("ADC");
-		t.show(newFrag);
-		t.commit();
-		TextView pin_view = (TextView) findViewById(R.id.pin_no);
-		pin_view.setText(pinData);
+		if(showOldFragment(protocol, R.anim.vertical_down_in, R.anim.vertical_down_out)){
+			TextView pin_view = (TextView) findViewById(R.id.pin_no);
+			pin_view.setText(pinData);
+		}
 	}
 
-	
+	public boolean addNewFragment(Fragment fragment, String tag,int incoming_animation, int outgoing_animation){
+		try{
+			fragmentManager = getSupportFragmentManager();
+			fragmentTransaction = fragmentManager.beginTransaction();
+			if(incoming_animation != -1 && outgoing_animation != -1){
+				fragmentTransaction.setCustomAnimations(incoming_animation, outgoing_animation);
+			}
+			oldFrag = newFrag;
+			fragmentTransaction.hide(oldFrag);
+			newFrag = fragment;
+			fragmentTransaction.add(R.id.sensor_form_container, newFrag, tag);
+			fragmentTransaction.show(newFrag);
+			fragmentTransaction.commit();
+			return true;
+		}catch(Exception e){
+			Log.e("fragment error", e.toString());
+			return false;
+		}
+	}
 
+	public boolean showOldFragment(String tag,int incoming_animation, int outgoing_animation){
+		try{
+			fragmentManager = getSupportFragmentManager();
+			fragmentTransaction = fragmentManager.beginTransaction();
+			if(incoming_animation != -1 && outgoing_animation != -1){
+				fragmentTransaction.setCustomAnimations(incoming_animation, outgoing_animation);
+			}
+			oldFrag = newFrag;
+			fragmentTransaction.hide(oldFrag);
+			newFrag = fragmentManager.findFragmentByTag(tag);
+			if(newFrag!= null){
+				fragmentTransaction.show(newFrag);
+				fragmentTransaction.commit();
+				return true;
+			}
+			else return false;
+		}catch(Exception e){
+			Log.e("fragment error", e.toString());
+			return false;
+		}
+	}
 }
