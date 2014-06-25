@@ -12,6 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.daq.db.AdcDbHelper;
+import com.daq.db.UartDbHelper;
 import com.daq.formula.Formula;
 import com.daq.formula.FormulaContainer;
 import com.daq.sensors.AdcProc;
@@ -39,6 +41,34 @@ public class GlobalState extends Application{
 	SocketIO socket;
 	String ip="192.168.1.145:3000/wifi";
 	String TAG = "Socket.io";
+	
+	//database
+	AdcDbHelper mADCHelper;
+	UartDbHelper mUartHelper;
+	
+	public AdcDbHelper getAdcDbHelper(){
+		return mADCHelper;
+	}
+	
+	public UartDbHelper getUartDbHelper() {
+		// TODO Auto-generated method stub
+		return mUartHelper;
+	}
+	
+	public void initializeDB(){
+		mADCHelper = new AdcDbHelper(this);
+		mADCHelper.openDB();
+		mADCHelper.test();
+		mADCHelper.loadEntries();
+		L.d("Adc created");
+		mUartHelper = new UartDbHelper(this);
+		L.d("Uart open db");
+		mUartHelper.openDB();
+		L.d("Uart opened db");
+		mUartHelper.test();
+		L.d("Uart test called");
+		mUartHelper.loadEntries();
+	}
 	
 	public void initializeFc(){
 		tempFc = new  FormulaContainer();

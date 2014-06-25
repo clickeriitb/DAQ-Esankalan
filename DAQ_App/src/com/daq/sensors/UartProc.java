@@ -9,15 +9,16 @@ import com.daq.formula.FormulaContainer;
 
 public class UartProc extends Sensor {
 
-	String pin1, pin2, command,quantity;
+	String command,quantity, pin, pin1, pin2;
 	float baudRate;
 	int byteValue;
 
-	public UartProc(String sensorName, String pin1, String pin2,
+	public UartProc(String sensorName, String pin1, String pin2,String pin,
 			FormulaContainer fc, float baudRate, String command,String quantity,int byteValue) {
 		super(sensorName, fc);
-		this.pin1 = pin1;
-		this.pin2 = pin2;
+		this.pin=pin;
+		this.pin1=pin1;
+		this.pin2=pin2;
 		this.command = command;
 		this.baudRate = baudRate;
 		this.quantity = quantity;
@@ -28,17 +29,13 @@ public class UartProc extends Sensor {
 		JSONObject json = new JSONObject();
 		try {
 			json.put("protocol", "uart");
-			//json.put("pin1", pin1);
-			//json.put("pin2", pin2);
-			json.put("pin", "UART1");
+			json.put("pin", pin);
 			json.put("sensor_code", sensorName);
 			json.put("baudRate", baudRate);
 			json.put("command", command);
 			json.put("quantity", quantity.toLowerCase(Locale.US));
 			json.put("byte", byteValue);
-			// json.put("inputRangeFrom", inputRangeFrom);
-			// json.put("inputRangeTo", inputRangeTo);
-
+			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -51,6 +48,12 @@ public class UartProc extends Sensor {
 	public String getQuantity() {
 		// TODO Auto-generated method stub
 		return quantity;
+	}
+
+	@Override
+	public String display() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

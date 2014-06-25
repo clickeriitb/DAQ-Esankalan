@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -20,7 +21,7 @@ import com.daq.sensors.UartProc;
 
 public class SensorFormActivity extends FragmentActivity implements
 		AdcFragment.Callbacks, FormulaFragment.Callbacks,
-		ExpressionFragment.Callbacks, UartFragment.Callbacks, PinSelectFragmentAdc.Callbacks {
+		ExpressionFragment.Callbacks, UartFragment.Callbacks, PinSelectFragmentAdc.Callbacks, SensorBrowseFragment.Callbacks {
 
 	GlobalState gS;
 	String protocol, initialSpinnerValue;
@@ -30,6 +31,7 @@ public class SensorFormActivity extends FragmentActivity implements
 	private ArrayList<String> varList;
 	private HashMap<String, Formula> allVar;
 	String pinData = "";
+	Cursor c;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,24 +40,34 @@ public class SensorFormActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_form_with_fragments);
 		gS = (GlobalState) getApplicationContext();
 		protocol = gS.getProtocol();
-		gS.initializeFc();
+//		gS.initializeFc();
 		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction t = fm.beginTransaction();
-		if (protocol.equals("ADC")) {
-			if (fm.findFragmentByTag(protocol) == null) {
-				newFrag = new AdcFragment();
-			}
-		} else if (protocol.equals("UART")) {
-			if (fm.findFragmentByTag(protocol) == null) {
-				newFrag = new UartFragment();
-			}
-		} else if (protocol.equals("I2C")) {
-			/* Under Development */
-		}
-		t.add(R.id.sensor_form_container, newFrag, protocol);
+//		if (protocol.equals("ADC")) {
+//			if (fm.findFragmentByTag(protocol) == null) {
+//				newFrag = new AdcFragment();
+//			}
+//		} else if (protocol.equals("UART")) {
+//			if (fm.findFragmentByTag(protocol) == null) {
+//				newFrag = new UartFragment();
+//			}
+//		} else if (protocol.equals("I2C")) {
+//			/* Under Development */
+//		}
+		newFrag = new SensorBrowseFragment();
+		t.add(R.id.sensor_form_container, newFrag, "browse");
 		t.show(newFrag);
 		t.commit();
 
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		L.d("handling intent action: " + intent.getAction());
+		super.onNewIntent(intent);
+		if(!Intent.ACTION_SEARCH.equals(intent.getAction())){
+			onCreate(null);
+		}
 	}
 
 	@Override
@@ -100,6 +112,7 @@ public class SensorFormActivity extends FragmentActivity implements
 	public void makeSensor(Sensor a) {
 		// TODO Auto-generated method stub
 		gS.addSensor(a);
+		gS.destroyFc();
 		Intent i = new Intent(getApplicationContext(), SensorListActivity.class);
 		startActivity(i);
 
@@ -155,6 +168,40 @@ public class SensorFormActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 
 		super.onBackPressed();
+	}
+	
+	@Override
+	public void openProtocol(Cursor c) {
+		// TODO Auto-generated method stub
+			protocol = gS.getProtocol();
+			gS.initializeFc();
+			FragmentManager fm = getSupportFragmentManager();
+			FragmentTransaction t = fm.beginTransaction();
+			oldFrag = newFrag;
+			t.hide(oldFrag);
+			if (protocol.equals("ADC")) {
+				if (fm.findFragmentByTag(protocol) == null) {
+					newFrag = new AdcFragment();
+				}
+			} else if (protocol.equals("UART")) {
+				if (fm.findFragmentByTag(protocol) == null) {
+					newFrag = new UartFragment();
+				}
+			} else if (protocol.equals("I2C")) {
+				/* Under Development */
+			}
+			if(c!=null){
+				this.c = c;
+			}
+			t.add(R.id.sensor_form_container, newFrag, protocol);
+			t.show(newFrag);
+			t.commit();
+	}
+
+	@Override
+	public Cursor getCursor() {
+		// TODO Auto-generated method stub
+		return c;
 	}
 
 	@Override

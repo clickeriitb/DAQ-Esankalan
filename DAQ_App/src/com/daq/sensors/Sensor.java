@@ -10,23 +10,23 @@ import com.daq.formula.FormulaContainer;
 import com.idl.daq.SensorDetailFragment;
 
 public abstract class Sensor {
-	String sensorName,desc;
+	String sensorName, desc;
 	int id;
 	SensorDetailFragment dataFrag;
 	FormulaContainer fc;
-	
-	double minThresh,maxThresh;
+
+	double minThresh, maxThresh;
 
 	static private int sensorCount = 0;
-	
-	public Sensor(String sensorName,FormulaContainer fc) {
+
+	public Sensor(String sensorName, FormulaContainer fc) {
 		super();
 		this.sensorName = sensorName;
 		this.fc = fc;
 		sensorCount++;
 		id = sensorCount;
 		dataFrag = new SensorDetailFragment();
-		//dataFrag.setRetainInstance(true);
+		// dataFrag.setRetainInstance(true);
 		dataFrag.setSensor(this);
 	}
 
@@ -55,15 +55,15 @@ public abstract class Sensor {
 	public int getId() {
 		return id;
 	}
-	
+
 	public abstract JSONObject getJSON();
 
 	public SensorDetailFragment getDataFrag(Context c) {
 		dataFrag.setContext(c);
 		return dataFrag;
 	}
-	
-	public void setThresh(double min,double max){
+
+	public void setThresh(double min, double max) {
 		minThresh = min;
 		maxThresh = max;
 	}
@@ -75,8 +75,9 @@ public abstract class Sensor {
 	public double getMaxThresh() {
 		return maxThresh;
 	}
-	
+
 	public abstract String getQuantity();
 	
-	
+	public abstract String display();
+
 }

@@ -17,6 +17,8 @@ public class CheckUSB extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash);
 		checkForUSB();
+		gS.initializeDB();
+		L.d("initialized database");
 		Intent i = new Intent(getApplicationContext(),SelectProtocol.class);
 		startActivity(i);
 	}
