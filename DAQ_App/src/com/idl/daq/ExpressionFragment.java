@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +39,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 	Intent i;
 	private ArrayList<String> list;
 	private TextView mathExpression;
-
+	private LinearLayout background;
 	private FButton one, two, three, four, five, six, seven, eight, nine,
 			times, divide, plus, minus, power, exp;
 	private FButton log, ln, zero, dot, clr, openbracket, closebracket, sqrt,
@@ -81,9 +82,13 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		rootView = inflater.inflate(R.layout.adc_calc, container, false);
-		Log.e("inflater", "inflated");
 		gS = (GlobalState) expressionCallbacks.getContext();
+		String protocol	= gS.getProtocol();
+		rootView = inflater.inflate(R.layout.adc_calc, container, false);
+		if(protocol.equals("UART"))
+	    { background = (LinearLayout)rootView.findViewById(R.id.background);
+	      background.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue));
+	    }
 		Log.e("gs", "global state defined");
 		defineAttributes();
 		Log.e("defineattributes", "called");

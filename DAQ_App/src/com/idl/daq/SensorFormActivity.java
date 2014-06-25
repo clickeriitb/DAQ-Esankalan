@@ -21,7 +21,7 @@ import com.daq.sensors.UartProc;
 
 public class SensorFormActivity extends FragmentActivity implements
 		AdcFragment.Callbacks, FormulaFragment.Callbacks,
-		ExpressionFragment.Callbacks, UartFragment.Callbacks, PinSelectFragmentAdc.Callbacks, SensorBrowseFragment.Callbacks {
+		ExpressionFragment.Callbacks, UartFragment.Callbacks, PinSelectFragmentAdc.Callbacks , PinSelectFragmentUart.Callbacks, SensorBrowseFragment.Callbacks {
 
 	GlobalState gS;
 	String protocol, initialSpinnerValue;
@@ -210,6 +210,8 @@ public class SensorFormActivity extends FragmentActivity implements
 		Fragment fragment = null;
 		if(protocol == "ADC")
 			fragment = new PinSelectFragmentAdc();
+		else if(protocol == "UART")
+			fragment = new PinSelectFragmentUart();
 		addNewFragment(fragment, protocol + "_pin", R.anim.vertical_up_in,R.anim.vertical_up_out);
 	}
 
@@ -229,8 +231,14 @@ public class SensorFormActivity extends FragmentActivity implements
 	public void openForm() {
 		// TODO Auto-generated method stub
 		if(showOldFragment(protocol, R.anim.vertical_down_in, R.anim.vertical_down_out)){
-			TextView pin_view = (TextView) findViewById(R.id.pin_no);
+			if(protocol.equals("ADC")){
+				TextView pin_view = (TextView) findViewById(R.id.pin_no);
 			pin_view.setText(pinData);
+			}
+			else {
+				TextView pin_view = (TextView)findViewById(R.id.sub_protocol);
+				pin_view.setText(pinData);
+			}
 		}
 	}
 
