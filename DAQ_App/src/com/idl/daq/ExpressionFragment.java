@@ -4,43 +4,46 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.daq.formula.Formula;
-import com.idl.daq.FormulaFragment.Callbacks;
-
-import expr.Expr;
-import expr.Parser;
-import expr.SyntaxException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daq.formula.Formula;
+
+import expr.Expr;
+import expr.Parser;
+import expr.SyntaxException;
+
 public class ExpressionFragment extends Fragment implements OnClickListener {
 
-	private Spinner expSpinner;
+	private ListView variableListHolder;
 	private GlobalState gS;
 	Intent i;
 	private ArrayList<String> list;
 	private TextView mathExpression;
 
-	private Button one, two, three, four, five, six, seven, eight, nine, times,
-			divide, plus, minus, power, exp, submit;
-	private Button log, ln, del, zero, dot, clr, openbracket, closebracket,
-			sqrt;
-
+	private FButton one, two, three, four, five, six, seven, eight, nine,
+			times, divide, plus, minus, power, exp;
+	private FButton log, ln, zero, dot, clr, openbracket, closebracket, sqrt,
+			pi;
+	private ImageButton del;
 	private ArrayList<String> userInput;
 	private int index;
 	private Boolean err;
@@ -78,25 +81,68 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		rootView = inflater.inflate(R.layout.expression, container, false);
+		rootView = inflater.inflate(R.layout.adc_calc, container, false);
 		Log.e("inflater", "inflated");
 		gS = (GlobalState) expressionCallbacks.getContext();
 		Log.e("gs", "global state defined");
 		defineAttributes();
 		Log.e("defineattributes", "called");
-
+		setHasOptionsMenu(true);
 		return rootView;
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.form_menu, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case R.id.done:
+
+			express = mathExpression.getText().toString();
+			err = true;
+			Expr expr = null;
+			try {
+				expr = Parser.parse(express);
+				Log.e("evaluate", expr.toString());
+			}
+
+			catch (SyntaxException e) {
+				System.err.println(e.explain());
+				Toast.makeText(gS, "Enter valid expression", Toast.LENGTH_SHORT)
+						.show();
+				err = false;
+			}
+
+			if (err) {
+
+				gS.setGlobalString(mathExpression.getText().toString());
+				Log.e("string", gS.getGlobalString());
+				expressionCallbacks.addToVariableList(list);
+
+				expressionCallbacks.openFormula("back");
+
+			}
+
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	private void defineAttributes() {
 		// TODO Auto-generated method stub
 
-		expSpinner = (Spinner) rootView.findViewById(R.id.spinner1);
+		variableListHolder = (ListView) rootView.findViewById(R.id.lv);
 
-		setSpinner();
+		setListView();
 
-		submit = (Button) rootView.findViewById(R.id.submit);
-		submit.setOnClickListener(this);
+		// submit = (Button) rootView.findViewById(R.id.submit);
+		// submit.setOnClickListener(this);
 		list = new ArrayList<>();
 		Log.e("dekhoooooooooo", "Activity created properly");
 		userInput = new ArrayList<String>();
@@ -105,32 +151,43 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 
 		mathExpression = (TextView) rootView.findViewById(R.id.express);
 
-		one = (Button) rootView.findViewById(R.id.button1);
-		two = (Button) rootView.findViewById(R.id.button2);
-		three = (Button) rootView.findViewById(R.id.button3);
-		plus = (Button) rootView.findViewById(R.id.button4);
-		minus = (Button) rootView.findViewById(R.id.button5);
-		power = (Button) rootView.findViewById(R.id.button29);
-		exp = (Button) rootView.findViewById(R.id.button7);
-		four = (Button) rootView.findViewById(R.id.button8);
-		five = (Button) rootView.findViewById(R.id.button9);
-		six = (Button) rootView.findViewById(R.id.button10);
-		times = (Button) rootView.findViewById(R.id.button11);
-		divide = (Button) rootView.findViewById(R.id.button12);
-		seven = (Button) rootView.findViewById(R.id.button15);
-		eight = (Button) rootView.findViewById(R.id.button16);
-		nine = (Button) rootView.findViewById(R.id.button17);
-		log = (Button) rootView.findViewById(R.id.button19);
-		ln = (Button) rootView.findViewById(R.id.button20);
-		del = (Button) rootView.findViewById(R.id.button21);
-		zero = (Button) rootView.findViewById(R.id.button23);
-		dot = (Button) rootView.findViewById(R.id.button24);
-		clr = (Button) rootView.findViewById(R.id.button30);
-		openbracket = (Button) rootView.findViewById(R.id.button26);
-		closebracket = (Button) rootView.findViewById(R.id.button27);
-		sqrt = (Button) rootView.findViewById(R.id.button25);
-		submit = (Button) rootView.findViewById(R.id.button6);
+		one = (FButton) rootView.findViewById(R.id.button1);
+		two = (FButton) rootView.findViewById(R.id.button2);
+		three = (FButton) rootView.findViewById(R.id.button3);
+		plus = (FButton) rootView.findViewById(R.id.button4);
+		minus = (FButton) rootView.findViewById(R.id.button5);
+		power = (FButton) rootView.findViewById(R.id.button29);
+		exp = (FButton) rootView.findViewById(R.id.button7);
+		four = (FButton) rootView.findViewById(R.id.button8);
+		five = (FButton) rootView.findViewById(R.id.button9);
+		six = (FButton) rootView.findViewById(R.id.button10);
+		times = (FButton) rootView.findViewById(R.id.button11);
+		divide = (FButton) rootView.findViewById(R.id.button12);
+		seven = (FButton) rootView.findViewById(R.id.button15);
+		eight = (FButton) rootView.findViewById(R.id.button16);
+		nine = (FButton) rootView.findViewById(R.id.button17);
+		log = (FButton) rootView.findViewById(R.id.button19);
+		ln = (FButton) rootView.findViewById(R.id.button20);
+		del = (ImageButton) rootView.findViewById(R.id.button21);
+		zero = (FButton) rootView.findViewById(R.id.button23);
+		dot = (FButton) rootView.findViewById(R.id.button24);
+		clr = (FButton) rootView.findViewById(R.id.button30);
+		openbracket = (FButton) rootView.findViewById(R.id.button26);
+		closebracket = (FButton) rootView.findViewById(R.id.button27);
+		sqrt = (FButton) rootView.findViewById(R.id.button25);
+		// submit = (FButton) rootView.findViewById(R.id.button6);
+		pi = (FButton) rootView.findViewById(R.id.button31);
 
+		pi.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				userInput.add(index, "3.14");
+				index++;
+				mathExpression.append(userInput.get(index - 1));
+			}
+		});
 		one.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -363,13 +420,13 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				if(index!=0){
+				if (index != 0) {
 					index--;
 					userInput.remove(index);
 					mathExpression.setText("");
 					for (int i = 0; i < index; i++) {
 						mathExpression.append(userInput.get(i));
-	
+
 					}
 				}
 			}
@@ -377,12 +434,12 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 
 	}
 
-	private void setSpinner() {
+	private void setListView() {
 		// TODO Auto-generated method stub
 		// gS = (GlobalState) expressionCallbacks.getContext();
 		HashMap<String, Formula> f = gS.getfc().getFc();
 		ArrayList<Formula> fa = new ArrayList<Formula>();
-		fa.add(new Formula("Select a Variable", ""));
+		// fa.add(new Formula("Select a Variable", ""));
 		String s = gS.getGlobalString();
 		// adding the initial parameter to the list, it's value=incoming data
 		// fa.add(new Formula(s,""));
@@ -393,40 +450,55 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 		}
 
 		ArrayAdapter<Formula> af = new ArrayAdapter<Formula>(getActivity(),
-				android.R.layout.simple_list_item_1, fa);
+				R.layout.variable_list, R.id.list_item, fa);
 
-		expSpinner.setAdapter(af);
-		expSpinner
-				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+		variableListHolder.setAdapter(af);
+		variableListHolder.setOnItemClickListener(new OnItemClickListener() {
 
-					@Override
-					public void onItemSelected(AdapterView<?> adapterView,
-							View view, int i, long id) {
-						// TODO Auto-generated method stub
-						String proc = String.valueOf(expSpinner
-								.getSelectedItem());
-						
-						
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				String proc = variableListHolder.getItemAtPosition(position).toString();
 
-						if (!proc.equals("Select a Variable")
-								&& !list.contains(proc)) {
-							list.add(proc);
-						}
-						if(!proc.equals("Select a Variable")) {
-							userInput.add(index, proc);
-							mathExpression.append(userInput.get(index));
-							index++;
-							expSpinner.setSelection(0);
-							
-						}
-					}
+				if (!list.contains(proc)) {
+					list.add(proc);
+				}
 
-					@Override
-					public void onNothingSelected(AdapterView<?> parent) {
-						// TODO Auto-generated method stub
+				userInput.add(index, proc);
+				mathExpression.append(userInput.get(index));
+				index++;
+				variableListHolder.setSelection(0);
 
-					}
-				});
+			}
+		});
+
+		// @Override
+		// public void onItemSelected(AdapterView<?> adapterView,
+		// View view, int i, long id) {
+		// // TODO Auto-generated method stub
+		// String proc = String.valueOf(variableListHolder
+		// .getSelectedItem());
+		//
+		// if (!proc.equals("Select a Variable")
+		// && !list.contains(proc)) {
+		// list.add(proc);
+		// }
+		// if (!proc.equals("Select a Variable")) {
+		// userInput.add(index, proc);
+		// mathExpression.append(userInput.get(index));
+		// index++;
+		// variableListHolder.setSelection(0);
+		//
+		// }
+		// }
+		//
+		// @Override
+		// public void onNothingSelected(AdapterView<?> parent) {
+		// // TODO Auto-generated method stub
+		//
+		// }
+		// });
 	}
 
 	@Override
