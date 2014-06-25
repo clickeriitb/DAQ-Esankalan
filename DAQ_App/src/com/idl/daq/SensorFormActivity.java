@@ -21,7 +21,9 @@ import com.daq.sensors.UartProc;
 
 public class SensorFormActivity extends FragmentActivity implements
 		AdcFragment.Callbacks, FormulaFragment.Callbacks,
-		ExpressionFragment.Callbacks, UartFragment.Callbacks, PinSelectFragmentAdc.Callbacks, SensorBrowseFragment.Callbacks {
+		ExpressionFragment.Callbacks, UartFragment.Callbacks,
+		PinSelectFragmentAdc.Callbacks, SensorBrowseFragment.Callbacks,
+		I2C_ConfigFragment.Callbacks {
 
 	GlobalState gS;
 	String protocol, initialSpinnerValue;
@@ -40,32 +42,32 @@ public class SensorFormActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_form_with_fragments);
 		gS = (GlobalState) getApplicationContext();
 		protocol = gS.getProtocol();
-//		gS.initializeFc();
+		// gS.initializeFc();
 		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction t = fm.beginTransaction();
-//		if (protocol.equals("ADC")) {
-//			if (fm.findFragmentByTag(protocol) == null) {
-//				newFrag = new AdcFragment();
-//			}
-//		} else if (protocol.equals("UART")) {
-//			if (fm.findFragmentByTag(protocol) == null) {
-//				newFrag = new UartFragment();
-//			}
-//		} else if (protocol.equals("I2C")) {
-//			/* Under Development */
-//		}
+		// if (protocol.equals("ADC")) {
+		// if (fm.findFragmentByTag(protocol) == null) {
+		// newFrag = new AdcFragment();
+		// }
+		// } else if (protocol.equals("UART")) {
+		// if (fm.findFragmentByTag(protocol) == null) {
+		// newFrag = new UartFragment();
+		// }
+		// } else if (protocol.equals("I2C")) {
+		// /* Under Development */
+		// }
 		newFrag = new SensorBrowseFragment();
 		t.add(R.id.sensor_form_container, newFrag, "browse");
 		t.show(newFrag);
 		t.commit();
 
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		L.d("handling intent action: " + intent.getAction());
 		super.onNewIntent(intent);
-		if(!Intent.ACTION_SEARCH.equals(intent.getAction())){
+		if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			onCreate(null);
 		}
 	}
@@ -169,33 +171,33 @@ public class SensorFormActivity extends FragmentActivity implements
 
 		super.onBackPressed();
 	}
-	
+
 	@Override
 	public void openProtocol(Cursor c) {
 		// TODO Auto-generated method stub
-			protocol = gS.getProtocol();
-			gS.initializeFc();
-			FragmentManager fm = getSupportFragmentManager();
-			FragmentTransaction t = fm.beginTransaction();
-			oldFrag = newFrag;
-			t.hide(oldFrag);
-			if (protocol.equals("ADC")) {
-				if (fm.findFragmentByTag(protocol) == null) {
-					newFrag = new AdcFragment();
-				}
-			} else if (protocol.equals("UART")) {
-				if (fm.findFragmentByTag(protocol) == null) {
-					newFrag = new UartFragment();
-				}
-			} else if (protocol.equals("I2C")) {
-				/* Under Development */
+		protocol = gS.getProtocol();
+		gS.initializeFc();
+		FragmentManager fm = getSupportFragmentManager();
+		FragmentTransaction t = fm.beginTransaction();
+		oldFrag = newFrag;
+		t.hide(oldFrag);
+		if (protocol.equals("ADC")) {
+			if (fm.findFragmentByTag(protocol) == null) {
+				newFrag = new AdcFragment();
 			}
-			if(c!=null){
-				this.c = c;
+		} else if (protocol.equals("UART")) {
+			if (fm.findFragmentByTag(protocol) == null) {
+				newFrag = new UartFragment();
 			}
-			t.add(R.id.sensor_form_container, newFrag, protocol);
-			t.show(newFrag);
-			t.commit();
+		} else if (protocol.equals("I2C")) {
+			//newFrag = new I2C_ConfigFragment();
+		}
+		if (c != null) {
+			this.c = c;
+		}
+		t.add(R.id.sensor_form_container, newFrag, protocol);
+		t.show(newFrag);
+		t.commit();
 	}
 
 	@Override
@@ -208,9 +210,10 @@ public class SensorFormActivity extends FragmentActivity implements
 	public void openPinSelection() {
 		// TODO Auto-generated method stub
 		Fragment fragment = null;
-		if(protocol == "ADC")
+		if (protocol == "ADC")
 			fragment = new PinSelectFragmentAdc();
-		addNewFragment(fragment, protocol + "_pin", R.anim.vertical_up_in,R.anim.vertical_up_out);
+		addNewFragment(fragment, protocol + "_pin", R.anim.vertical_up_in,
+				R.anim.vertical_up_out);
 	}
 
 	@Override
@@ -228,18 +231,21 @@ public class SensorFormActivity extends FragmentActivity implements
 	@Override
 	public void openForm() {
 		// TODO Auto-generated method stub
-		if(showOldFragment(protocol, R.anim.vertical_down_in, R.anim.vertical_down_out)){
+		if (showOldFragment(protocol, R.anim.vertical_down_in,
+				R.anim.vertical_down_out)) {
 			TextView pin_view = (TextView) findViewById(R.id.pin_no);
 			pin_view.setText(pinData);
 		}
 	}
 
-	public boolean addNewFragment(Fragment fragment, String tag,int incoming_animation, int outgoing_animation){
-		try{
+	public boolean addNewFragment(Fragment fragment, String tag,
+			int incoming_animation, int outgoing_animation) {
+		try {
 			fragmentManager = getSupportFragmentManager();
 			fragmentTransaction = fragmentManager.beginTransaction();
-			if(incoming_animation != -1 && outgoing_animation != -1){
-				fragmentTransaction.setCustomAnimations(incoming_animation, outgoing_animation);
+			if (incoming_animation != -1 && outgoing_animation != -1) {
+				fragmentTransaction.setCustomAnimations(incoming_animation,
+						outgoing_animation);
 			}
 			oldFrag = newFrag;
 			fragmentTransaction.hide(oldFrag);
@@ -248,29 +254,31 @@ public class SensorFormActivity extends FragmentActivity implements
 			fragmentTransaction.show(newFrag);
 			fragmentTransaction.commit();
 			return true;
-		}catch(Exception e){
+		} catch (Exception e) {
 			Log.e("fragment error", e.toString());
 			return false;
 		}
 	}
 
-	public boolean showOldFragment(String tag,int incoming_animation, int outgoing_animation){
-		try{
+	public boolean showOldFragment(String tag, int incoming_animation,
+			int outgoing_animation) {
+		try {
 			fragmentManager = getSupportFragmentManager();
 			fragmentTransaction = fragmentManager.beginTransaction();
-			if(incoming_animation != -1 && outgoing_animation != -1){
-				fragmentTransaction.setCustomAnimations(incoming_animation, outgoing_animation);
+			if (incoming_animation != -1 && outgoing_animation != -1) {
+				fragmentTransaction.setCustomAnimations(incoming_animation,
+						outgoing_animation);
 			}
 			oldFrag = newFrag;
 			fragmentTransaction.hide(oldFrag);
 			newFrag = fragmentManager.findFragmentByTag(tag);
-			if(newFrag!= null){
+			if (newFrag != null) {
 				fragmentTransaction.show(newFrag);
 				fragmentTransaction.commit();
 				return true;
-			}
-			else return false;
-		}catch(Exception e){
+			} else
+				return false;
+		} catch (Exception e) {
 			Log.e("fragment error", e.toString());
 			return false;
 		}
