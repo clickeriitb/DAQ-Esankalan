@@ -505,7 +505,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 
-		if (v.getId() == R.id.submit) {
+		if (v.getId() == R.id.done) {
 
 			express = mathExpression.getText().toString();
 			err = true;
