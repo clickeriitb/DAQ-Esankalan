@@ -88,4 +88,12 @@ public class Formula {
 	public ArrayList<Variable> getAllVariables(){
 		return var;
 	}
+	
+	public String getFormulaString(){
+		return name+"="+expression;
+	}
+	
+	public String getExpression(){
+		return expression;
+	}
 }
