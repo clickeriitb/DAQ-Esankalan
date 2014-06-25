@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,15 +40,21 @@ public class AdcFragment extends Fragment implements OnClickListener {
 
 	private GlobalState gS;
 
+	private FButton selectPin;
+
 	public interface Callbacks {
 
 		public void openFormula(String s);
+
+		public void openPinSelection();
 
 		public void makeToast(String t);
 
 		public void makeSensor(Sensor a);
 
 		public Context getContext();
+
+		public String getPindata();
 	}
 
 	@Override
@@ -56,6 +64,7 @@ public class AdcFragment extends Fragment implements OnClickListener {
 		rootView = inflater.inflate(R.layout.adc_form, container, false);
 
 		defineAttributes();
+		selectPin.setOnClickListener(this);
 		setHasOptionsMenu(true);
 
 		return rootView;
@@ -83,7 +92,8 @@ public class AdcFragment extends Fragment implements OnClickListener {
 		pinNo = (TextView) rootView.findViewById(R.id.pin_no);
 		Quantity = (EditText) rootView.findViewById(R.id.quantity_name);
 		Unit = (EditText) rootView.findViewById(R.id.unit_adc);
-
+		pinNo.setText(adcCallbacks.getPindata());
+		selectPin = (FButton) rootView.findViewById(R.id.pin);
 		gS = (GlobalState) adcCallbacks.getContext();
 	}
 
@@ -133,7 +143,8 @@ public class AdcFragment extends Fragment implements OnClickListener {
 
 			// if any of the fields in form is empty, toast shown
 			if (err == true || sensor.isEmpty() || pinNum.isEmpty()
-					|| formulaString.isEmpty()) {
+					//|| formulaString.isEmpty()
+					) {
 				adcCallbacks.makeToast("Empty fields present");
 			}
 
@@ -152,6 +163,7 @@ public class AdcFragment extends Fragment implements OnClickListener {
 
 		// when submit button clicked
 		if (v.getId() == R.id.pin) {
+			adcCallbacks.openPinSelection();
 
 		}
 	}
