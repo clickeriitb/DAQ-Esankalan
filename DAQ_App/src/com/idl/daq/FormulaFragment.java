@@ -16,6 +16,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class FormulaFragment extends Fragment implements OnClickListener {
@@ -26,7 +27,7 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 	private TextView ex;
 	private EditText fname;
 	private GlobalState gS;
-
+	private ScrollView background;
 	private Callbacks formCallbacks;
 
 	public interface Callbacks {
@@ -65,9 +66,14 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		rootView = inflater.inflate(R.layout.adc_expression, container, false);
-		Log.e("inflater", "inflated");
 		gS = (GlobalState) formCallbacks.getContext();
+		L.d(gS.getProtocol());
+		String protocol = gS.getProtocol();
+	    rootView = inflater.inflate(R.layout.adc_expression, container, false);
+	    if(protocol.equals("UART"))
+	    { background = (ScrollView)rootView.findViewById(R.id.background);
+	    background.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue));
+	    }
 		defineAttributes();
 		Log.e("defineattributes", "called");
 		expr.setOnClickListener(this);

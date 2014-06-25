@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.ImageButton;
 
 public class SelectProtocol extends Activity implements OnClickListener{
 
-	private Button adc,uart,i2c;
+	private ImageButton adc,uart,i2c;
 	String proc;
 	
 	Intent i;
@@ -20,12 +20,12 @@ public class SelectProtocol extends Activity implements OnClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_protocol);
+		setContentView(R.layout.select_protocol);
 		
 		
-		adc = (Button) findViewById(R.id.adc);
-		uart = (Button) findViewById(R.id.uart);
-		i2c = (Button) findViewById(R.id.i2c);
+		adc = (ImageButton) findViewById(R.id.adc);
+		uart = (ImageButton) findViewById(R.id.uart);
+		i2c = (ImageButton) findViewById(R.id.i2c);
 		adc.setOnClickListener(this);
 		uart.setOnClickListener(this);
 		i2c.setOnClickListener(this);
