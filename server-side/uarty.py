@@ -42,7 +42,16 @@ class Uart() :
 	def task(self):
 		UART.setup(self.pin)
 		self.out=''
-		self.serial_port = serial.Serial(port = "/dev/ttyO1", baudrate = self.baudrate)
+		if self.pin == "UART1":
+			path = "/dev/ttyO1"
+		elif self.pin == "UART2":
+			path = "/dev/ttyO2"
+		elif self.pin == "UART4":
+			path = "/dev/ttyO4"
+		elif self.pin == "UART5":
+			path = "/dev/ttyO5"
+
+		self.serial_port = serial.Serial(port = path, baudrate = self.baudrate)
 		self.serial_port.open()
 		while not self.stop.isSet():
 			try:

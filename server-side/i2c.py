@@ -7,6 +7,7 @@ import global_module
 import datetime
 import threading
 import threading
+import ast
 
 class I2c() :
 	def __init__(self,jsonObj):
@@ -14,8 +15,8 @@ class I2c() :
 		decoded = json.loads(json_string)
 		self.protocol = decoded["protocol"]
 		self.i2c_id = decoded["i2c_id"]
-		self.config_cmd = decoded["config_cmd"]
-		self.cmd = decoded["cmd"]
+		self.config_cmd = ast.literal_eval(decoded["config_cmd"])
+		self.cmd = ast.literal_eval(decoded["cmd"])
 		self.sensor_code = decoded["sensor_code"]
 		self.quantity = deocoded["quantity"]
 		self.isLogging = decoded["isLogging"]

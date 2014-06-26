@@ -12,5 +12,8 @@
 
 # Project target.
 target=android-19
-
-android.library.reference.1=../../../../../workspace/appcompat_v7
+<<<<<<< HEAD
+android.library.reference.1=../../../../../adt-bundle-linux-x86_64-20131030/sdk/extras/android/support/v7/appcompat
+=======
+android.library.reference.1=../../workspace/Android/android-sdk-linux/extras/android/support/v7/appcompat
+>>>>>>> 48e1d0912b08aa16e1ddf9247593ac84a66b3cb6
