@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 
+import com.daq.formula.Formula;
 import com.daq.formula.FormulaContainer;
 import com.idl.daq.SensorDetailFragment;
 
@@ -28,6 +29,11 @@ public abstract class Sensor {
 		dataFrag = new SensorDetailFragment();
 		// dataFrag.setRetainInstance(true);
 		dataFrag.setSensor(this);
+		
+	}
+	
+	public Sensor(){
+		fc = new FormulaContainer();
 	}
 
 	@Override
@@ -44,12 +50,21 @@ public abstract class Sensor {
 		this.sensorName = sensorName;
 	}
 
-	public FormulaContainer getFormula() {
+	//FormulaContainer related methods
+	public void destroyFc(){
+		fc.clear();
+	}
+	public FormulaContainer getFormulaContainer() {
 		return fc;
 	}
 
 	public void setFormulaContainer(FormulaContainer fc) {
 		this.fc = fc;
+	}
+	
+	public void addToFc(Formula f)
+	{
+		fc.put(f.toString(), f);
 	}
 
 	public int getId() {
@@ -79,5 +94,27 @@ public abstract class Sensor {
 	public abstract String getQuantity();
 	
 	public abstract String display();
+	
+	//Getters and Setters
+	
+	public SensorDetailFragment getDataFrag() {
+		return dataFrag;
+	}
+
+	public void setDataFrag(SensorDetailFragment dataFrag) {
+		this.dataFrag = dataFrag;
+	}
+
+	public void setFc(FormulaContainer fc) {
+		this.fc = fc;
+	}
+
+	public void setMinThresh(double minThresh) {
+		this.minThresh = minThresh;
+	}
+
+	public void setMaxThresh(double maxThresh) {
+		this.maxThresh = maxThresh;
+	}
 
 }

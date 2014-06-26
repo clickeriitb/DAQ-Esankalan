@@ -19,6 +19,10 @@ public class AdcProc extends Sensor{
 		this.quantity=quantity;
 	}
 	
+	public AdcProc(){
+		super();
+	}
+	
 	public JSONObject getJSON(){
 		JSONObject json = new JSONObject();
 		try {
@@ -44,4 +48,27 @@ public class AdcProc extends Sensor{
 		// TODO Auto-generated method stub
 		return sensorName+ " " + quantity + " " + unit;
 	}
+
+	//Getters and Setters
+	public String getPinNo() {
+		return pinNo;
+	}
+
+	public void setPinNo(String pinNo) {
+		this.pinNo = pinNo;
+	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+
+	public void setQuantity(String quantity) {
+		this.quantity = quantity;
+	}
+	
+	
 }
