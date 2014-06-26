@@ -1,5 +1,9 @@
 package com.idl.daq;
 
+import java.util.ArrayList;
+
+import com.daq.sensors.Sensor;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,18 +18,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class FormulaFragment extends Fragment implements OnClickListener {
 
 	private View rootView;
 	private String name, expression;
-	private Button expr;
+	private Button add, clearAll;
 	private TextView ex;
 	private EditText fname;
 	private GlobalState gS;
+	private ListView listFormula;
+	private ArrayList<String> formulaStrings;
+	private ArrayAdapter<String> formulaAdapter;
+	private Sensor tempSensor;
 
 	private Callbacks formCallbacks;
 
@@ -36,7 +46,7 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 
 		public void openFormula(String s);
 
-		public void getFormula(String name, String expression);
+		public void getFormula(String name, String expression,String displayName,String displayExpression);
 
 		public void showProtocolForm();
 
@@ -68,9 +78,11 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 		rootView = inflater.inflate(R.layout.adc_expression, container, false);
 		Log.e("inflater", "inflated");
 		gS = (GlobalState) formCallbacks.getContext();
+		tempSensor = gS.getSensor();
 		defineAttributes();
 		Log.e("defineattributes", "called");
-		expr.setOnClickListener(this);
+		add.setOnClickListener(this);
+		clearAll.setOnClickListener(this);
 		setHasOptionsMenu(true);
 		return rootView;
 
@@ -79,8 +91,23 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 	private void defineAttributes() {
 		// TODO Auto-generated method stub
 		fname = (EditText) rootView.findViewById(R.id.fname);
-		expr = (Button) rootView.findViewById(R.id.edit_exp);
+		add = (Button) rootView.findViewById(R.id.add_formula);
+		clearAll = (Button) rootView.findViewById(R.id.clear_all);
 		ex = (TextView) rootView.findViewById(R.id.expr);
+		listFormula = (ListView) rootView.findViewById(R.id.lv_formula);
+		setFormulaStrings();
+		
+		
+	}
+	
+	public void setFormulaStrings(){
+		formulaStrings = tempSensor.getFormulaContainer().getAllFormulaStrings();
+		L.d("displaying formula Strings after setFormulaStrings");
+		for(String s : formulaStrings){
+			L.d(s);
+		}
+		formulaAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,formulaStrings);
+		listFormula.setAdapter(formulaAdapter);
 	}
 
 	@Override
@@ -95,15 +122,16 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
 		case R.id.done:
-			expression = gS.getGlobalString();
+//			expression = gS.getGlobalString();
 			// if no expression was entered
-			if (expression == null) {
-				formCallbacks.makeToast("Enter expression");
-			}
-
-			else {
-				callDialog();
-			}
+//			if (expression == null) {
+//				formCallbacks.makeToast("Enter expression");
+//			}
+//
+//			else {
+//				callDialog();
+//			}
+			formCallbacks.showProtocolForm();
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -114,19 +142,18 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 		// TODO Auto-generated method stub
 
 		// if edit expression clicked
-		if (v.getId() == R.id.edit_exp) {
+		if (v.getId() == R.id.add_formula) {
 			// if formula name not entered
-			if (fname.getText().toString().isEmpty()) {
-				formCallbacks.makeToast("Enter formula name");
-			} else {
-				// go to expression fragment
-				formCallbacks.createExpression();
-			}
+			formCallbacks.createExpression();
 		}
 
 		// if done button clicked
-		else {
-
+		else if(v.getId() == R.id.clear_all){
+			tempSensor.destroyFc();
+			setFormulaStrings();
+			L.d("hi aunty");
+			L.d("hi aunty2");
+			
 		}
 
 	}
@@ -147,7 +174,7 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 								// startActivity(i);
 								name = fname.getText().toString();
 								expression = gS.getGlobalString();
-								formCallbacks.getFormula(name, expression);
+								//formCallbacks.getFormula(name, expression);
 								formCallbacks.openFormula("new");
 							}
 						})
@@ -157,7 +184,7 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 						// formCallbacks.getFormula(name,expression);
 						name = fname.getText().toString();
 						expression = gS.getGlobalString();
-						formCallbacks.getFormula(name, expression);
+						//formCallbacks.getFormula(name, expression);
 						formCallbacks.showProtocolForm();
 						Log.e("show protocol called", gS.getProtocol());
 					}

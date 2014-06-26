@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,13 +39,15 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 	Intent i;
 	private ArrayList<String> list;
 	private TextView mathExpression;
+	
+	private EditText formulaName;
 
 	private FButton one, two, three, four, five, six, seven, eight, nine,
 			times, divide, plus, minus, power, exp;
 	private FButton log, ln, zero, dot, clr, openbracket, closebracket, sqrt,
 			pi;
 	private ImageButton del;
-	private ArrayList<String> userInput;
+	private ArrayList<String> userInput, expression;
 	private int index;
 	private Boolean err;
 	private String express;
@@ -61,6 +64,9 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 		public Context getContext();
 
 		public void addToVariableList(ArrayList<String> varList);
+		
+		public void getFormula(String name, String expression,String displayName,String displayExpression);
+
 	}
 
 	@Override
@@ -86,9 +92,12 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 		gS = (GlobalState) expressionCallbacks.getContext();
 		Log.e("gs", "global state defined");
 		defineAttributes();
-		Log.e("defineattributes", "called");
+		Log.e("defineattributes", ""
+				+ "called");
 		setHasOptionsMenu(true);
 		return rootView;
+		
+		
 	}
 
 	@Override
@@ -103,9 +112,24 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
 		case R.id.done:
+			
+			err = false;
 
-			express = mathExpression.getText().toString();
-			err = true;
+			//building expression
+			express = "";
+			for(String s : expression){
+				express+=s;
+			}
+			L.d("expr "+express);
+			
+			if(express.isEmpty()){
+				err = true;
+				expressionCallbacks.makeToast("Enter expression");
+				
+			}else if(formulaName.getText().toString().isEmpty()){
+				err = true;
+				expressionCallbacks.makeToast("Enter formula");
+			}
 			Expr expr = null;
 			try {
 				expr = Parser.parse(express);
@@ -116,16 +140,15 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 				System.err.println(e.explain());
 				Toast.makeText(gS, "Enter valid expression", Toast.LENGTH_SHORT)
 						.show();
-				err = false;
+				err = true;
 			}
 
-			if (err) {
-
-				gS.setGlobalString(mathExpression.getText().toString());
-				Log.e("string", gS.getGlobalString());
+			if (!err) {
 				expressionCallbacks.addToVariableList(list);
-
-				expressionCallbacks.openFormula("back");
+				expressionCallbacks.getFormula(formulaName.getText().toString(), express, formulaName.getText().toString(), mathExpression.getText().toString());
+				gS.setGlobalString(express);
+				Log.e("string", gS.getGlobalString());
+				expressionCallbacks.openFormula("");
 
 			}
 
@@ -138,6 +161,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 		// TODO Auto-generated method stub
 
 		variableListHolder = (ListView) rootView.findViewById(R.id.lv);
+		formulaName = (EditText) rootView.findViewById(R.id.fname);
 
 		setListView();
 
@@ -146,8 +170,9 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 		list = new ArrayList<>();
 		Log.e("dekhoooooooooo", "Activity created properly");
 		userInput = new ArrayList<String>();
+		expression = new ArrayList<String>();
 		index = 0;
-		err = true;
+		err = false;
 
 		mathExpression = (TextView) rootView.findViewById(R.id.express);
 
@@ -184,6 +209,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "3.14");
+				expression.add(index, "3.14");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -193,6 +219,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "1");
+				expression.add(index, "1");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -204,6 +231,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "2");
+				expression.add(index, "2");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -214,6 +242,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "3");
+				expression.add(index, "3");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -225,6 +254,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 				// TODO Auto-generated method stub
 
 				userInput.add(index, "4");
+				expression.add(index, "4");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -234,6 +264,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "5");
+				expression.add(index, "5");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -246,6 +277,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 				// TODO Auto-generated method stub
 
 				userInput.add(index, "6");
+				expression.add(index, "6");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -257,6 +289,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 				// TODO Auto-generated method stub
 
 				userInput.add(index, "7");
+				expression.add(index, "7");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -267,6 +300,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "8");
+				expression.add(index, "8");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -277,6 +311,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "9");
+				expression.add(index, "9");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -288,6 +323,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "0");
+				expression.add(index, "0");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -297,6 +333,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "+");
+				expression.add(index, "+");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -307,6 +344,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "-");
+				expression.add(index, "-");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -316,6 +354,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "*");
+				expression.add(index, "*");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -325,6 +364,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "/");
+				expression.add(index, "/");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -335,6 +375,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "^");
+				expression.add(index, "^");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -344,6 +385,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "exp");
+				expression.add(index, "exp");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -354,6 +396,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "log");
+				expression.add(index, "log");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -364,6 +407,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "ln");
+				expression.add(index, "ln");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -373,6 +417,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, ".");
+				expression.add(index, ".");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -382,6 +427,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "(");
+				expression.add(index, "(");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -392,6 +438,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, ")");
+				expression.add(index, ")");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -401,6 +448,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				userInput.add(index, "sqrt");
+				expression.add(index, "sqrt");
 				index++;
 				mathExpression.append(userInput.get(index - 1));
 			}
@@ -411,6 +459,7 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 				// TODO Auto-generated method stub
 				index--;
 				userInput.add(index, "");
+				expression.add(index, "");
 				index++;
 				mathExpression.setText(userInput.get(index - 1));
 			}
@@ -423,11 +472,12 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 				if (index != 0) {
 					index--;
 					userInput.remove(index);
+					expression.remove(index);
 					mathExpression.setText("");
 					for (int i = 0; i < index; i++) {
 						mathExpression.append(userInput.get(i));
 
-					}
+					} 
 				}
 			}
 		});
@@ -437,20 +487,20 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 	private void setListView() {
 		// TODO Auto-generated method stub
 		// gS = (GlobalState) expressionCallbacks.getContext();
-		HashMap<String, Formula> f = gS.getfc().getFc();
-		ArrayList<Formula> fa = new ArrayList<Formula>();
-		// fa.add(new Formula("Select a Variable", ""));
-		String s = gS.getGlobalString();
+		HashMap<String, Formula> f = gS.getSensor().getFormulaContainer().getFc();
+		ArrayList<Formula> variableList = new ArrayList<Formula>();
+		// variableList.add(new Formula("Select a Variable", ""));
 		// adding the initial parameter to the list, it's value=incoming data
-		// fa.add(new Formula(s,""));
+		// variableList.add(new Formula(s,""));
 		Log.e("dekhoooooooooo", "Activity created properly");
 
+		
 		for (Map.Entry<String, Formula> e : f.entrySet()) {
-			fa.add(e.getValue());
+			variableList.add(e.getValue());
 		}
 
 		ArrayAdapter<Formula> af = new ArrayAdapter<Formula>(getActivity(),
-				R.layout.variable_list, R.id.list_item, fa);
+				R.layout.variable_list, R.id.list_item, variableList);
 
 		variableListHolder.setAdapter(af);
 		variableListHolder.setOnItemClickListener(new OnItemClickListener() {
@@ -459,14 +509,14 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				String proc = variableListHolder.getItemAtPosition(position)
-						.toString();
+				Formula proc = (Formula) variableListHolder.getItemAtPosition(position);
 
-				if (!list.contains(proc)) {
-					list.add(proc);
+				if (!list.contains(proc.getName())) {
+					list.add(proc.getName());
 				}
 
-				userInput.add(index, proc);
+				userInput.add(index, proc.toString());
+				expression.add(index, proc.getName());
 				mathExpression.append(userInput.get(index));
 				index++;
 				variableListHolder.setSelection(0);
