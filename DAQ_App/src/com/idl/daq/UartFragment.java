@@ -1,5 +1,8 @@
 package com.idl.daq;
 
+import java.util.Arrays;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -11,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -81,7 +83,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 
 	private void defineAttributes() {
 		// TODO Auto-generated method stub
-				//String array[] = uartCallbacks.getPindata().split(":");
+				
 				SensorName = (EditText) rootView.findViewById(R.id.sensor_name);
 				Quantity = (EditText) rootView.findViewById(R.id.quantity_name1);
 				Unit = (EditText) rootView.findViewById(R.id.s_unit1);
@@ -95,9 +97,9 @@ public class UartFragment extends Fragment implements OnClickListener{
 				//pin_select.setOnClickListener(this);
 				gS = (GlobalState) uartCallbacks.getContext();
 				selectPin = (FButton) rootView.findViewById(R.id.pin_uart);
-				PinProtocol.setText(uartCallbacks.getPindata().toString());
-//				PinOne.setText(array[1]);
-//				PinTwo.setText(array[2]);
+				
+				//PinOne.setText(array[1]);
+				//PinTwo.setText(array[2]);
 		
 	}
 	

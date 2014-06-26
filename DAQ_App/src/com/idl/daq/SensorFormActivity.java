@@ -233,11 +233,17 @@ public class SensorFormActivity extends FragmentActivity implements
 		if(showOldFragment(protocol, R.anim.vertical_down_in, R.anim.vertical_down_out)){
 			if(protocol.equals("ADC")){
 				TextView pin_view = (TextView) findViewById(R.id.pin_no);
-			pin_view.setText(pinData);
+			    pin_view.setText(pinData);
 			}
 			else {
+				String[] data = pinData.split(":");
 				TextView pin_view = (TextView)findViewById(R.id.sub_protocol);
-				pin_view.setText(pinData);
+				pin_view.setText(data[0]);
+				TextView pin_view1 = (TextView)findViewById(R.id.pin1);
+				pin_view1.setText(data[1]);
+				TextView pin_view2= (TextView)findViewById(R.id.pin2);
+				pin_view2.setText(data[2]);
+				
 			}
 		}
 	}

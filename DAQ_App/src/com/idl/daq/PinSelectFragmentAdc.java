@@ -118,7 +118,7 @@ public class PinSelectFragmentAdc extends Fragment implements OnTouchListener,On
 				pinSelectCallbacks.sendSelectedPins(s);
 				pinSelectCallbacks.openForm();
 			} else;
-				//Toast.makeText(context, "Please select a pin",
+				pinSelectCallbacks.makeToast("Please select a pin");
 					//	Toast.LENGTH_SHORT).show();
 
 		}
@@ -232,7 +232,7 @@ public class PinSelectFragmentAdc extends Fragment implements OnTouchListener,On
 				break;
 
 			}
-			//Toast.makeText(context, s, Toast.LENGTH_SHORT)
+			pinSelectCallbacks.makeToast(s);
 				//	.show();
 		} else {
 			bview.setcol(0xa00099ff);

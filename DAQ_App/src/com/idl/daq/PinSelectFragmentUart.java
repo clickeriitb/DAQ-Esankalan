@@ -125,11 +125,11 @@ public class PinSelectFragmentUart extends Fragment implements OnTouchListener,O
 //		    intent.putExtra("uart",s1);
 //		    intent.putExtra("rx",s2);
 //		    intent.putExtra("tx",s3);
-			if (s1 != ""){//&& s2 != "" && s3 != "") {
-				pinSelectCallbacks.sendSelectedPins(s1);// + ":" + s2 + ":" + s3);
+			if (s1 != "") {
+				pinSelectCallbacks.sendSelectedPins(s1 + ":" + s2 + ":" + s3);
 				pinSelectCallbacks.openForm();
 			} else;
-				//Toast.makeText(context, "Please select a pin",
+			pinSelectCallbacks.makeToast("Please select a pin");
 					//	Toast.LENGTH_SHORT).show();
 
 		}
@@ -234,7 +234,7 @@ public class PinSelectFragmentUart extends Fragment implements OnTouchListener,O
 		    cb2.setChecked(true);
 		    cb2.setBackgroundColor(0xffff0000);
 		    bview.setcol1(0xa0ff0000);
-		    //Toast.makeText(getApplicationContext(),s1+" Rx", Toast.LENGTH_SHORT).show();
+		    pinSelectCallbacks.makeToast(s1+" Rx");
 		    break;
 		    case R.id.chk_box2: s1="UART1";
 		    s2="P9_26";
@@ -242,7 +242,7 @@ public class PinSelectFragmentUart extends Fragment implements OnTouchListener,O
 		    cb1.setChecked(true);
 		    cb1.setBackgroundColor(0xffff0000);
 		    bview.setcol1(0xa0ff0000);
-		    //Toast.makeText(getApplicationContext(),s1+" Tx", Toast.LENGTH_SHORT).show();
+		    pinSelectCallbacks.makeToast(s1+" Tx");
 			break;
 		    case R.id.chk_box3: s1="UART2";
 		    s2="P9_22";
@@ -250,7 +250,7 @@ public class PinSelectFragmentUart extends Fragment implements OnTouchListener,O
 		    cb4.setChecked(true);
 		    cb4.setBackgroundColor(0xffff0000);
 		    bview.setcol2(0xa0ff0000);
-			//Toast.makeText(getApplicationContext(),s1+" Rx", Toast.LENGTH_SHORT).show();
+		    pinSelectCallbacks.makeToast(s1+" Rx");
 			break;
 		    case R.id.chk_box4: s1="UART2";
 		    s2="P9_22";
@@ -258,7 +258,7 @@ public class PinSelectFragmentUart extends Fragment implements OnTouchListener,O
 		    cb3.setChecked(true);
 		    cb3.setBackgroundColor(0xffff0000);
 		    bview.setcol2(0xa0ff0000);
-		    //Toast.makeText(getApplicationContext(),s1+" Tx", Toast.LENGTH_SHORT).show();
+		    pinSelectCallbacks.makeToast(s1+" Tx");
 		    break;
 		    case R.id.chk_box5: s1="UART4";
 		    s2="P9_11";
@@ -266,7 +266,7 @@ public class PinSelectFragmentUart extends Fragment implements OnTouchListener,O
 		    cb6.setChecked(true);
 		    cb6.setBackgroundColor(0xffff0000);
 		    bview.setcol3(0xa0ff0000);
-		    //Toast.makeText(getApplicationContext(),s1+" Tx", Toast.LENGTH_SHORT).show();
+		    pinSelectCallbacks.makeToast(s1+" Tx");
 		    break;
 		    case R.id.chk_box6: s1="UART4";
 		    s2="P9_11";
@@ -274,7 +274,7 @@ public class PinSelectFragmentUart extends Fragment implements OnTouchListener,O
 		    cb5.setChecked(true);
 		    cb5.setBackgroundColor(0xffff0000);
 		    bview.setcol3(0xa0ff0000);
-		    //Toast.makeText(getApplicationContext(),s1+" Rx", Toast.LENGTH_SHORT).show();
+		    pinSelectCallbacks.makeToast(s1+" Rx");
 		    break;
 		    
 		    case R.id.chk_box7: s1="UART5";
@@ -283,7 +283,7 @@ public class PinSelectFragmentUart extends Fragment implements OnTouchListener,O
 		    cb8.setChecked(true);
 		    cb8.setBackgroundColor(0xffff0000);
 		    bview.setcol4(0xa0ff0000);
-		    //Toast.makeText(getApplicationContext(),s1+" Rx", Toast.LENGTH_SHORT).show();
+		    pinSelectCallbacks.makeToast(s1+" Rx");
 		    break;
 		    case R.id.chk_box8: s1="UART5";
 		    s2="P9_38";
@@ -291,7 +291,7 @@ public class PinSelectFragmentUart extends Fragment implements OnTouchListener,O
 		    cb7.setChecked(true);
 		    cb7.setBackgroundColor(0xffff0000);
 		    bview.setcol4(0xa0ff0000);
-		    //Toast.makeText(getApplicationContext(),s1+" Tx", Toast.LENGTH_SHORT).show();
+		    pinSelectCallbacks.makeToast(s1+" Tx");
 		    break;
 		   
 		    }
