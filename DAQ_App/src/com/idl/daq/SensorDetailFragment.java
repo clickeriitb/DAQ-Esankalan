@@ -182,7 +182,7 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 		for(int i=data.size();i<t.size();++i){
 			try {
 				if(t.get(i).get("sensor_code").equals(mySensor.getSensorName())){
-					Formula f = mySensor.getFormula().getFc().get(mySensor.getQuantity());
+					Formula f = mySensor.getFormulaContainer().getFc().get(mySensor.getQuantity());
 					String value = t.get(i).getString("data");
 					String date = t.get(i).getString("date");
 					//String[] r = info.split(":");
@@ -196,9 +196,9 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 //						// TODO Auto-generated catch block
 //						e1.printStackTrace();
 //					}
-					gS.getfc().evaluate();
+					mySensor.getFormulaContainer().evaluate();
 					String s="";
-					for(Map.Entry<String, Formula> e : gS.getfc().getFc().entrySet()){
+					for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
 						s=e.getValue().getValue()+"";
 					}
 					L.d(s);

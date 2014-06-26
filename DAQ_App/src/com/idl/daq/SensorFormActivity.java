@@ -70,6 +70,7 @@ public class SensorFormActivity extends FragmentActivity implements
 		}
 	}
 
+	//TODO clean it saaf safayi
 	@Override
 	public void openFormula(String s) {
 		// TODO Auto-generated method stub
@@ -112,7 +113,7 @@ public class SensorFormActivity extends FragmentActivity implements
 	public void makeSensor(Sensor a) {
 		// TODO Auto-generated method stub
 		gS.addSensor(a);
-		gS.destroyFc();
+		gS.destroySensor();
 		Intent i = new Intent(getApplicationContext(), SensorListActivity.class);
 		startActivity(i);
 
@@ -126,14 +127,14 @@ public class SensorFormActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void getFormula(String name, String expression) {
+	public void getFormula(String name, String expression,String displayName,String displayExpression) {
 		// TODO Auto-generated method stub
 		Log.e("entered getformula", "jkhjh");
-		allVar = gS.getfc().getFc();
-		Formula formula = new Formula(name, expression);
+		allVar = gS.getSensor().getFormulaContainer().getFc();
+		Formula formula = new Formula(name, expression,displayName,displayExpression);
 		for (String str : varList)
 			formula.addToHashMap(str, allVar.get(str));
-		gS.addToFc(formula);
+		gS.getSensor().addToFc(formula);
 
 	}
 
@@ -174,7 +175,6 @@ public class SensorFormActivity extends FragmentActivity implements
 	public void openProtocol(Cursor c) {
 		// TODO Auto-generated method stub
 			protocol = gS.getProtocol();
-			gS.initializeFc();
 			FragmentManager fm = getSupportFragmentManager();
 			FragmentTransaction t = fm.beginTransaction();
 			oldFrag = newFrag;
@@ -275,4 +275,5 @@ public class SensorFormActivity extends FragmentActivity implements
 			return false;
 		}
 	}
+
 }
