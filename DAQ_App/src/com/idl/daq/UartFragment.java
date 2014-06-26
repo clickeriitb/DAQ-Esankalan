@@ -38,7 +38,9 @@ public class UartFragment extends Fragment implements OnClickListener{
 	
 	private String subprotocol;
 	
-	private UartProc uartSensor;
+	private FormulaContainer tempFc;
+
+	private UartProc tempUartSensor;
 
 	private Cursor c=null;
 	
@@ -64,9 +66,13 @@ public class UartFragment extends Fragment implements OnClickListener{
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		rootView = inflater.inflate(R.layout.activity_uart,container, false);
+		
 		defineAttributes();
 		submit.setOnClickListener(this);
 		formula_uart.setOnClickListener(this);
+		
+		tempFc = new FormulaContainer();
+		tempUartSensor.setFc(tempFc);
 		
 		if (c != null) {
 			autoFillForm();
@@ -76,6 +82,30 @@ public class UartFragment extends Fragment implements OnClickListener{
 		subprotocol = "UART1";
 		
 		return rootView;
+	}
+	
+	private void defineAttributes() {
+		// TODO Auto-generated method stub
+				SensorName = (EditText) rootView.findViewById(R.id.sensor_name);
+				Quantity = (EditText) rootView.findViewById(R.id.quantity_name1);
+				Unit = (EditText) rootView.findViewById(R.id.s_unit1);
+				PinOne = (EditText) rootView.findViewById(R.id.pin1);
+				PinTwo = (EditText) rootView.findViewById(R.id.pin2);
+				Command = (EditText) rootView.findViewById(R.id.command);
+				BaudRate = (EditText) rootView.findViewById(R.id.baud_rate);
+				Formula = (TextView) rootView.findViewById(R.id.formula);
+				Byte = (EditText) rootView.findViewById(R.id.byte_string);
+				
+				submit = (Button) rootView.findViewById(R.id.submit_uart);
+				formula_uart = (Button) rootView.findViewById(R.id.formula_uart);
+				
+				gS = (GlobalState) uartCallbacks.getContext();
+				c = uartCallbacks.getCursor();
+				mUartHelper = gS.getUartDbHelper();
+				
+				gS.initializeSensor();
+				tempUartSensor = (UartProc) gS.getSensor();
+		
 	}
 	
 	private void autoFillForm() {
@@ -111,8 +141,6 @@ public class UartFragment extends Fragment implements OnClickListener{
 				UartDbHelper.UART_FORMULA_SENSOR + "=?",
 				new String[] { row_id + "" }, null, null, null);
 		if (c.moveToFirst()) {
-			gS.initializeFc();
-			FormulaContainer tempFc = gS.getfc();
 			Formula f;
 			do {
 				f = getFormula(c, tempFc);
@@ -160,26 +188,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 		uartCallbacks = (Callbacks) activity;
 	}
 
-	private void defineAttributes() {
-		// TODO Auto-generated method stub
-				SensorName = (EditText) rootView.findViewById(R.id.sensor_name);
-				Quantity = (EditText) rootView.findViewById(R.id.quantity_name1);
-				Unit = (EditText) rootView.findViewById(R.id.s_unit1);
-				PinOne = (EditText) rootView.findViewById(R.id.pin1);
-				PinTwo = (EditText) rootView.findViewById(R.id.pin2);
-				Command = (EditText) rootView.findViewById(R.id.command);
-				BaudRate = (EditText) rootView.findViewById(R.id.baud_rate);
-				Formula = (TextView) rootView.findViewById(R.id.formula);
-				Byte = (EditText) rootView.findViewById(R.id.byte_string);
-				
-				submit = (Button) rootView.findViewById(R.id.submit_uart);
-				formula_uart = (Button) rootView.findViewById(R.id.formula_uart);
-				
-				gS = (GlobalState) uartCallbacks.getContext();
-				c = uartCallbacks.getCursor();
-				mUartHelper = gS.getUartDbHelper();
-		
-	}
+
 	
 	private void fillForm() {
 		// TODO Auto-generated method stub
@@ -199,7 +208,6 @@ public class UartFragment extends Fragment implements OnClickListener{
 			err=true;
 		}
 		
-		uartSensor = new UartProc(sensor,pin1,pin2, subprotocol, gS.getfc(),baud,command,quantity,byteValue);
 	}
 
 
@@ -222,7 +230,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 					else
 					{
 						updateDatabase();
-						uartCallbacks.makeSensor(uartSensor);
+						uartCallbacks.makeSensor(tempUartSensor);
 					}
 				}
 				
@@ -242,17 +250,30 @@ public class UartFragment extends Fragment implements OnClickListener{
 					else{
 						L.d("opening formula");
 						//name of output parameter is sent as argument
-						FormulaContainer fc = gS.getfc();
-						Formula f = new Formula(quantity,quantity);
-						Variable x = Variable.make(quantity);
+						Formula f = new Formula("pin1","pin1",PinOne.getText().toString(),"pin");
+						Variable x = Variable.make("pin1");
 						f.addVariable(x);
-						fc.put(quantity, f);
-						uartCallbacks.openFormula(quantity);
+						tempFc.put("pin1", f);
+						updateSensor();
+						uartCallbacks.openFormula("");
 					}
 				}
 		
 	}
 	
+	private void updateSensor() {
+		// TODO Auto-generated method stub
+		fillForm();
+		tempUartSensor.setSensorName(sensor);
+		tempUartSensor.setQuantity(quantity);
+		tempUartSensor.setUnit(unit);
+		tempUartSensor.setPin1(pin1);
+		tempUartSensor.setPin2(pin2);
+		tempUartSensor.setCommand(command);
+		tempUartSensor.setBaudRate(baud);
+		tempUartSensor.setByteValue(byteValue);
+	}
+
 	private void updateDatabase() {
 		// TODO Auto-generated method stub
 		SQLiteDatabase db = mUartHelper.getSqlDB();
@@ -308,8 +329,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 	private void updateFormula(long newRowId, SQLiteDatabase db) {
 		// TODO Auto-generated method stub
 
-		L.d(gS.getfc()+"");
-		HashMap<String, Formula> fc = gS.getfc().getFc();
+		HashMap<String, Formula> fc = tempFc.getFc();
 		String name, expression, variables;
 		ContentValues values;
 		for (Map.Entry<String, Formula> e : fc.entrySet()) {
