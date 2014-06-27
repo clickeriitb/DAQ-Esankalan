@@ -13,10 +13,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.daq.db.AdcDbHelper;
+import com.daq.db.I2CDbHelper;
 import com.daq.db.UartDbHelper;
 import com.daq.formula.Formula;
 import com.daq.formula.FormulaContainer;
 import com.daq.sensors.AdcProc;
+import com.daq.sensors.I2CProc;
 import com.daq.sensors.Sensor;
 import com.daq.sensors.UartProc;
 import com.idl.daq.USBEngine.USBCallback;
@@ -46,6 +48,7 @@ public class GlobalState extends Application{
 	//database
 	AdcDbHelper mADCHelper;
 	UartDbHelper mUartHelper;
+	I2CDbHelper mI2CHelper;
 	
 	//Constructor
 	public GlobalState() {
@@ -64,6 +67,10 @@ public class GlobalState extends Application{
 		return mUartHelper;
 	}
 	
+	public I2CDbHelper getI2CDbHelper(){
+		return mI2CHelper;
+	}
+	
 	public void initializeDB(){
 		mADCHelper = new AdcDbHelper(this);
 		mADCHelper.openDB();
@@ -77,6 +84,11 @@ public class GlobalState extends Application{
 		mUartHelper.test();
 		L.d("Uart test called");
 		mUartHelper.loadEntries();
+		
+		mI2CHelper = new I2CDbHelper(this);
+		mI2CHelper.openDB();
+		mI2CHelper.test();
+		mI2CHelper.loadEntries();
 	}
 	
 	public void initializeSensor(){
@@ -85,7 +97,7 @@ public class GlobalState extends Application{
 		}else if(protocol.equals("UART")){
 			tempSensor = new UartProc();
 		}else if(protocol.equals("I2C")){
-			//tempSensor =  new I2cProc();
+			tempSensor =  new I2CProc();
 		}
 		
 	}
