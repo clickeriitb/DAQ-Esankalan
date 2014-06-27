@@ -43,4 +43,14 @@ public class I2C_ItemClass {
 	public int getDelay(){
 		return this.delay;
 	}
+	
+	public String getInfo(){
+		if(type.equals("read")){
+			return "r:"+addr;
+		}else if(type.equals("write")){
+			return "w:"+addr+":"+val;
+		}else{
+			return "d:"+delay;
+		}
+	}
 }
