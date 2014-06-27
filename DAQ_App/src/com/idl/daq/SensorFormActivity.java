@@ -24,7 +24,7 @@ public class SensorFormActivity extends FragmentActivity implements
 
 		ExpressionFragment.Callbacks, UartFragment.Callbacks,
 		PinSelectFragmentAdc.Callbacks, SensorBrowseFragment.Callbacks,
-		PinSelectFragmentUart.Callbacks, I2C_ConfigFragment.Callbacks  {
+		PinSelectFragmentUart.Callbacks, I2CFragment.Callbacks, I2CPinSelect.Callbacks, I2C_ConfigFragment.Callbacks,I2C_ExecFragment.Callbacks  {
 
 
 	GlobalState gS;
@@ -145,7 +145,7 @@ public class SensorFormActivity extends FragmentActivity implements
 	@Override
 	public void showProtocolForm() {
 		// TODO Auto-generated method stub
-		showOldFragment(protocol, -1, -1);
+		showOldFragment(protocol, R.anim.right_in, R.anim.right_out);
 	}
 
 	@Override
@@ -178,30 +178,20 @@ public class SensorFormActivity extends FragmentActivity implements
 	@Override
 	public void openProtocol(Cursor c) {
 		// TODO Auto-generated method stub
-			protocol = gS.getProtocol();
-			FragmentManager fm = getSupportFragmentManager();
-			FragmentTransaction t = fm.beginTransaction();
-			oldFrag = newFrag;
-			t.hide(oldFrag);
-			if (protocol.equals("ADC")) {
-				if (fm.findFragmentByTag(protocol) == null) {
-					newFrag = new AdcFragment();
-				}
-			} else if (protocol.equals("UART")) {
-				if (fm.findFragmentByTag(protocol) == null) {
-					newFrag = new UartFragment();
-				}
-			} else if (protocol.equals("I2C")) {
-				/* Under Development */
+		protocol = gS.getProtocol();
+		Fragment fragment = null;
+		if (protocol.equals("ADC"))
+			fragment = new AdcFragment();
+		else if (protocol.equals("UART"))
+			fragment = new UartFragment();
+		else if (protocol.equals("I2C"))
+			fragment = new I2CFragment();
 
-			}
-		
 		if (c != null) {
 			this.c = c;
 		}
-		t.add(R.id.sensor_form_container, newFrag, protocol);
-		t.show(newFrag);
-		t.commit();
+		if (fragment != null)
+			addNewFragment(fragment, protocol, R.anim.left_in, R.anim.left_out);
 	}
 
 	@Override
@@ -218,6 +208,8 @@ public class SensorFormActivity extends FragmentActivity implements
 			fragment = new PinSelectFragmentAdc();
 		else if(protocol == "UART")
 			fragment = new PinSelectFragmentUart();
+		else if (protocol.equals("I2C"))
+			fragment = new I2CPinSelect();
 		addNewFragment(fragment, protocol + "_pin", R.anim.vertical_up_in,R.anim.vertical_up_out);
 	}
 
@@ -242,7 +234,7 @@ public class SensorFormActivity extends FragmentActivity implements
 				TextView pin_view = (TextView) findViewById(R.id.pin_no);
 			    pin_view.setText(pinData);
 			}
-			else {
+			else if (protocol.equals("UART")){
 				String[] data = pinData.split(":");
 				TextView pin_view = (TextView)findViewById(R.id.sub_protocol);
 				pin_view.setText(data[0]);
@@ -251,6 +243,12 @@ public class SensorFormActivity extends FragmentActivity implements
 				TextView pin_view2= (TextView)findViewById(R.id.pin2);
 				pin_view2.setText(data[2]);
 				
+			} else if (protocol.equals("I2C")) {
+				String arr[] = pinData.split(":");
+				TextView sda = (TextView) findViewById(R.id.sda);
+				sda.setText(arr[1]);
+				TextView scl = (TextView) findViewById(R.id.scl);
+				scl.setText(arr[2]);
 			}
 		}
 	}
@@ -288,8 +286,9 @@ public class SensorFormActivity extends FragmentActivity implements
 			}
 			oldFrag = newFrag;
 			fragmentTransaction.hide(oldFrag);
-			newFrag = fragmentManager.findFragmentByTag(tag);
-			if (newFrag != null) {
+			Fragment tempFrag = fragmentManager.findFragmentByTag(tag); 
+			if (tempFrag != null) {
+				newFrag = tempFrag;
 				fragmentTransaction.show(newFrag);
 				fragmentTransaction.commit();
 				return true;
@@ -300,5 +299,31 @@ public class SensorFormActivity extends FragmentActivity implements
 			return false;
 		}
 	}
+
+	@Override
+	public void openConfig() {
+		// TODO Auto-generated method stub
+		if (protocol.equals("I2C")) {
+			Fragment fragment = new I2C_ConfigFragment();
+			if(!showOldFragment("i2c_config", R.anim.left_in, R.anim.left_out)){
+				addNewFragment(fragment, "i2c_config", R.anim.left_in,
+		R.anim.left_out);
+			}
+		}
+	}
+
+	@Override
+	public void openExec() {
+		// TODO Auto-generated method stub
+		if (protocol.equals("I2C")) {
+			Fragment fragment = new I2C_ExecFragment();
+			if(!showOldFragment("i2c_exec", R.anim.left_in, R.anim.left_out)){
+				addNewFragment(fragment, "i2c_exec", R.anim.left_in,
+		R.anim.left_out);
+			}
+		}
+	}
+	
+	
 
 }
