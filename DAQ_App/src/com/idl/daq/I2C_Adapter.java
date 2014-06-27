@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class I2C_Adapter extends ArrayAdapter<I2C_ItemClass> implements
@@ -20,9 +21,9 @@ public class I2C_Adapter extends ArrayAdapter<I2C_ItemClass> implements
 	Context context;
 	List<I2C_ItemClass> list;
 
-	public I2C_Adapter(Context context, List<I2C_ItemClass> list) {
+	public I2C_Adapter(Context context, List<I2C_ItemClass> list,int layout) {
 		// TODO Auto-generated constructor stub
-		super(context, R.layout.list_layout_i2c, list);
+		super(context, layout, list);
 		this.context = context;
 		this.list = list;
 	}
@@ -34,14 +35,14 @@ public class I2C_Adapter extends ArrayAdapter<I2C_ItemClass> implements
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		I2C_ItemClass listObj = list.get(position);
 		String type = listObj.getType();
-		Button edit, del;
+		ImageButton edit, del;
 		TextView addr, val, time;
 		if (type.contentEquals("read")) {
 			View view = inflater.inflate(R.layout.read, parent, false);
 			addr = (TextView) view.findViewById(R.id.addr);
 			addr.append(listObj.getAddr());
-			edit = (Button) view.findViewById(R.id.edit);
-			del = (Button) view.findViewById(R.id.del);
+			edit = (ImageButton) view.findViewById(R.id.edit);
+			del = (ImageButton) view.findViewById(R.id.del);
 			edit.setTag(position + ":read");
 			del.setTag(position + ":read");
 			edit.setOnClickListener(this);
@@ -49,15 +50,27 @@ public class I2C_Adapter extends ArrayAdapter<I2C_ItemClass> implements
 			return view;
 		} else if (type.contentEquals("write")) {
 			View view = inflater.inflate(R.layout.write, parent, false);
-			// addr = (EditText) view.findViewById(R.id.addr);
-			// addr.setText(listObj.getAddr());
-			// val = (EditText) view.findViewById(R.id.val);
-			// val.setText(listObj.getVal());
+			 addr = (TextView) view.findViewById(R.id.addr);
+			 addr.setText(listObj.getAddr());
+			 val = (TextView) view.findViewById(R.id.val);
+			 val.setText(listObj.getVal());
+			 edit = (ImageButton) view.findViewById(R.id.edit);
+				del = (ImageButton) view.findViewById(R.id.del);
+				edit.setTag(position + ":write");
+				del.setTag(position + ":write");
+				edit.setOnClickListener(this);
+				del.setOnClickListener(this);
 			return view;
 		} else {
 			View view = inflater.inflate(R.layout.delay, parent, false);
-			// time = (EditText) view.findViewById(R.id.time);
-			// time.setText(listObj.getDelay() + "");
+			 time = (TextView) view.findViewById(R.id.time);
+			 time.setText(listObj.getDelay() + "");
+			 edit = (ImageButton) view.findViewById(R.id.edit);
+				del = (ImageButton) view.findViewById(R.id.del);
+				edit.setTag(position + ":delay");
+				del.setTag(position + ":delay");
+				edit.setOnClickListener(this);
+				del.setOnClickListener(this);
 			return view;
 		}
 	}
