@@ -3,6 +3,7 @@ package com.idl.daq;
 import java.util.ArrayList;
 
 import com.daq.db.AdcDbHelper;
+import com.daq.db.I2CDbHelper;
 import com.daq.db.UartDbHelper;
 import com.daq.sensors.Sensor;
 import com.idl.daq.AdcFragment.Callbacks;
@@ -93,6 +94,11 @@ public class SensorBrowseFragment extends Fragment implements
 			sensorCodes = gS.getUartDbHelper().getUartCodes();
 			sensorQuantities = gS.getUartDbHelper().getUartQuantities();
 			sensorUnits = gS.getUartDbHelper().getUartUnits();
+		} else if (protocol.equals("I2C")) {
+			gS.getI2CDbHelper().loadEntries();
+			sensorCodes = gS.getI2CDbHelper().getI2CCodes();
+			sensorQuantities = gS.getI2CDbHelper().getI2CQuantities();
+			sensorUnits = gS.getI2CDbHelper().getI2CUnits();
 		}
 		sensorDetails = new ArrayList<String>();
 		for (int i = 0; i < sensorCodes.size(); ++i) {
@@ -177,6 +183,8 @@ public class SensorBrowseFragment extends Fragment implements
 			cr = gS.getAdcDbHelper().getSensorsFor(arg0);
 		} else if (protocol.equals("UART")) {
 			cr = gS.getUartDbHelper().getSensorsFor(arg0);
+		} else if (protocol.equals("I2C")) {
+			cr = gS.getI2CDbHelper().getSensorsFor(arg0);
 		}
 		if (cr == null) {
 			L.d("what the hell");
@@ -206,9 +214,20 @@ public class SensorBrowseFragment extends Fragment implements
 							.getColumnIndex(UartDbHelper.UART_UNIT));
 					sensorDetails.add(code + " " + quantity + " " + unit);
 				} while (cr.moveToNext());
+			} else if (protocol.equals("I2C")) {
+				do {
+
+					String code = cr.getString(cr
+							.getColumnIndex(I2CDbHelper.I2C_SENSOR_CODE));
+					String quantity = cr.getString(cr
+							.getColumnIndex(I2CDbHelper.I2C_QUANTITY));
+					String unit = cr.getString(cr
+							.getColumnIndex(I2CDbHelper.I2C_UNIT));
+					sensorDetails.add(code + " " + quantity + " " + unit);
+				} while (cr.moveToNext());
 			}
 		}
-		if(sensorDetails.size()==0){
+		if (sensorDetails.size() == 0) {
 			listAdapter.add("No such sensor found");
 		}
 		listAdapter.notifyDataSetChanged();
@@ -230,21 +249,26 @@ public class SensorBrowseFragment extends Fragment implements
 		Cursor c;
 		SQLiteDatabase db = null;
 		String query = null;
-		
+
 		if (protocol.equals("ADC")) {
 			db = gS.getAdcDbHelper().getSqlDB();
-			query = "SELECT * FROM " + AdcDbHelper.ADC_TABLE_NAME
-					+ " WHERE " + AdcDbHelper.ADC_SENSOR_CODE + " = '"
-					+ args[0] + "' AND " + AdcDbHelper.ADC_QUANTITY + " = '"
-					+ args[1] + "' AND " + AdcDbHelper.ADC_UNIT + " = '"
-					+ args[2] + "';";
+			query = "SELECT * FROM " + AdcDbHelper.ADC_TABLE_NAME + " WHERE "
+					+ AdcDbHelper.ADC_SENSOR_CODE + " = '" + args[0] + "' AND "
+					+ AdcDbHelper.ADC_QUANTITY + " = '" + args[1] + "' AND "
+					+ AdcDbHelper.ADC_UNIT + " = '" + args[2] + "';";
 		} else if (protocol.equals("UART")) {
 			db = gS.getUartDbHelper().getSqlDB();
-			query = "SELECT * FROM " + UartDbHelper.UART_TABLE_NAME
-					+ " WHERE " + UartDbHelper.UART_SENSOR_CODE + " = '"
-					+ args[0] + "' AND " + UartDbHelper.UART_QUANTITY + " = '"
-					+ args[1] + "' AND " + UartDbHelper.UART_UNIT + " = '"
-					+ args[2] + "';";
+			query = "SELECT * FROM " + UartDbHelper.UART_TABLE_NAME + " WHERE "
+					+ UartDbHelper.UART_SENSOR_CODE + " = '" + args[0]
+					+ "' AND " + UartDbHelper.UART_QUANTITY + " = '" + args[1]
+					+ "' AND " + UartDbHelper.UART_UNIT + " = '" + args[2]
+					+ "';";
+		} else if (protocol.equals("I2C")) {
+			db = gS.getI2CDbHelper().getSqlDB();
+			query = "SELECT * FROM " + I2CDbHelper.I2C_TABLE_NAME + " WHERE "
+					+ I2CDbHelper.I2C_SENSOR_CODE + " = '" + args[0] + "' AND "
+					+ I2CDbHelper.I2C_QUANTITY + " = '" + args[1] + "' AND "
+					+ I2CDbHelper.I2C_UNIT + " = '" + args[2] + "';";
 		}
 		L.d(query);
 		c = db.rawQuery(query, null);
