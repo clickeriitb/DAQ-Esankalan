@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
+     <item
+        android:id="@+id/formula_menu"
+        android:title="Formula"
+        android:visible="true"
+        android:icon="@drawable/ic_launcher"
+        app:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/config_menu"
+        android:title="Config"
+        android:visible="true"
+        android:icon="@drawable/ic_action_done"
+        app:showAsAction="ifRoom|withText"/>
+
+</menu>
