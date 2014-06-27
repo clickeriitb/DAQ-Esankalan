@@ -4,48 +4,38 @@
     android:layout_height="match_parent"
     tools:context="${packageName}.${activityClass}" >
 
-    
-
-<com.idl.daq.I2cImageView
+    <com.idl.daq.I2cImageView
         android:id="@+id/image"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:src="@drawable/bbb"
-         />
-    
+        android:src="@drawable/bbb" />
+
     <CheckBox
         android:id="@+id/chk_box1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="handleCheckBoxClick"
         android:scaleX="0.9"
-        android:scaleY="0.9"
-         />
-    
-    
+        android:scaleY="0.9" />
+
     <CheckBox
         android:id="@+id/chk_box2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="handleCheckBoxClick"
         android:scaleX="0.9"
-        android:scaleY="0.9"
-         />
-    
+        android:scaleY="0.9" />
+
     <CheckBox
         android:id="@+id/chk_box3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="handleCheckBoxClick"
         android:scaleX="0.9"
-        android:scaleY="0.9"
-         />
+        android:scaleY="0.9" />
+
     <CheckBox
         android:id="@+id/chk_box4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="handleCheckBoxClick"
         android:scaleX="0.9"
-        android:scaleY="0.9"
-         />
-    </RelativeLayout>
+        android:scaleY="0.9" />
+
+</RelativeLayout>

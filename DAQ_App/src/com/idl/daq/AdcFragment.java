@@ -72,8 +72,6 @@ public class AdcFragment extends Fragment implements OnClickListener {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		rootView = inflater.inflate(R.layout.adc_form, container, false);
-
-	
 		defineAttributes();
 		selectPin.setOnClickListener(this);
 		setHasOptionsMenu(true);
