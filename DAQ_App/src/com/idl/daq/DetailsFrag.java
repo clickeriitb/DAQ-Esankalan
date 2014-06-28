@@ -241,10 +241,10 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener, Load
 			L.d("value of i " + i);
 			try {
 				if(t.get(i).get("sensor_code").equals(mySensor.getSensorName())){
-					for(Map.Entry<String, Formula> e : mySensor.getFormula().getFc().entrySet()){
+					for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
 						L.d(e.getKey()+" "+e.getValue());
 					}
-					Formula f = mySensor.getFormula().getFc().get(mySensor.getQuantity());
+					Formula f = mySensor.getFormulaContainer().getFc().get(mySensor.getQuantity());
 					String value = t.get(i).getString("data");
 					String date = t.get(i).getString("date");
 					//String[] r = info.split(":");
@@ -264,8 +264,8 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener, Load
 //					}
 					String s = "";
 //					if(!mySensor.getFormula().toString().equals("")){
-						mySensor.getFormula().evaluate();
-						for(Map.Entry<String, Formula> e : mySensor.getFormula().getFc().entrySet()){
+						mySensor.getFormulaContainer().evaluate();
+						for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
 							s=e.getValue().getValue()+"";
 						}
 //					}

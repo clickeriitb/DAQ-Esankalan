@@ -29,29 +29,56 @@ public class AdcDbHelper extends SQLiteOpenHelper {
 	public static final String ADC_FORMULA_VARIABLES = "variables";
 	public static final String ADC_FORMULA_KEY = "_id";
 	public static final String ADC_FORMULA_SENSOR = "sensor";
-	
+	public static final String ADC_FORMULA_DISPLAY_NAME = "displayName";
+	public static final String ADC_FORMULA_DISPLAY_EXPRESSION = "displayExpression";
+
 	public SQLiteDatabase sqlDB = null;
 	ArrayList<String> adcCodes = new ArrayList<String>();
 	ArrayList<String> adcQuantities = new ArrayList<String>();
 	ArrayList<String> adcUnits = new ArrayList<String>();
-	
-	public static final String[] projection = { ADC_SENSOR_CODE,ADC_QUANTITY,ADC_UNIT }; 
+
+	public static final String[] projection = { ADC_SENSOR_CODE, ADC_QUANTITY,
+			ADC_UNIT };
 
 	public static final String ADC_CREATE_SCRIPT = "CREATE TABLE IF NOT EXISTS "
-			+ ADC_TABLE_NAME + " (" + ADC_KEY
-			+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + ADC_SENSOR_CODE
-			+ " TEXT, " + ADC_QUANTITY + " TEXT, " + ADC_UNIT + " TEXT, "
-			+ ADC_PIN_NUMBER + " TEXT, UNIQUE ("
-			+ ADC_SENSOR_CODE + ", " + ADC_QUANTITY + ", " + ADC_UNIT
-			+ ") ON CONFLICT REPLACE);";
+			+ ADC_TABLE_NAME
+			+ " ("
+			+ ADC_KEY
+			+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
+			+ ADC_SENSOR_CODE
+			+ " TEXT, "
+			+ ADC_QUANTITY
+			+ " TEXT, "
+			+ ADC_UNIT
+			+ " TEXT, "
+			+ ADC_PIN_NUMBER
+			+ " TEXT, UNIQUE ("
+			+ ADC_SENSOR_CODE
+			+ ", "
+			+ ADC_QUANTITY + ", " + ADC_UNIT + ") ON CONFLICT REPLACE);";
 
 	public static final String ADC_FORMULA_CREATE_SCRIPT = " CREATE TABLE IF NOT EXISTS "
-			+ ADC_FORMULA_TABLE_NAME + " (" + ADC_FORMULA_KEY
-			+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + ADC_FORMULA_NAME
-			+ " TEXT," + ADC_FORMULA_EXPRESSION + " TEXT, "
-			+ ADC_FORMULA_VARIABLES + " TEXT, " + ADC_FORMULA_SENSOR
-			+ " INTEGER, FOREIGN KEY(" + ADC_FORMULA_SENSOR + ") REFERENCES "
-			+ ADC_TABLE_NAME + "(" + ADC_KEY + "));";
+			+ ADC_FORMULA_TABLE_NAME
+			+ " ("
+			+ ADC_FORMULA_KEY
+			+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
+			+ ADC_FORMULA_NAME
+			+ " TEXT,"
+			+ ADC_FORMULA_DISPLAY_NAME
+			+ " TEXT,"
+			+ ADC_FORMULA_EXPRESSION
+			+ " TEXT, "
+			+ ADC_FORMULA_DISPLAY_EXPRESSION
+			+ " TEXT, "
+			+ ADC_FORMULA_VARIABLES
+			+ " TEXT, "
+			+ ADC_FORMULA_SENSOR
+			+ " INTEGER, FOREIGN KEY("
+			+ ADC_FORMULA_SENSOR
+			+ ") REFERENCES "
+			+ ADC_TABLE_NAME
+			+ "("
+			+ ADC_KEY + "));";
 
 	public AdcDbHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
@@ -61,9 +88,9 @@ public class AdcDbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
-		L.d(ADC_CREATE_SCRIPT+" "+ADC_FORMULA_CREATE_SCRIPT);
+		L.d(ADC_CREATE_SCRIPT + " " + ADC_FORMULA_CREATE_SCRIPT);
 		L.d("on create database called");
-		
+
 	}
 
 	@Override
@@ -82,101 +109,108 @@ public class AdcDbHelper extends SQLiteOpenHelper {
 		db.execSQL(ADC_CREATE_SCRIPT);
 		db.execSQL(ADC_FORMULA_CREATE_SCRIPT);
 	}
-	
-	public void openDB(){
-		if(sqlDB==null){
+
+	public void openDB() {
+		if (sqlDB == null) {
 			sqlDB = getWritableDatabase();
 		}
 	}
-	
-	public void loadEntries(){
-		Cursor c = sqlDB.query(ADC_TABLE_NAME, projection, null, null, null, null, null);
+
+	public void loadEntries() {
+		Cursor c = sqlDB.query(ADC_TABLE_NAME, projection, null, null, null,
+				null, null);
 		adcCodes.clear();
 		adcQuantities.clear();
 		adcUnits.clear();
 		c.moveToFirst();
-		do{
+		do {
 			adcCodes.add(c.getString(c.getColumnIndex(ADC_SENSOR_CODE)));
 			adcQuantities.add(c.getString(c.getColumnIndex(ADC_QUANTITY)));
 			adcUnits.add(c.getString(c.getColumnIndex(ADC_UNIT)));
-		}while(c.moveToNext());
+		} while (c.moveToNext());
 	}
-	
-	public ArrayList<String> getAdcCodes(){
+
+	public ArrayList<String> getAdcCodes() {
 		return adcCodes;
 	}
-	
-	public ArrayList<String> getAdcQuantities(){
+
+	public ArrayList<String> getAdcQuantities() {
 		return adcQuantities;
 	}
-	
-	public ArrayList<String> getAdcUnits(){
+
+	public ArrayList<String> getAdcUnits() {
 		return adcUnits;
 	}
-	
-	
-	
+
 	public SQLiteDatabase getSqlDB() {
 		return sqlDB;
 	}
 
-	public void test(){
+	public void test() {
 		ContentValues values = new ContentValues();
 		values.put(ADC_SENSOR_CODE, "lm-35");
 		values.put(ADC_QUANTITY, "Temperature");
 		values.put(ADC_UNIT, "Celsius");
 		values.put(ADC_PIN_NUMBER, "P9_37");
-		
+
 		long newRowId;
 		newRowId = sqlDB.insert(ADC_TABLE_NAME, null, values);
-		
+
 		ContentValues valuesFormula = new ContentValues();
-		valuesFormula.put(ADC_FORMULA_NAME, "Temperature");
-		valuesFormula.put(ADC_FORMULA_EXPRESSION, "Temperature");
+		valuesFormula.put(ADC_FORMULA_NAME, "pin");
+		valuesFormula.put(ADC_FORMULA_DISPLAY_NAME, "P9_37");
+		valuesFormula.put(ADC_FORMULA_EXPRESSION, "pin");
+		valuesFormula.put(ADC_FORMULA_DISPLAY_EXPRESSION, "pin");
 		valuesFormula.put(ADC_FORMULA_VARIABLES, "");
 		valuesFormula.put(ADC_FORMULA_SENSOR, newRowId);
-		
+
 		sqlDB.insert(ADC_FORMULA_TABLE_NAME, null, valuesFormula);
-		
+
 		valuesFormula = new ContentValues();
 		valuesFormula.put(ADC_FORMULA_NAME, "Temp");
-		valuesFormula.put(ADC_FORMULA_EXPRESSION, "Temperature/10");
-		valuesFormula.put(ADC_FORMULA_VARIABLES, "Temperature:");
+		valuesFormula.put(ADC_FORMULA_EXPRESSION, "pin/10");
+		valuesFormula.put(ADC_FORMULA_DISPLAY_NAME, "Temp");
+		valuesFormula.put(ADC_FORMULA_DISPLAY_EXPRESSION, "P9_37/10");
+		valuesFormula.put(ADC_FORMULA_VARIABLES, "pin:");
 		valuesFormula.put(ADC_FORMULA_SENSOR, newRowId);
-		
+
 		sqlDB.insert(ADC_FORMULA_TABLE_NAME, null, valuesFormula);
-		
+
 		values = new ContentValues();
 		values.put(ADC_SENSOR_CODE, "lm-36");
 		values.put(ADC_QUANTITY, "Temperature");
 		values.put(ADC_UNIT, "Fahrenheit");
 		values.put(ADC_PIN_NUMBER, "P9_37");
-		
+
 		newRowId = sqlDB.insert(ADC_TABLE_NAME, null, values);
-		
+
 		valuesFormula = new ContentValues();
-		valuesFormula.put(ADC_FORMULA_NAME, "Temperature");
-		valuesFormula.put(ADC_FORMULA_EXPRESSION, "Temperature");
+		valuesFormula.put(ADC_FORMULA_NAME, "pin");
+		valuesFormula.put(ADC_FORMULA_EXPRESSION, "pin");
+		valuesFormula.put(ADC_FORMULA_DISPLAY_NAME, "P9_36");
+		valuesFormula.put(ADC_FORMULA_DISPLAY_EXPRESSION, "pin");
 		valuesFormula.put(ADC_FORMULA_VARIABLES, "");
 		valuesFormula.put(ADC_FORMULA_SENSOR, newRowId);
-		
+
 		sqlDB.insert(ADC_FORMULA_TABLE_NAME, null, valuesFormula);
-		
+
 		valuesFormula = new ContentValues();
 		valuesFormula.put(ADC_FORMULA_NAME, "Temp");
-		valuesFormula.put(ADC_FORMULA_EXPRESSION, "(9*Temperature/50)+32");
-		valuesFormula.put(ADC_FORMULA_VARIABLES, "Temperature:");
+		valuesFormula.put(ADC_FORMULA_EXPRESSION, "(9*pin/50)+32");
+		valuesFormula.put(ADC_FORMULA_DISPLAY_NAME, "Temp");
+		valuesFormula.put(ADC_FORMULA_DISPLAY_EXPRESSION, "(9*P9_36/50)+32");
+		valuesFormula.put(ADC_FORMULA_VARIABLES, "pin:");
 		valuesFormula.put(ADC_FORMULA_SENSOR, newRowId);
-		
+
 		sqlDB.insert(ADC_FORMULA_TABLE_NAME, null, valuesFormula);
-		
-		
-		
+
 	}
-	
-	public Cursor getSensorsFor(String s){
+
+	public Cursor getSensorsFor(String s) {
 		Cursor c;
-		String query = "SELECT * FROM "+ADC_TABLE_NAME+" WHERE "+ADC_SENSOR_CODE+" LIKE '"+s+"%' OR "+ADC_QUANTITY+" LIKE '"+s+"%';";
+		String query = "SELECT * FROM " + ADC_TABLE_NAME + " WHERE "
+				+ ADC_SENSOR_CODE + " LIKE '" + s + "%' OR " + ADC_QUANTITY
+				+ " LIKE '" + s + "%';";
 		L.d(query);
 		c = sqlDB.rawQuery(query, null);
 		L.d(c.toString());

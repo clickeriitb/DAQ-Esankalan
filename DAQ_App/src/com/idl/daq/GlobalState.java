@@ -13,10 +13,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.daq.db.AdcDbHelper;
+import com.daq.db.I2CDbHelper;
 import com.daq.db.UartDbHelper;
 import com.daq.formula.Formula;
 import com.daq.formula.FormulaContainer;
 import com.daq.sensors.AdcProc;
+import com.daq.sensors.I2CProc;
 import com.daq.sensors.Sensor;
 import com.daq.sensors.UartProc;
 import com.idl.daq.USBEngine.USBCallback;
@@ -36,7 +38,8 @@ public class GlobalState extends Application{
 	
 	ArrayList<JSONObject> temp;
 	
-	FormulaContainer tempFc;
+	//FormulaContainer tempFc;
+	Sensor tempSensor;
 	
 	SocketIO socket;
 	String ip="192.168.1.145:3000/wifi";
@@ -45,6 +48,15 @@ public class GlobalState extends Application{
 	//database
 	AdcDbHelper mADCHelper;
 	UartDbHelper mUartHelper;
+	I2CDbHelper mI2CHelper;
+	
+	//Constructor
+	public GlobalState() {
+		super();
+		sensors = new ArrayList<Sensor>();
+		temp = new ArrayList<JSONObject>();
+		isExiting = true;
+	}
 	
 	public AdcDbHelper getAdcDbHelper(){
 		return mADCHelper;
@@ -53,6 +65,10 @@ public class GlobalState extends Application{
 	public UartDbHelper getUartDbHelper() {
 		// TODO Auto-generated method stub
 		return mUartHelper;
+	}
+	
+	public I2CDbHelper getI2CDbHelper(){
+		return mI2CHelper;
 	}
 	
 	public void initializeDB(){
@@ -68,43 +84,30 @@ public class GlobalState extends Application{
 		mUartHelper.test();
 		L.d("Uart test called");
 		mUartHelper.loadEntries();
+		L.d("Loaded uart entries");
+		
+		mI2CHelper = new I2CDbHelper(this);
+		mI2CHelper.openDB();
+		mI2CHelper.test();
+		mI2CHelper.loadEntries();
 	}
 	
-	public void initializeFc(){
-		tempFc = new  FormulaContainer();
+	public void initializeSensor(){
+		if(protocol.equals("ADC")){
+			tempSensor = new AdcProc();
+		}else if(protocol.equals("UART")){
+			tempSensor = new UartProc();
+		}else if(protocol.equals("I2C")){
+			tempSensor =  new I2CProc();
+		}
+		
 	}
 	
-	public void destroyFc(){
-		tempFc = null;
+	
+	public Sensor getSensor(){
+		return tempSensor;
 	}
 	
-	public FormulaContainer getfc()
-	{
-		return tempFc;
-	}
-	
-	public void addToFc(Formula f)
-	{
-		tempFc.put(f.toString(), f);
-	}
-	
-	//returns the number of formulas for a sensor
-	public int getFormNum()
-	{
-		return tempFc.getFc().size();
-	}
-	
-	public GlobalState() {
-		super();
-		sensors = new ArrayList<Sensor>();
-		temp = new ArrayList<JSONObject>();
-		isExiting = true;
-	}
-
-//	public void addToTemp(String s){
-//		L.d("added " + s);
-//		temp.add(s);
-//	}
 	
 	public ArrayList<JSONObject> getTemp(){
 		return temp;
@@ -331,9 +334,6 @@ public class GlobalState extends Application{
 		}
 		
 	
-		
 	};
-	
-	
 	
 }

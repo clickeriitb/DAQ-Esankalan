@@ -2,11 +2,15 @@ package com.daq.sensors;
 
 import java.util.ArrayList;
 
+import javax.crypto.spec.DESKeySpec;
+
 import org.json.JSONObject;
 
 import android.content.Context;
 
+import com.daq.formula.Formula;
 import com.daq.formula.FormulaContainer;
+import com.idl.daq.L;
 import com.idl.daq.SensorDetailFragment;
 import com.idl.daq.DetailsFrag;
 
@@ -29,6 +33,12 @@ public abstract class Sensor {
 		dataFrag = new DetailsFrag();
 		//dataFrag.setRetainInstance(true);
 		dataFrag.setSensor(this);
+		
+	}
+	
+	public Sensor(){
+		dataFrag = new DetailsFrag();
+		dataFrag.setSensor(this);
 	}
 
 	public void initializeFrag(){
@@ -49,12 +59,21 @@ public abstract class Sensor {
 		this.sensorName = sensorName;
 	}
 
-	public FormulaContainer getFormula() {
+	//FormulaContainer related methods
+	public void destroyFc(){
+		fc.clear();
+	}
+	public FormulaContainer getFormulaContainer() {
 		return fc;
 	}
 
 	public void setFormulaContainer(FormulaContainer fc) {
 		this.fc = fc;
+	}
+	
+	public void addToFc(Formula f)
+	{
+		fc.put(f.toString(), f);
 	}
 
 	public int getId() {
@@ -86,4 +105,28 @@ public abstract class Sensor {
 	public abstract String getQuantity();
 	
 	
+
+	
+	//Getters and Setters
+	
+	public DetailsFrag getDataFrag() {
+		return dataFrag;
+	}
+
+	public void setDataFrag(DetailsFrag dataFrag) {
+		this.dataFrag = dataFrag;
+	}
+
+	public void setFc(FormulaContainer fc) {
+		this.fc = fc;
+	}
+
+	public void setMinThresh(double minThresh) {
+		this.minThresh = minThresh;
+	}
+
+	public void setMaxThresh(double maxThresh) {
+		this.maxThresh = maxThresh;
+	}
+
 }

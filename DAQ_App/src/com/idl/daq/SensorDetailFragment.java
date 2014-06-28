@@ -212,27 +212,33 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 		for(int i=data.size();i<t.size();++i){
 			try {
 				if(t.get(i).get("sensor_code").equals(mySensor.getSensorName())){
-					Formula f = mySensor.getFormula().getFc().get(mySensor.getQuantity());
 					String value = t.get(i).getString("data");
 					String date = t.get(i).getString("date");
 					//String[] r = info.split(":");
 					//L.d(r.length);
 					L.d(value+" "+date);
-					f.setValue(Double.parseDouble(value));
-					//f.getAllVariables().get(0).setValue(t.get(i).getDouble("data"));
+					if(mySensor.getFormulaContainer()!=null){
+						Formula f = mySensor.getFormulaContainer().getFc().get("pin");
+						if(f==null){
+							L.d("I told ya!");
+						}
+						f.setValue(Double.parseDouble(value));
+						f.getAllVariables().get(0).setValue(t.get(i).getDouble("data"));
+						mySensor.getFormulaContainer().evaluate();
+						String s="";
+						for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
+							s=e.getValue().getValue()+"";
+						}
+						value = s;
+					}
+					
 //					try {
 //						f.setValue(t.get(i).getDouble("data"));
 //					} catch (Exception e1) {
 //						// TODO Auto-generated catch block
 //						e1.printStackTrace();
 //					}
-					gS.getfc().evaluate();
-					String s="";
-					for(Map.Entry<String, Formula> e : gS.getfc().getFc().entrySet()){
-						s=e.getValue().getValue()+"";
-					}
-					data.add(mySensor.getId()+":"+s+" Time:"+date);
-					//data.add(t.get(i).getDouble("data")+"");
+					data.add(mySensor.getSensorName()+":"+value+" Time:"+date);
 				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

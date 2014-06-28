@@ -1,5 +1,9 @@
 package com.idl.daq;
 
+import com.daq.db.AdcDbHelper;
+import com.daq.db.I2CDbHelper;
+import com.daq.formula.FormulaContainer;
+import com.daq.sensors.I2CProc;
 import com.daq.sensors.Sensor;
 import com.idl.daq.AdcFragment.Callbacks;
 
@@ -18,21 +22,29 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class I2CFragment extends Fragment implements OnClickListener{
+public class I2CFragment extends Fragment implements OnClickListener {
 
 	private View rootView;
 	private GlobalState gS;
-	private EditText sensorName, Quantity, Unit,i2cAddress;
+	private EditText sensorName, Quantity, Unit, i2cAddress;
 	private FButton pinSelect;
-	private TextView sda,scl;
+	private TextView sda, scl;
 	private Boolean err;
+	
+	private FormulaContainer tempFc;
+	
 	private Cursor c = null;
+	private String sensor, quantity, unit, i2cAddr, sdaVal, sclVal;
 	
-	//I2CDbHelper i2cHelper;
+	private I2CProc tempI2cSensor;
+
+	// I2CDbHelper i2cHelper;
 	private Callbacks I2C_Callbacks;
-	
+
+	private I2CDbHelper i2cHelper;
+
 	public interface Callbacks {
-		
+
 		public void openFormula(String s);
 
 		public void openPinSelection();
@@ -44,23 +56,27 @@ public class I2CFragment extends Fragment implements OnClickListener{
 		public Context getContext();
 
 		public String getPindata();
-		
+
 		public Cursor getCursor();
+		
+		public void openConfig();
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		rootView = inflater.inflate(R.layout.i2c_form, container,false);
+		rootView = inflater.inflate(R.layout.i2c_form, container, false);
 		defineAttributes();
 		setHasOptionsMenu(true);
+		
+		tempFc = new FormulaContainer();
 		if (c != null) {
 			autoFillForm();
 		}
 		return rootView;
 	}
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -76,15 +92,27 @@ public class I2CFragment extends Fragment implements OnClickListener{
 		I2C_Callbacks = (Callbacks) activity;
 	}
 
-	
 	private void autoFillForm() {
 		// TODO Auto-generated method stub
-		
+		long row_id;
+		if (c.moveToFirst()) {
+			sensorName.setText(c.getString(c
+					.getColumnIndex(I2CDbHelper.I2C_SENSOR_CODE)));
+			Quantity.setText(c.getString(c
+					.getColumnIndex(I2CDbHelper.I2C_QUANTITY)));
+			Unit.setText(c.getString(c.getColumnIndex(I2CDbHelper.I2C_UNIT)));
+			i2cAddress.setText(c.getString(c
+					.getColumnIndex(I2CDbHelper.I2C_UNIT)));
+			sda.setText(c.getString(c.getColumnIndex(I2CDbHelper.I2C_PIN_SDA)));
+			scl.setText(c.getString(c.getColumnIndex(I2CDbHelper.I2C_PIN_SCL)));
+
+		}
+
 	}
 
 	private void defineAttributes() {
 		// TODO Auto-generated method stub
-		
+
 		sensorName = (EditText) rootView.findViewById(R.id.sensor_code_i2c);
 		Quantity = (EditText) rootView.findViewById(R.id.quantity_i2c);
 		Unit = (EditText) rootView.findViewById(R.id.unit_i2c);
@@ -95,28 +123,63 @@ public class I2CFragment extends Fragment implements OnClickListener{
 		pinSelect.setOnClickListener(this);
 		gS = (GlobalState) I2C_Callbacks.getContext();
 		c = I2C_Callbacks.getCursor();
-		//i2cHelper = gS.getAdcDbHelper();
-		
+		i2cHelper = gS.getI2CDbHelper();
+		gS.initializeSensor();
+		tempI2cSensor = (I2CProc) gS.getSensor();
+
+	}
+
+	private void fillForm() {
+		// TODO Auto-generated method stub
+		sensor = sensorName.getText().toString();
+		i2cAddr = i2cAddress.getText().toString();
+		quantity = Quantity.getText().toString();
+		unit = Unit.getText().toString();
+		sdaVal = sda.getText().toString();
+		sclVal = scl.getText().toString();
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		// TODO Auto-generated method stub
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.adc_form_menu, menu);
+		inflater.inflate(R.menu.i2c_form_menu, menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
-		
+		switch (item.getItemId()) {
+		case R.id.cmd_menu:
+			updateSensor();
+			I2C_Callbacks.openConfig();
+			break;
+		case R.id.done_menu:
+			break;
+
+		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void updateSensor() {
+		// TODO Auto-generated method stub
+		fillForm();
+		tempI2cSensor.setSensorName(sensor);
+		tempI2cSensor.setQuantity(quantity);
+		tempI2cSensor.setUnit(unit);
+		tempI2cSensor.setI2cAddress(i2cAddr);
+		tempI2cSensor.setScl(sclVal);
+		tempI2cSensor.setSda(sdaVal);
 	}
 
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		
+		switch(v.getId()){
+		case R.id.pin_i2c:
+				I2C_Callbacks.openPinSelection();
+			break;
+		}
 	}
 
 }

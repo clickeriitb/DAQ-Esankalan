@@ -2,6 +2,9 @@ package com.idl.daq;
 
 
 
+import com.idl.daq.I2CFragment.Callbacks;
+
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -43,6 +46,21 @@ public class I2CPinSelect extends Fragment implements OnTouchListener,
 		public Context getContext();
 
 	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+		// Activities containing this fragment must implement its callbacks.
+		if (!(activity instanceof Callbacks)) {
+			throw new IllegalStateException(
+					"Activity must implement fragment's callbacks.");
+		}
+
+		setRetainInstance(true);
+		L.d("i2c fragment attached!");
+		pinSelectCallbacks = (Callbacks) activity;
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,11 +78,17 @@ public class I2CPinSelect extends Fragment implements OnTouchListener,
 		cb2 = (CheckBox) rootView.findViewById(R.id.chk_box2);
 		cb3 = (CheckBox) rootView.findViewById(R.id.chk_box3);
 		cb4 = (CheckBox) rootView.findViewById(R.id.chk_box4);
-
+		
+		cb1.setOnClickListener(this);
+		cb2.setOnClickListener(this);
+		cb3.setOnClickListener(this);
+		cb4.setOnClickListener(this);
+		
 		allinvisible();
 		allcolor();
 		bview.setcol1(0xa00099ff);
 		bview.setcol2(0xaa00ff00);
+		setHasOptionsMenu(true);
 		return rootView;
 
 	}
@@ -86,6 +110,7 @@ public class I2CPinSelect extends Fragment implements OnTouchListener,
 		if (id == R.id.done) {
 			if (s1 != "") {
 				s1 = s1 + ":" + s2 + ":" + s3;
+				L.d(s1);
 				pinSelectCallbacks.sendSelectedPins(s1);
 				pinSelectCallbacks.openForm();
 				// setResult(RESULT_OK, intent);

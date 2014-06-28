@@ -14,11 +14,11 @@ import expr.Variable;
 
 public class Formula {
 
-	private String name;
-	private String expression;
+	private String name, displayName;
+	private String expression, displayExpression;
 	private double value;
 	private HashMap<String,Formula> variables;
-	private ArrayList<Variable> var;	
+	private ArrayList<Variable> var;
 	
 	public Formula(String name, String expression) {
 		super();
@@ -27,14 +27,27 @@ public class Formula {
 		
 		variables = new LinkedHashMap<>();
 		var = new ArrayList<>();
+		this.displayName = name;
+	}
+	
+	public Formula(String name, String expression,String displayName,String displayExpression) {
+		super();
+		this.name = name;
+		this.expression = expression;
+		
+		variables = new LinkedHashMap<>();
+		var = new ArrayList<>();
+		this.displayName = displayName;
+		this.displayExpression = displayExpression;
 	}
 
 
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return name;
+		return displayName;
 	}
+	
 	
 	public void addToHashMap(String s, Formula f)
 	{
@@ -44,6 +57,10 @@ public class Formula {
 	
 	public void addVariable(Variable v){
 		var.add(v);
+	}
+	
+	public String getName(){
+		return name;
 	}
 	
 	public double getValue(){
@@ -90,10 +107,18 @@ public class Formula {
 	}
 	
 	public String getFormulaString(){
-		return name+"="+expression;
+		return displayName+"="+displayExpression;
 	}
 	
 	public String getExpression(){
 		return expression;
+	}
+	
+	public String getDisplayName(){
+		return displayName;
+	}
+	
+	public String getDisplayExpression(){
+		return displayExpression;
 	}
 }

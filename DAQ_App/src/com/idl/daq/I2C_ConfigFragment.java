@@ -3,6 +3,8 @@ package com.idl.daq;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.daq.sensors.I2CProc;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -28,6 +30,10 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 	Context context;
 	I2C_Adapter adapter;
 	I2C_ItemClass obj;
+	String TAG;
+	
+	GlobalState gS;
+	I2CProc tempSensor;
 
 	Callbacks i2c_config_callback;
 	public interface Callbacks {
@@ -35,6 +41,10 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 		public void makeToast(String t);
 
 		public Context getContext();
+
+		public void openExec();
+
+		public void showProtocolForm();
 	}
 
 	@Override
@@ -60,19 +70,22 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 		// TODO Auto-generated method stub
 		rootView = inflater.inflate(R.layout.list_layout_i2c, container, false);
 		defineAttributes();
+		setHasOptionsMenu(true);
 		return rootView;
 	}
 
 	private void defineAttributes() {
 		// TODO Auto-generated method stub
-		context = i2c_config_callback.getContext();
+		context = getActivity();
+		gS = (GlobalState) i2c_config_callback.getContext();
+		tempSensor = (I2CProc) gS.getSensor();
 		lv = (ListView) rootView.findViewById(R.id.listView_i2c);
 		// context = this;
 		read = (FButton) rootView.findViewById(R.id.i2c_read);
 		write = (FButton) rootView.findViewById(R.id.i2c_write);
 		delay = (FButton) rootView.findViewById(R.id.i2c_delay);
 		list = new ArrayList<I2C_ItemClass>();
-		adapter = new I2C_Adapter(context, list);
+		adapter = new I2C_Adapter(context, list,R.layout.list_layout_i2c);
 		lv.setAdapter(adapter);
 
 		obj = new I2C_ItemClass();
@@ -86,11 +99,23 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		// TODO Auto-generated method stub
 		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.i2c_config_menu, menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
+		tempSensor.setConfigList(list);
+		switch(item.getItemId()){
+		
+		case R.id.exec_menu:
+			
+			i2c_config_callback.openExec();
+			break;
+		case R.id.form_menu:
+			i2c_config_callback.showProtocolForm();
+			break;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -139,6 +164,7 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 							public void onClick(DialogInterface dialog, int id) {
 								list.get(position).setDelay(
 										addr.getText().toString());
+								adapter.notifyDataSetChanged();
 								dialog.dismiss();
 
 							}
@@ -173,7 +199,7 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 										addr.getText().toString());
 								list.get(position).setVal(
 										val.getText().toString());
-
+								adapter.notifyDataSetChanged();
 								dialog.dismiss();
 
 							}
@@ -205,6 +231,7 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 							public void onClick(DialogInterface dialog, int id) {
 								list.get(position).setAddr(
 										addr.getText().toString());
+								adapter.notifyDataSetChanged();
 								dialog.dismiss();
 
 							}

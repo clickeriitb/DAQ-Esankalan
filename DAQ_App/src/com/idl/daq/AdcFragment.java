@@ -35,10 +35,11 @@ public class AdcFragment extends Fragment implements OnClickListener {
 	private TextView pinNo;
 
 	private String sensor, pinNum, formulaString, quantity, unit;
-
 	private Boolean err;
+	
+	private FormulaContainer tempFc;
 
-	private AdcProc adcSensor;
+	private AdcProc tempAdcSensor;
 
 	private Callbacks adcCallbacks;
 
@@ -71,11 +72,13 @@ public class AdcFragment extends Fragment implements OnClickListener {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		rootView = inflater.inflate(R.layout.adc_form, container, false);
-
 		defineAttributes();
 		selectPin.setOnClickListener(this);
 		setHasOptionsMenu(true);
 
+		tempFc = new FormulaContainer();
+		tempAdcSensor.setFc(tempFc);
+		
 		if (c != null) {
 			autoFillForm();
 		}
@@ -83,6 +86,23 @@ public class AdcFragment extends Fragment implements OnClickListener {
 		return rootView;
 
 	}
+	
+	private void defineAttributes() {
+		// TODO Auto-generated method stub
+		sensorName = (EditText) rootView.findViewById(R.id.sensor_name);
+		pinNo = (TextView) rootView.findViewById(R.id.pin_no);
+		Quantity = (EditText) rootView.findViewById(R.id.quantity_name);
+		Unit = (EditText) rootView.findViewById(R.id.unit_adc);
+		pinNo.setText(adcCallbacks.getPindata());
+		
+		selectPin = (FButton) rootView.findViewById(R.id.pin);
+		gS = (GlobalState) adcCallbacks.getContext();
+		c = adcCallbacks.getCursor();
+		mAdcHelper = gS.getAdcDbHelper();
+		gS.initializeSensor();
+		tempAdcSensor = (AdcProc) gS.getSensor();
+	}
+
 	
 	private void autoFillForm() {
 		// TODO Auto-generated method stub
@@ -108,12 +128,11 @@ public class AdcFragment extends Fragment implements OnClickListener {
 				AdcDbHelper.ADC_FORMULA_SENSOR + "=?",
 				new String[] { row_id + "" }, null, null, null);
 		if (c.moveToFirst()) {
-			gS.initializeFc();
-			FormulaContainer tempFc = gS.getfc();
+			
 			Formula f;
 			do {
 				f = getFormula(c, tempFc);
-				tempFc.put(f.toString(), f);
+				tempFc.put(f.getName(), f);
 			} while (c.moveToNext());
 		}
 	}
@@ -126,17 +145,17 @@ public class AdcFragment extends Fragment implements OnClickListener {
 				.getColumnIndex(AdcDbHelper.ADC_FORMULA_EXPRESSION));
 		String variables = c.getString(c
 				.getColumnIndex(AdcDbHelper.ADC_FORMULA_VARIABLES));
-		Formula f = new Formula(name, expression);
+		String displayExpression = c.getString(c
+				.getColumnIndex(AdcDbHelper.ADC_FORMULA_DISPLAY_EXPRESSION));
+		String displayName = c.getString(c
+				.getColumnIndex(AdcDbHelper.ADC_FORMULA_DISPLAY_NAME));
+		Formula f = new Formula(name, expression,displayName, displayExpression);
 		if (variables.isEmpty()) {
 			Variable x = Variable.make(name);
 			f.addVariable(x);
 		} else {
 			String[] variableList = variables.split(":");
-			HashMap<String, Formula> allVars = tempFc.getFc();
-			L.d("name of the formula: "+name);
-			for(Map.Entry<String, Formula> e : allVars.entrySet()){
-				L.d(e.getKey()+" "+e.getValue().toString());
-			}
+			HashMap<String, Formula> allVars = tempFc.getFc();			
 			for (int i=0;i<variableList.length-1;++i) {
 				f.addToHashMap(variableList[i], allVars.get(variableList[i]));
 			}
@@ -160,30 +179,14 @@ public class AdcFragment extends Fragment implements OnClickListener {
 		adcCallbacks = (Callbacks) activity;
 	}
 
-	private void defineAttributes() {
-		// TODO Auto-generated method stub
-		sensorName = (EditText) rootView.findViewById(R.id.sensor_name);
-		pinNo = (TextView) rootView.findViewById(R.id.pin_no);
-		Quantity = (EditText) rootView.findViewById(R.id.quantity_name);
-		Unit = (EditText) rootView.findViewById(R.id.unit_adc);
-		pinNo.setText(adcCallbacks.getPindata());
-		selectPin = (FButton) rootView.findViewById(R.id.pin);
-		gS = (GlobalState) adcCallbacks.getContext();
-		c = adcCallbacks.getCursor();
-		mAdcHelper = gS.getAdcDbHelper();
-	}
 
 	//
 	private void fillForm() {
 		// TODO Auto-generated method stub
-		err = false;
 		sensor = sensorName.getText().toString();
 		pinNum = pinNo.getText().toString();
-
 		quantity = Quantity.getText().toString();
 		unit = Unit.getText().toString();
-
-		adcSensor = new AdcProc(sensor, quantity, unit, pinNum, gS.getfc());
 	}
 
 	@Override
@@ -198,42 +201,47 @@ public class AdcFragment extends Fragment implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
 		case R.id.formula_menu:
-			quantity = Quantity.getText().toString();
-			if (quantity.isEmpty()) {
-				adcCallbacks.makeToast("Enter quantity");
+			pinNum = pinNo.getText().toString();
+			if (pinNum.isEmpty()) {
+				adcCallbacks.makeToast("Enter Pin Number");
 
 			} else {
 				L.d("opening formula");
 				// name of output parameter is sent as argument
-				FormulaContainer fc = gS.getfc();
-				Formula f = new Formula(quantity, quantity);
-				Variable x = Variable.make(quantity);
-				f.addVariable(x);
-				fc.put(quantity, f);
-				adcCallbacks.openFormula(quantity);
+				if(c==null){
+					Formula f = new Formula("pin", "pin",pinNo.getText().toString(),"pin");
+					Variable x = Variable.make("pin");
+					f.addVariable(x);
+					tempFc.put("pin", f);
+					L.d("hmm lets see : " + tempFc.getFc().get("pin"));
+				}
+				updateSensor();
+				adcCallbacks.openFormula("");
 			}
 
 			break;
 		case R.id.done_menu:
 			fillForm();
-
+			
+			
 			// if any of the fields in form is empty, toast shown
-			if (err == true || sensor.isEmpty() || pinNum.isEmpty()
-					//|| formulaString.isEmpty()
-					) {
+			if (sensor.isEmpty() || pinNum.isEmpty()) {
 				adcCallbacks.makeToast("Empty fields present");
 			}
 
 			// else sensor object created
 			else {
+				updateSensor();
 				updateDatabase();
-				adcCallbacks.makeSensor(adcSensor);
+				adcCallbacks.makeSensor(tempAdcSensor);
 			}
 			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
+
+
 	private void updateDatabase() {
 		// TODO Auto-generated method stub
 		SQLiteDatabase db = mAdcHelper.getSqlDB();
@@ -284,13 +292,14 @@ public class AdcFragment extends Fragment implements OnClickListener {
 	private void updateFormula(long newRowId, SQLiteDatabase db) {
 		// TODO Auto-generated method stub
 
-		L.d(gS.getfc()+"");
-		HashMap<String, Formula> fc = gS.getfc().getFc();
-		String name, expression, variables;
+		HashMap<String, Formula> fc = tempFc.getFc();
+		String name, expression, variables,displayName,displayExpression;
 		ContentValues values;
 		for (Map.Entry<String, Formula> e : fc.entrySet()) {
 			name = e.getValue().toString();
 			expression = e.getValue().getExpression();
+			displayName = e.getValue().getDisplayName();
+			displayExpression = e.getValue().getDisplayExpression();
 			variables = "";
 			for (Variable var : e.getValue().getAllVariables()) {
 				variables += var.toString() + ":";
@@ -300,7 +309,10 @@ public class AdcFragment extends Fragment implements OnClickListener {
 			values.put(AdcDbHelper.ADC_FORMULA_EXPRESSION, expression);
 			values.put(AdcDbHelper.ADC_FORMULA_VARIABLES, variables);
 			values.put(AdcDbHelper.ADC_FORMULA_SENSOR, newRowId);
+			values.put(AdcDbHelper.ADC_FORMULA_DISPLAY_NAME,displayName);
+			values.put(AdcDbHelper.ADC_FORMULA_DISPLAY_EXPRESSION,displayExpression);
 			db.insert(AdcDbHelper.ADC_FORMULA_TABLE_NAME, null, values);
+			
 		}
 	}
 	
@@ -314,6 +326,16 @@ public class AdcFragment extends Fragment implements OnClickListener {
 			adcCallbacks.openPinSelection();
 
 		}
+	}
+	
+	private void updateSensor() {
+		// TODO Auto-generated method stub
+		fillForm();
+		tempAdcSensor.setSensorName(sensor);
+		tempAdcSensor.setQuantity(quantity);
+		tempAdcSensor.setUnit(unit);
+		tempAdcSensor.setPinNo(pinNum);
+		
 	}
 
 }
