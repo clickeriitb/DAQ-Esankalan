@@ -84,6 +84,7 @@ public class GlobalState extends Application{
 		mUartHelper.test();
 		L.d("Uart test called");
 		mUartHelper.loadEntries();
+		L.d("Loaded uart entries");
 		
 		mI2CHelper = new I2CDbHelper(this);
 		mI2CHelper.openDB();
@@ -102,9 +103,6 @@ public class GlobalState extends Application{
 		
 	}
 	
-	public void destroySensor(){
-		tempSensor = null;
-	}
 	
 	public Sensor getSensor(){
 		return tempSensor;
