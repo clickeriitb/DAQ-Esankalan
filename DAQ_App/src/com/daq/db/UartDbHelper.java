@@ -22,18 +22,12 @@ public class UartDbHelper extends SQLiteOpenHelper {
 	public static final String UART_UNIT = "unit";
 	public static final String UART_PIN_RX = "pin_rx";
 	public static final String UART_PIN_TX = "pin_tx";
+//	public static final String UART_PIN_PROTOCOL = "sub_protocol";
 	public static final String UART_BAUD_RATE = "baud_rate";
 	public static final String UART_COMMAND = "command";
 	public static final String UART_BYTES = "byte";
 	public static final String UART_KEY = "_id";
 
-	public static final String UART_FORMULA_TABLE_NAME = "UART_FORMULA";
-	public static final String UART_FORMULA_NAME = "name";
-	public static final String UART_FORMULA_EXPRESSION = "expression";
-	public static final String UART_FORMULA_VARIABLES = "variables";
-	public static final String UART_FORMULA_KEY = "_id";
-	public static final String UART_FORMULA_SENSOR = "sensor";
-	
 	public SQLiteDatabase sqlDB = null;
 	ArrayList<String> uartCodes = new ArrayList<String>();
 	ArrayList<String> uartQuantities = new ArrayList<String>();
@@ -46,20 +40,12 @@ public class UartDbHelper extends SQLiteOpenHelper {
 			+ UART_TABLE_NAME + " (" + UART_KEY
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + UART_SENSOR_CODE
 			+ " TEXT, " + UART_QUANTITY + " TEXT, " + UART_UNIT + " TEXT, "
-			+ UART_PIN_RX + " TEXT, " + UART_PIN_TX + " TEXT, "
-			+ UART_BAUD_RATE + " NUMERIC, " + UART_COMMAND
+			+ UART_PIN_RX + " TEXT, " + UART_PIN_TX + " TEXT, " + UART_BAUD_RATE + " NUMERIC, " + UART_COMMAND
 			+ " NUMERIC, " + UART_BYTES + " NUNERIC, UNIQUE ("
 			+ UART_SENSOR_CODE + ", " + UART_QUANTITY + ", " + UART_UNIT
 			+ ") ON CONFLICT REPLACE);";
 	
-	public static final String UART_FORMULA_CREATE_SCRIPT = " CREATE TABLE IF NOT EXISTS "
-			+ UART_FORMULA_TABLE_NAME + " (" + UART_FORMULA_KEY
-			+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + UART_FORMULA_NAME
-			+ " TEXT," + UART_FORMULA_EXPRESSION + " TEXT, "
-			+ UART_FORMULA_VARIABLES + " TEXT, " + UART_FORMULA_SENSOR
-			+ " INTEGER, FOREIGN KEY(" + UART_FORMULA_SENSOR + ") REFERENCES "
-			+ UART_TABLE_NAME + "(" + UART_KEY + "));";
-
+	
 	
 	public UartDbHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
@@ -69,10 +55,7 @@ public class UartDbHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		// TODO Auto-generated method stub
-		L.d(UART_CREATE_SCRIPT+" "+UART_FORMULA_CREATE_SCRIPT);
 		L.d("on create database called");
-		
-		
 	}
 
 	@Override
@@ -89,9 +72,7 @@ public class UartDbHelper extends SQLiteOpenHelper {
 		// TODO Auto-generated method stub
 		super.onOpen(db);
 		L.d("on open database called");
-		L.d(UART_CREATE_SCRIPT+" "+UART_FORMULA_CREATE_SCRIPT);
 		db.execSQL(UART_CREATE_SCRIPT);
-		db.execSQL(UART_FORMULA_CREATE_SCRIPT);
 	}
 	
 	public void openDB() {
@@ -103,20 +84,29 @@ public class UartDbHelper extends SQLiteOpenHelper {
 	
 	public void loadEntries() {
 		// TODO Auto-generated method stub
+		
 		Cursor c = sqlDB.query(UART_TABLE_NAME, projection, null, null, null, null, null);
 		
 		uartCodes.clear();
 		uartQuantities.clear();
 		uartUnits.clear();
 		
-		c.moveToFirst();
+		L.d("before move to first");
+		if(c.moveToFirst())
+			
+		{	L.d("after move to first");
 		do{
+			L.d("enters do");
 			uartCodes.add(c.getString(c.getColumnIndex(UART_SENSOR_CODE)));
+			L.d("uart sensor code");
 			uartQuantities.add(c.getString(c.getColumnIndex(UART_QUANTITY)));
 			uartUnits.add(c.getString(c.getColumnIndex(UART_UNIT)));
 		}while(c.moveToNext());
+		L.d("method ends");
 	}
+		}
 
+	
 	public ArrayList<String> getUartCodes(){
 		return uartCodes;
 	}
@@ -145,25 +135,8 @@ public class UartDbHelper extends SQLiteOpenHelper {
 		values.put(UART_COMMAND, 31);
 		values.put(UART_BYTES, 8);
 		
-		long newRowId;
-		newRowId = sqlDB.insert(UART_TABLE_NAME, null, values);
-		
-		ContentValues valuesFormula = new ContentValues();
-		valuesFormula.put(UART_FORMULA_NAME, "Temperature");
-		valuesFormula.put(UART_FORMULA_EXPRESSION, "Temperature");
-		valuesFormula.put(UART_FORMULA_VARIABLES, "");
-		valuesFormula.put(UART_FORMULA_SENSOR, newRowId);
-		
-		sqlDB.insert(UART_FORMULA_TABLE_NAME, null, valuesFormula);
-		
-		valuesFormula = new ContentValues();
-		valuesFormula.put(UART_FORMULA_NAME, "Temp");
-		valuesFormula.put(UART_FORMULA_EXPRESSION, "Temperature/10");
-		valuesFormula.put(UART_FORMULA_VARIABLES, "Temperature:");
-		valuesFormula.put(UART_FORMULA_SENSOR, newRowId);
-		
-		sqlDB.insert(UART_FORMULA_TABLE_NAME, null, valuesFormula);
-		
+		sqlDB.insert(UART_TABLE_NAME, null, values);
+//			
 	}
 
 
