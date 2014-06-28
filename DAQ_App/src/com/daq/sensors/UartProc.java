@@ -10,11 +10,10 @@ import com.daq.formula.FormulaContainer;
 public class UartProc extends Sensor {
 
 	String command,quantity, pin, pin1, pin2, unit;
-	float baudRate;
-	int byteValue;
+	int byteValue,baudRate;
 
 	public UartProc(String sensorName, String pin1, String pin2,String pin,
-			FormulaContainer fc, float baudRate, String command,String quantity,String unit,int byteValue) {
+			FormulaContainer fc, int baudRate, String command,String quantity,String unit,int byteValue) {
 		super(sensorName, fc);
 		this.pin=pin;
 		this.pin1=pin1;
@@ -98,7 +97,7 @@ public class UartProc extends Sensor {
 		return baudRate;
 	}
 
-	public void setBaudRate(float baudRate) {
+	public void setBaudRate(int baudRate) {
 		this.baudRate = baudRate;
 	}
 
