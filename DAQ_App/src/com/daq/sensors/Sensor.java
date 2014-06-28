@@ -8,6 +8,7 @@ import android.content.Context;
 
 import com.daq.formula.Formula;
 import com.daq.formula.FormulaContainer;
+import com.idl.daq.L;
 import com.idl.daq.SensorDetailFragment;
 
 public abstract class Sensor {
@@ -33,7 +34,8 @@ public abstract class Sensor {
 	}
 	
 	public Sensor(){
-		fc = new FormulaContainer();
+		dataFrag = new SensorDetailFragment();
+		dataFrag.setSensor(this);
 	}
 
 	@Override
@@ -74,6 +76,9 @@ public abstract class Sensor {
 	public abstract JSONObject getJSON();
 
 	public SensorDetailFragment getDataFrag(Context c) {
+		if(dataFrag==null){
+			L.d("WTHhhhhhhhhhhhh");
+		}
 		dataFrag.setContext(c);
 		return dataFrag;
 	}
