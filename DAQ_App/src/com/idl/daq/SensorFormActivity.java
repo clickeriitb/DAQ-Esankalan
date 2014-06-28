@@ -117,7 +117,6 @@ public class SensorFormActivity extends FragmentActivity implements
 	public void makeSensor(Sensor a) {
 		// TODO Auto-generated method stub
 		gS.addSensor(a);
-		gS.destroySensor();
 		Intent i = new Intent(getApplicationContext(), SensorListActivity.class);
 		startActivity(i);
 
@@ -160,13 +159,6 @@ public class SensorFormActivity extends FragmentActivity implements
 		varList = varlist;
 	}
 
-	@Override
-	public void makeSensor(UartProc a) {
-		// TODO Auto-generated method stub
-		gS.addSensor(a);
-		Intent i = new Intent(getApplicationContext(), SensorListActivity.class);
-		startActivity(i);
-	}
 
 	@Override
 	public void onBackPressed() {
@@ -323,7 +315,6 @@ public class SensorFormActivity extends FragmentActivity implements
 			}
 		}
 	}
-	
-	
+		
 
 }
