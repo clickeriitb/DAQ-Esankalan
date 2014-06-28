@@ -1,10 +1,8 @@
 package com.idl.daq;
 
-import java.util.Arrays;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.daq.db.UartDbHelper;
 import com.daq.formula.Formula;
 import com.daq.formula.FormulaContainer;
 import com.daq.sensors.UartProc;
@@ -38,6 +37,10 @@ public class UartFragment extends Fragment implements OnClickListener{
 	private UartProc uartSensor;
 	private FButton selectPin;
 
+	private Cursor c=null;
+	
+	UartDbHelper mUartHelper;
+
 	private Callbacks uartCallbacks;
 	
 	public interface Callbacks {
@@ -53,6 +56,8 @@ public class UartFragment extends Fragment implements OnClickListener{
 		public Context getContext();
 		
 		public String getPindata();
+		
+		//public Cursor getCursor();
 	}
 
 	@Override
@@ -95,6 +100,8 @@ public class UartFragment extends Fragment implements OnClickListener{
 				//Formula = (TextView) rootView.findViewById(R.id.formula);
 				Byte = (EditText) rootView.findViewById(R.id.byte_string);
 				//pin_select.setOnClickListener(this);
+//				c = uartCallbacks.getCursor();
+//				mUartHelper = gS.getUartDbHelper();
 				gS = (GlobalState) uartCallbacks.getContext();
 				selectPin = (FButton) rootView.findViewById(R.id.pin_uart);
 				
@@ -102,6 +109,8 @@ public class UartFragment extends Fragment implements OnClickListener{
 				//PinTwo.setText(array[2]);
 		
 	}
+	
+	
 	
 	private void fillForm() {
 		// TODO Auto-generated method stub

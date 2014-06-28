@@ -24,7 +24,7 @@ public class SensorFormActivity extends FragmentActivity implements
 
 		ExpressionFragment.Callbacks, UartFragment.Callbacks,
 		PinSelectFragmentAdc.Callbacks, SensorBrowseFragment.Callbacks,
-		PinSelectFragmentUart.Callbacks, I2C_ConfigFragment.Callbacks  {
+		PinSelectFragmentUart.Callbacks  {
 
 
 	GlobalState gS;

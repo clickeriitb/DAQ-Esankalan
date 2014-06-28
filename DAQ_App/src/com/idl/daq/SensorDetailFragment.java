@@ -10,7 +10,9 @@ import org.json.JSONObject;
 
 import com.daq.formula.Formula;
 import com.daq.sensors.Sensor;
+import com.idl.daq.SensorBrowseFragment.Callbacks;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -46,6 +48,8 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 	View rootView;
 	private int count;
 	GlobalState gS;
+	
+	
 
 	ArrayList<JSONObject> t;
 	/**
@@ -53,6 +57,7 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 	 */
 	//private DummyContent.DummyItem mItem;
 	private String json;
+	private Callbacks detailCallbacks;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -61,13 +66,36 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 	public SensorDetailFragment() {
 	}
 
+	public interface Callbacks {
+		
+		public Context getContext();
+		
+		public Sensor getSensor();
+		
+		public void sendArrayWithAdapter(ArrayAdapter<String> a,ArrayList<String> data);
+		
+	}
 	
+	
+	
+	@Override
+	public void onAttach(Activity activity) {
+		// TODO Auto-generated method stub
+		super.onAttach(activity);
+		if (!(activity instanceof Callbacks)) {
+			throw new IllegalStateException(
+					"Activity must implement fragment's callbacks.");
+		}
+		detailCallbacks = (Callbacks) activity;
+	}
+
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		
 		super.onActivityCreated(savedInstanceState);
-		setRetainInstance(true);
+		setRetainInstance(false);
 //		if(a==null)
 //		{
 //			lv = (ListView) rootView.findViewById(R.id.dataList);
@@ -92,7 +120,7 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 //			tw.setText(mySensor.getSensorName());
 //		}
 		count = 0;
-		getLoaderManager().initLoader(0, null, this);
+		//getLoaderManager().initLoader(0, null, this);
 	}
 	
 	
@@ -114,9 +142,10 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		L.d("Oncreate view");
-		rootView = inflater.inflate(R.layout.fragment_sensor_detail,
+		rootView = inflater.inflate(R.layout.raw,
 				container, false);
-
+		gS = (GlobalState) detailCallbacks.getContext();
+		mySensor = detailCallbacks.getSensor();
 		// Show the dummy content as text in a TextView.
 		//if (json != null) {
 //			lv = (ListView) rootView.findViewById(R.id.dataList);
@@ -152,6 +181,8 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 		        }
 		    };
 			lv.setAdapter(a);
+			detailCallbacks.sendArrayWithAdapter(a,data);
+			L.d("Sent adapter");
 //			lv.post(new Runnable(){
 //
 //				@Override
@@ -164,7 +195,6 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 			TextView tw = (TextView) rootView.findViewById(R.id.textView1);
 			tw.setText(mySensor.getSensorName());
 		//}
-
 		return rootView;
 	}
 	
@@ -201,7 +231,6 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 					for(Map.Entry<String, Formula> e : gS.getfc().getFc().entrySet()){
 						s=e.getValue().getValue()+"";
 					}
-					L.d(s);
 					data.add(mySensor.getId()+":"+s+" Time:"+date);
 					//data.add(t.get(i).getDouble("data")+"");
 				}

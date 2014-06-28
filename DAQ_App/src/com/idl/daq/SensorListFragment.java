@@ -51,6 +51,8 @@ public class SensorListFragment extends ListFragment {
 		public void onItemSelected(Sensor s,int position);
 		
 		public GlobalState getGlobalState();
+
+		public void initializeSensorFragments();
 	}
 
 	/**
@@ -67,6 +69,12 @@ public class SensorListFragment extends ListFragment {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public void initializeSensorFragments() {
+			// TODO Auto-generated method stub
+			
+		}
 	};
 
 	/**
@@ -79,12 +87,13 @@ public class SensorListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		//gs stores a list of sensors
 		gS = mCallbacks.getGlobalState();
 		// TODO: replace with a real list adapter.
 		setListAdapter(new ArrayAdapter<Sensor>(getActivity(),
 				android.R.layout.simple_list_item_activated_1,
 				android.R.id.text1,gS.getSensors()));
+		mCallbacks.initializeSensorFragments();
 	}
 
 	@Override

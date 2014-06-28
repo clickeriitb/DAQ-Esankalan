@@ -31,7 +31,7 @@ public class UartProc extends Sensor {
 			json.put("protocol", "uart");
 			json.put("pin", pin);
 			json.put("sensor_code", sensorName);
-			json.put("baudRate", baudRate);
+			json.put("baudrate", baudRate);
 			json.put("command", command);
 			json.put("quantity", quantity.toLowerCase(Locale.US));
 			json.put("byte", byteValue);
