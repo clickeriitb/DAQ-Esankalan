@@ -14,10 +14,10 @@ class Uart() :
 			decoded = json.loads(json_string)
 		else:
 			decoded = json.loads(jsonObj)
-		self.code = decoded["sensor_code"]
+		self.sensor_code = decoded["sensor_code"]
 		self.quantity = decoded["quantity"]
 		self.isLogging = decoded["isLogging"]
-		self.rate =  decoded["rate"];
+		self.rate =  (float)(decoded["rate"])/1000.;
 		self.protocol = decoded["protocol"];
 		self.baudrate = decoded["baudrate"]
 		self.byte = decoded["byte"]
@@ -42,15 +42,14 @@ class Uart() :
 	def task(self):
 		UART.setup(self.pin)
 		self.out=''
-		if self.pin == "UART1":
+		if self.pin=="UART1":
 			path = "/dev/ttyO1"
 		elif self.pin == "UART2":
 			path = "/dev/ttyO2"
 		elif self.pin == "UART4":
 			path = "/dev/ttyO4"
 		elif self.pin == "UART5":
-			path = "/dev/ttyO5"
-
+			path = "/dev/ttyO5" 
 		self.serial_port = serial.Serial(port = path, baudrate = self.baudrate)
 		self.serial_port.open()
 		while not self.stop.isSet():
@@ -60,19 +59,23 @@ class Uart() :
 				now = datetime.datetime.now()
 				val = str(self.out) + ":" + str(now.minute) + ":" + str(now.second) + ":" + str(now.microsecond)
 				print val
-				data = [{'data':val,'sensor_code':self.sensor_code}]
+				date = str(now.minute) + ":" + str(now.second) + ":" + str(now.microsecond)
+				data = {'data':str(self.out),'sensor_code':self.sensor_code , 'date':date}
 				string_data = json.dumps(data)
-				if global_mode == 0:
-			            global_module.wifi_namespace_reference.on_send(data)
+				print string_data
+				if global_module.mode == 0:
+			            global_module.wifi_namespace_reference.on_send(string_data)
+			            
 				else:
 				    global_module.ep_out.write(string_data.encode('utf-8'),timeout=0)
 				if self.isLogging:
 					log_file.write(val)
-				time.sleep(0.25)
+				print self.rate
+				sleep(self.rate)
 			except:
 				e_msg = "Sorry! Unable to read UART data"
 				print e_msg
-				if global_mode == 0:
+				if global_module.mode == 0:
 			            global_module.wifi_namespace_reference.on_error(e_msg)
 				else:
 				    global_module.ep_out.write(e_msg.encode('utf-8'),timeout=0)
@@ -87,7 +90,7 @@ class Uart() :
 		except:
 			e_msg = "Sorry! Unable to end the read thread for this UART protocol sensor"
 			print e_msg
-			if global_mode == 0:
+			if global_module.mode == 0:
 			    global_module.wifi_namespace_reference.on_error(e_msg)
 			else:
 			    global_module.ep_out.write(e_msg.encode('utf-8'),timeout=0)
