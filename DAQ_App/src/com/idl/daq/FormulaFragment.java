@@ -30,7 +30,6 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 	private View rootView;
 	private String name, expression;
 	private Button add, clearAll;
-	private TextView ex;
 	private EditText fname;
 	private GlobalState gS;
 
@@ -102,7 +101,7 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 		fname = (EditText) rootView.findViewById(R.id.fname);
 		add = (Button) rootView.findViewById(R.id.add_formula);
 		clearAll = (Button) rootView.findViewById(R.id.clear_all);
-		ex = (TextView) rootView.findViewById(R.id.expr);
+		//ex = (TextView) rootView.findViewById(R.id.expr);
 		listFormula = (ListView) rootView.findViewById(R.id.lv_formula);
 		setFormulaStrings();
 		
@@ -115,7 +114,7 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 		for(String s : formulaStrings){
 			L.d(s);
 		}
-		formulaAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,formulaStrings);
+		formulaAdapter = new ArrayAdapter<String>(getActivity(),R.layout.variable_list, R.id.list_item,formulaStrings);
 		listFormula.setAdapter(formulaAdapter);
 	}
 

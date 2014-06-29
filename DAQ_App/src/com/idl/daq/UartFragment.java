@@ -28,46 +28,45 @@ import com.daq.sensors.UartProc;
 
 import expr.Variable;
 
-public class UartFragment extends Fragment implements OnClickListener{
-	
+public class UartFragment extends Fragment implements OnClickListener {
+
 	private View rootView;
-	EditText SensorName,Quantity,BaudRate,Unit,Command,Byte;
-	TextView Formula,PinOne,PinTwo,PinProtocol;
-	String sensor,pin1,pin2,command,quantity,unit,formulaString,sub_protocol;
+	EditText SensorName, Quantity, BaudRate, Unit, Command, Byte;
+	TextView Formula, PinOne, PinTwo, PinProtocol;
+	String sensor, pin1, pin2, command, quantity, unit, formulaString,
+			sub_protocol;
 	float baud;
 	int byteValue;
-	FButton pin_select;
 	private Boolean err;
 	GlobalState gS;
 
 	private String subprotocol;
-	
+
 	private FormulaContainer tempFc;
 
 	private UartProc tempUartSensor;
 
-	private Cursor c=null;
-	
+	private Cursor c = null;
+
 	UartDbHelper mUartHelper;
 
 	private UartProc uartSensor;
 	private FButton selectPin;
 
-
 	private Callbacks uartCallbacks;
-	
+
 	public interface Callbacks {
-		
+
 		public void openFormula(String s);
-		
+
 		public void makeToast(String t);
-		
+
 		public void makeSensor(UartProc a);
-		
+
 		public void openPinSelection();
-		
+
 		public Context getContext();
-		
+
 		public String getPindata();
 	}
 
@@ -75,27 +74,25 @@ public class UartFragment extends Fragment implements OnClickListener{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		rootView = inflater.inflate(R.layout.activity_uart,container, false);
+		rootView = inflater.inflate(R.layout.uart_form, container, false);
 		defineAttributes();
-		
+
 		tempFc = new FormulaContainer();
 		tempUartSensor.setFc(tempFc);
-		
+
 		if (c != null) {
 			autoFillForm();
 		}
-		
-		//value will come from pin selection
+
+		// value will come from pin selection
 		subprotocol = "UART1";
 
-		selectPin.setOnClickListener(this);
+		//selectPin.setOnClickListener(this);
 
-		
 		setHasOptionsMenu(true);
 		return rootView;
 	}
-	
-	
+
 	private void autoFillForm() {
 		// TODO Auto-generated method stub
 		long row_id;
@@ -103,7 +100,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 			SensorName.setText(c.getString(c
 					.getColumnIndex(UartDbHelper.UART_SENSOR_CODE)));
 			Quantity.setText(c.getString(c
-					.getColumnIndex(UartDbHelper.UART_QUANTITY)));	
+					.getColumnIndex(UartDbHelper.UART_QUANTITY)));
 			Unit.setText(c.getString(c.getColumnIndex(UartDbHelper.UART_UNIT)));
 			PinOne.setText(c.getString(c
 					.getColumnIndex(UartDbHelper.UART_PIN_RX)));
@@ -121,7 +118,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 		}
 
 	}
-	
+
 	private void autoFillFormula(long row_id) {
 		// TODO Auto-generated method stub
 		Cursor c = mUartHelper.getSqlDB().query(
@@ -138,7 +135,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 			Formula.setText(f.getFormulaString());
 		}
 	}
-	
+
 	private Formula getFormula(Cursor c, FormulaContainer tempFc) {
 		// TODO Auto-generated method stub
 		String name = c.getString(c
@@ -154,14 +151,13 @@ public class UartFragment extends Fragment implements OnClickListener{
 		} else {
 			String[] variableList = variables.split(":");
 			HashMap<String, Formula> allVars = tempFc.getFc();
-			for (int i=0;i<variableList.length-1;++i) {
+			for (int i = 0; i < variableList.length - 1; ++i) {
 				f.addToHashMap(variableList[i], allVars.get(variableList[i]));
 			}
 		}
 		return f;
 	}
-	
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -176,36 +172,35 @@ public class UartFragment extends Fragment implements OnClickListener{
 		uartCallbacks = (Callbacks) activity;
 	}
 
-
 	private void defineAttributes() {
 		// TODO Auto-generated method stub
-				
-				SensorName = (EditText) rootView.findViewById(R.id.sensor_name);
-				Quantity = (EditText) rootView.findViewById(R.id.quantity_name1);
-				Unit = (EditText) rootView.findViewById(R.id.s_unit1);
-				PinOne = (TextView) rootView.findViewById(R.id.pin1);
-				PinTwo = (TextView) rootView.findViewById(R.id.pin2);
-				Command = (EditText) rootView.findViewById(R.id.command);
-				PinProtocol = (TextView)rootView.findViewById(R.id.sub_protocol);
-				BaudRate = (EditText) rootView.findViewById(R.id.baud_rate);
-				//Formula = (TextView) rootView.findViewById(R.id.formula);
-				Byte = (EditText) rootView.findViewById(R.id.byte_string);
-				//pin_select.setOnClickListener(this);
-				gS = (GlobalState) uartCallbacks.getContext();
-				selectPin = (FButton) rootView.findViewById(R.id.pin_uart);
-//				c = uartCallbacks.getCursor();
-				gS.initializeSensor();
-				tempUartSensor = (UartProc) gS.getSensor();
-				
-				//PinOne.setText(array[1]);
-				//PinTwo.setText(array[2]);
-		
+
+		SensorName = (EditText) rootView.findViewById(R.id.sensor_name);
+		Quantity = (EditText) rootView.findViewById(R.id.quantity_name1);
+		Unit = (EditText) rootView.findViewById(R.id.s_unit1);
+		PinOne = (TextView) rootView.findViewById(R.id.pin1);
+		PinTwo = (TextView) rootView.findViewById(R.id.pin2);
+		Command = (EditText) rootView.findViewById(R.id.command);
+		PinProtocol = (TextView) rootView.findViewById(R.id.sub_protocol);
+		BaudRate = (EditText) rootView.findViewById(R.id.baud_rate);
+		// Formula = (TextView) rootView.findViewById(R.id.formula);
+		Byte = (EditText) rootView.findViewById(R.id.byte_string);
+		// pin_select.setOnClickListener(this);
+		gS = (GlobalState) uartCallbacks.getContext();
+		selectPin = (FButton) rootView.findViewById(R.id.pin_uart);
+		selectPin.setOnClickListener(this);
+		// c = uartCallbacks.getCursor();
+		gS.initializeSensor();
+		tempUartSensor = (UartProc) gS.getSensor();
+
+		// PinOne.setText(array[1]);
+		// PinTwo.setText(array[2]);
+
 	}
 
-	
 	private void fillForm() {
 		// TODO Auto-generated method stub
-		err=false;
+		err = false;
 		sensor = SensorName.getText().toString();
 		quantity = Quantity.getText().toString();
 		unit = Unit.getText().toString();
@@ -213,17 +208,16 @@ public class UartFragment extends Fragment implements OnClickListener{
 		pin2 = PinTwo.getText().toString();
 		sub_protocol = PinProtocol.getText().toString();
 		command = Command.getText().toString();
-		//formulaString = Formula.getText().toString();
-		
+		// formulaString = Formula.getText().toString();
+
 		try {
 			baud = Float.parseFloat(BaudRate.getText().toString());
 			byteValue = Integer.parseInt(Byte.getText().toString());
 		} catch (Exception e) {
-			err=true;
+			err = true;
 		}
-		
-	}
 
+	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -231,8 +225,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.adc_form_menu, menu);
 	}
-	
-	
+
 	private void updateSensor() {
 		// TODO Auto-generated method stub
 		fillForm();
@@ -252,7 +245,6 @@ public class UartFragment extends Fragment implements OnClickListener{
 		long newRowId;
 		Cursor c;
 
-		
 	}
 
 	@Override
@@ -279,8 +271,8 @@ public class UartFragment extends Fragment implements OnClickListener{
 			fillForm();
 
 			// if any of the fields in form is empty, toast shown
-			if (err == true || sensor.isEmpty() || pin1.isEmpty()||pin2.isEmpty()
-					) {
+			if (err == true || sensor.isEmpty() || pin1.isEmpty()
+					|| pin2.isEmpty()) {
 				uartCallbacks.makeToast("Empty fields present");
 			}
 
@@ -297,32 +289,27 @@ public class UartFragment extends Fragment implements OnClickListener{
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		// when submit button clicked
-				if (v.getId() == R.id.pin_uart) {
-					uartCallbacks.openPinSelection();
+		if (v.getId() == R.id.pin_uart) {
+			uartCallbacks.openPinSelection();
 
-				}
-			}
+		}
+	}
 
-//		HashMap<String, Formula> fc = tempFc.getFc();
-//		String name, expression, variables;
-//		ContentValues values;
-//		for (Map.Entry<String, Formula> e : fc.entrySet()) {
-//			name = e.getValue().toString();
-//			expression = e.getValue().getExpression();
-//			variables = "";
-//			for (Variable var : e.getValue().getAllVariables()) {
-//				variables += var.toString() + ":";
-//			}
-//			values = new ContentValues();
-//			values.put(UartDbHelper.UART_FORMULA_NAME, name);
-//			values.put(UartDbHelper.UART_FORMULA_EXPRESSION, expression);
-//			values.put(UartDbHelper.UART_FORMULA_VARIABLES, variables);
-//			values.put(UartDbHelper.UART_FORMULA_SENSOR, newRowId);
-//			db.insert(UartDbHelper.UART_FORMULA_TABLE_NAME, null, values);
-
-		
-
-	
+	// HashMap<String, Formula> fc = tempFc.getFc();
+	// String name, expression, variables;
+	// ContentValues values;
+	// for (Map.Entry<String, Formula> e : fc.entrySet()) {
+	// name = e.getValue().toString();
+	// expression = e.getValue().getExpression();
+	// variables = "";
+	// for (Variable var : e.getValue().getAllVariables()) {
+	// variables += var.toString() + ":";
+	// }
+	// values = new ContentValues();
+	// values.put(UartDbHelper.UART_FORMULA_NAME, name);
+	// values.put(UartDbHelper.UART_FORMULA_EXPRESSION, expression);
+	// values.put(UartDbHelper.UART_FORMULA_VARIABLES, variables);
+	// values.put(UartDbHelper.UART_FORMULA_SENSOR, newRowId);
+	// db.insert(UartDbHelper.UART_FORMULA_TABLE_NAME, null, values);
 
 }
-
