@@ -57,3 +57,4 @@ proguard/
 
 #python compiled files
 .pyc
+.py~
