@@ -2,8 +2,6 @@ package com.idl.daq;
 
 
 
-import com.idl.daq.I2CFragment.Callbacks;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -18,10 +16,12 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 public class I2CPinSelect extends Fragment implements OnTouchListener,
 		OnClickListener {
 
+	
 	View rootView;
 	CheckBox cb1;
 	CheckBox cb2;
@@ -68,10 +68,10 @@ public class I2CPinSelect extends Fragment implements OnTouchListener,
 		// TODO Auto-generated method stub
 
 		rootView = inflater.inflate(R.layout.i2c_sel, container, false);
-
-		// Toast.makeText(getApplicationContext(),"Zoom the highlightd area to select a pin",
-		// Toast.LENGTH_SHORT).show();
-
+		
+		Toast.makeText(getActivity(),"Touch to select a pin",
+		Toast.LENGTH_SHORT).show();
+		
 		bview = (I2cImageView) rootView.findViewById(R.id.image);
 		bview.setOnTouchListener(this);
 		cb1 = (CheckBox) rootView.findViewById(R.id.chk_box1);
@@ -116,7 +116,7 @@ public class I2CPinSelect extends Fragment implements OnTouchListener,
 				// setResult(RESULT_OK, intent);
 				// finish();
 			} else
-				;
+				pinSelectCallbacks.makeToast("Please select a pin");
 			// Toast.makeText(getApplicationContext(),
 			// "Please select the pins", Toast.LENGTH_SHORT).show();
 
@@ -200,8 +200,8 @@ public class I2CPinSelect extends Fragment implements OnTouchListener,
 				cb2.setChecked(true);
 				cb2.setBackgroundColor(0xffff0000);
 				bview.setcol1(0xa0ff0000);
-				// Toast.makeText(getApplicationContext(), s1 + " scl",
-				// Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), s1 + " scl",
+				Toast.LENGTH_SHORT).show();
 				break;
 			case R.id.chk_box2:
 				s1 = "I2C1";
@@ -210,8 +210,8 @@ public class I2CPinSelect extends Fragment implements OnTouchListener,
 				cb1.setChecked(true);
 				cb1.setBackgroundColor(0xffff0000);
 				bview.setcol1(0xa0ff0000);
-				// Toast.makeText(getApplicationContext(), s1 + " sda",
-				// Toast.LENGTH_SHORT).show();
+				 Toast.makeText(getActivity(), s1 + " sda",
+				 Toast.LENGTH_SHORT).show();
 				break;
 			case R.id.chk_box3:
 				s1 = "I2C2";
@@ -220,8 +220,8 @@ public class I2CPinSelect extends Fragment implements OnTouchListener,
 				cb4.setChecked(true);
 				cb4.setBackgroundColor(0xffff0000);
 				bview.setcol2(0xa0ff0000);
-				// Toast.makeText(getApplicationContext(), s1 + " scl",
-				// Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), s1 + " scl",
+				Toast.LENGTH_SHORT).show();
 				break;
 			case R.id.chk_box4:
 				s1 = "I2C2";
@@ -230,8 +230,8 @@ public class I2CPinSelect extends Fragment implements OnTouchListener,
 				cb3.setChecked(true);
 				cb3.setBackgroundColor(0xffff0000);
 				bview.setcol2(0xa0ff0000);
-				// Toast.makeText(getApplicationContext(), s1 + " sda",
-				// Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), s1 + " sda",
+				Toast.LENGTH_SHORT).show();
 				break;
 
 			}

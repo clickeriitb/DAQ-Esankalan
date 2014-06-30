@@ -95,9 +95,11 @@ public class ExpressionFragment extends Fragment implements OnClickListener {
 		gS = (GlobalState) expressionCallbacks.getContext();
 		String protocol	= gS.getProtocol();
 		rootView = inflater.inflate(R.layout.adc_calc, container, false);
-		if(protocol.equals("UART"))
-	    { background = (LinearLayout)rootView.findViewById(R.id.background);
-	      background.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue));
+		if(protocol.equals("I2C"))
+	    { 
+			rootView.setBackgroundResource(R.drawable.green);
+		//background = (LinearLayout)rootView.findViewById(R.id.background);
+	      //background.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue));
 	    }
 		Log.e("gs", "global state defined");
 		defineAttributes();

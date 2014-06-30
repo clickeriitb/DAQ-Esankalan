@@ -83,9 +83,11 @@ public class FormulaFragment extends Fragment implements OnClickListener {
 		L.d(gS.getProtocol());
 		String protocol = gS.getProtocol();
 	    rootView = inflater.inflate(R.layout.adc_expression, container, false);
-	    if(protocol.equals("UART"))
-	    { background = (ScrollView)rootView.findViewById(R.id.background);
-	    background.setBackgroundDrawable(getResources().getDrawable(R.drawable.blue));
+	    if(protocol.equals("I2C"))
+	    { 
+	    rootView.setBackgroundResource(R.drawable.green);
+	    //background = (ScrollView)rootView.findViewById(R.id.background);
+	    //background.setBackgroundDrawable(getResources().getDrawable(R.drawable.green));
 	    }
 		defineAttributes();
 		Log.e("defineattributes", "called");
