@@ -1,6 +1,7 @@
 package com.idl.daq;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -25,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TabHost;
 
 import com.daq.formula.Formula;
+import com.daq.sensors.I2CProc;
 import com.daq.sensors.Sensor;
 import com.daq.tabsswipe.adapter.TabsPagerAdapter;
 import com.jjoe64.graphview.GraphView;
@@ -45,6 +47,8 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener, Load
 	
 	private Context c;
 	private GlobalState gS;
+	
+	HashMap<String,Boolean> checkEmptyRegisters;
 	
 	//needed for display
 	private ArrayList<String> data,time,info;
@@ -139,7 +143,21 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener, Load
 		count = 0;
 		//load the asyc task
 		getLoaderManager().initLoader(0, null, this);
+		checkEmptyRegisters = new HashMap<String,Boolean>();
+		initializeInputs();
+		
 		return rootView;
+	}
+
+	private void initializeInputs() {
+		// TODO Auto-generated method stub
+		if(mySensor instanceof I2CProc){
+			for(I2C_ItemClass i : ((I2CProc) mySensor).getExecList()){
+				checkEmptyRegisters.put(i.getAddr(),true);
+			}
+		}else{
+			checkEmptyRegisters.put("pin",true);
+		}
 	}
 
 	private void setupTabs() {
@@ -232,10 +250,6 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener, Load
 		L.d("Loading data");
 		series = mAdapter.graph.series;
 		L.d("Received series");
-//		ArrayList<String> data = new ArrayList<String>();
-//		ArrayAdapter<String> a = new ArrayAdapter<String>(c,android.R.layout.simple_list_item_1,data);
-//		lv.setAdapter(a);
-//		getLoaderManager().initLoader(0, null, this);
 		t = gS.getTemp();
 		for(int i=data.size();i<t.size();++i){
 			L.d("value of i " + i);
@@ -244,64 +258,51 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener, Load
 					for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
 						L.d(e.getKey()+" "+e.getValue());
 					}
-					Formula f = mySensor.getFormulaContainer().getFc().get(mySensor.getQuantity());
-					String value = t.get(i).getString("data");
 					String date = t.get(i).getString("date");
-					//String[] r = info.split(":");
-					//L.d(r.length);
-					L.d(value+" "+date);
-					final double val = Double.parseDouble(value);
-					if(f==null){
-						L.d("Problemo");
-					}
-					f.setValue(val);
-					//f.getAllVariables().get(0).setValue(t.get(i).getDouble("data"));
-//					try {
-//						f.setValue(t.get(i).getDouble("data"));
-//					} catch (Exception e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}
-					String s = "";
-//					if(!mySensor.getFormula().toString().equals("")){
-						mySensor.getFormulaContainer().evaluate();
-						for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
-							s=e.getValue().getValue()+"";
-						}
-//					}
-					//if there is no formula then the data needs to be directly displayed
-//					L.d(s);
-					//add the respective values to the series
-					data.add(s);
 					time.add(date);
-					L.d(s+" "+date);
-					if(info==null && infoAdapter==null){
-						L.d("info or infoAdapter null hain");
-					}
-					if(series == null){
-						L.d("Series null");
-					}
-					//notify the SensorList activity that a value has been recieved
-					info.add(mySensor.getId()+":"+s+" Time:"+date);
-					infoAdapter.notifyDataSetChanged();
-					getActivity().runOnUiThread(new Runnable() {
-			              @Override
-			              public void run() {
-			            	  //keep appending the particular list
-			            	  JSONObject obj = mySensor.getJSON();
-			                  try {
-								series.appendData(new GraphView.GraphViewData(TIME + (float)(obj.getInt("rate")), val), true);
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								series.appendData(new GraphView.GraphViewData(TIME ++, val), true);
-								e.printStackTrace();
+					String sensorData ="";
+					if(mySensor.getFormulaContainer()!=null){
+						Formula f;
+						if(mySensor instanceof I2CProc){
+							String dataList[] = t.get(i).getString("data").split(":");
+							String register = dataList[0];
+							double val = Double.parseDouble(dataList[1]);
+							f=null;
+							for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
+								if(e.getValue().getDisplayName().equals(register)){
+									f = e.getValue();
+									break;
+								}
 							}
-			                  //Here I try few different things
-			                  
-			              }
-			          });
-					L.d("for fragment: " + countFrag + " data: "+ s);
-					//data.add(t.get(i).getDouble("data")+"");
+							f.setValue(val);
+							checkEmptyRegisters.put(register, false);
+						}else{
+							f = mySensor.getFormulaContainer().getFc().get("pin");
+							String value = t.get(i).getString("data");
+							Double d = Double.parseDouble(value);
+							f.setValue(d);
+							checkEmptyRegisters.put("pin", false);
+						}
+						//When formula evaluation takes place
+						if(!checkEmptyRegisters.containsValue(true)){
+							mySensor.getFormulaContainer().evaluate();
+							L.d("leaving formula container");
+							mySensor.getFormulaContainer().logAllFormulas();
+							String s = "";
+							for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
+								s=e.getValue().getValue()+"";
+							}
+							sensorData = s;
+							displayData(sensorData,date);
+							initializeInputs();
+						}
+					}
+					else{
+					String value = t.get(i).getString("data");
+					sensorData = value;
+					displayData(sensorData,date);
+					}
+					L.d(sensorData+" "+date);
 				}
 				
 			} catch (JSONException e) {
@@ -309,22 +310,36 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener, Load
 				e.printStackTrace();
 			}
 		}
-//		a.notifyDataSetChanged();		
-//		for(int i=0;i<100;++i){
-//			try {
-//				data.add(i + ": "+(new JSONObject(json).getString("sensorName")));
-//			} catch (JSONException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-			
-//		}
+	}
+
+	private void displayData(String sensorData, String date) {
+		// TODO Auto-generated method stub
+		if(info==null && infoAdapter==null){
+			L.d("info or infoAdapter null hain");
+		}
+		if(series == null){
+			L.d("Series null");
+		}
+		//notify the SensorList activity that a value has been recieved
+		info.add(mySensor.getId()+":"+sensorData+" Time:"+date);
+		infoAdapter.notifyDataSetChanged();
+		final double graphVal = Double.parseDouble(sensorData);
+		getActivity().runOnUiThread(new Runnable() {
+              @Override
+              public void run() {
+            	  //keep appending the particular list
+            	  JSONObject obj = mySensor.getJSON();
+                  try {
+					series.appendData(new GraphView.GraphViewData(TIME + (float)(obj.getInt("rate")), graphVal), true);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					series.appendData(new GraphView.GraphViewData(TIME ++, graphVal), true);
+					e.printStackTrace();
+				}
+                  //Here I try few different things
+                  
+              }
+          });
 	}
 
 	@Override

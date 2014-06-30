@@ -1,6 +1,7 @@
 package com.idl.daq;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.daq.formula.Formula;
+import com.daq.sensors.I2CProc;
 import com.daq.sensors.Sensor;
 import com.idl.daq.SensorBrowseFragment.Callbacks;
 
@@ -43,6 +45,7 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 	Context c;
 	Sensor mySensor;
 	public static final String ARG_ITEM_ID = "item_id";
+	
 	ArrayList<String> data;// = new ArrayList<String>();
 	ArrayAdapter<String> a;// = new ArrayAdapter<String>(c,android.R.layout.simple_list_item_1,data);
 	View rootView;
@@ -200,68 +203,124 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 	
 
 	
-	public void loadData(){
-		L.d("Loading data");
-//		ArrayList<String> data = new ArrayList<String>();
-//		ArrayAdapter<String> a = new ArrayAdapter<String>(c,android.R.layout.simple_list_item_1,data);
-//		lv.setAdapter(a);
-//		getLoaderManager().initLoader(0, null, this);
-		
-		
-		t = gS.getTemp();
-		for(int i=data.size();i<t.size();++i){
-			try {
-				if(t.get(i).get("sensor_code").equals(mySensor.getSensorName())){
-					String value = t.get(i).getString("data");
-					String date = t.get(i).getString("date");
-					//String[] r = info.split(":");
-					//L.d(r.length);
-					L.d(value+" "+date);
-					if(mySensor.getFormulaContainer()!=null){
-						Formula f = mySensor.getFormulaContainer().getFc().get("pin");
-						if(f==null){
-							L.d("I told ya!");
-						}
-						f.setValue(Double.parseDouble(value));
-						f.getAllVariables().get(0).setValue(t.get(i).getDouble("data"));
-						mySensor.getFormulaContainer().evaluate();
-						String s="";
-						for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
-							s=e.getValue().getValue()+"";
-						}
-						value = s;
-					}
-					
-//					try {
-//						f.setValue(t.get(i).getDouble("data"));
-//					} catch (Exception e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
+//	public void loadData(){
+//		L.d("Loading data");
+////		ArrayList<String> data = new ArrayList<String>();
+////		ArrayAdapter<String> a = new ArrayAdapter<String>(c,android.R.layout.simple_list_item_1,data);
+////		lv.setAdapter(a);
+////		getLoaderManager().initLoader(0, null, this);
+//		
+//		
+//		t = gS.getTemp();
+//		for(int i=data.size();i<t.size();++i){
+//			try {
+//				Formula f;
+//				if(t.get(i).get("sensor_code").equals(mySensor.getSensorName())){
+//<<<<<<< HEAD
+//					
+//				
+//					String date = t.get(i).getString("date");
+//					//String[] r = info.split(":");
+//					//L.d(r.length);
+//					L.d("date: "+date);
+//					
+//					L.d("value of formula "+f.getValue());
+//					//f.getAllVariables().get(0).setValue(t.get(i).getDouble("data"));
+//=======
+//					String value = t.get(i).getString("data");
+//					String date = t.get(i).getString("date");
+//					//String[] r = info.split(":");
+//					//L.d(r.length);
+//					L.d(value+" "+date);
+//					if(mySensor.getFormulaContainer()!=null){
+//						if(mySensor instanceof I2CProc){
+//							String dataList[] = t.get(i).getString("data").split(":");
+//							String register = dataList[0];
+//							double val = Double.parseDouble(dataList[1]);
+//							f=null;
+//							for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
+//								if(e.getValue().getDisplayName().equals(register)){
+//									f = e.getValue();
+//									break;
+//								}
+//							}
+//							f.setValue(val);
+//							checkEmptyRegisters.put(register, false);
+//						}else{
+//							f = mySensor.getFormulaContainer().getFc().get("pin");
+//							String value = t.get(i).getString("data");
+//							Double d = Double.parseDouble(value);
+//							f.setValue(d);
+//							checkEmptyRegisters.put("pin", false);
+//						}
+//						Formula f = mySensor.getFormulaContainer().getFc().get("pin");
+//						if(f==null){
+//							L.d("I told ya!");
+//						}
+//						f.setValue(Double.parseDouble(value));
+//						f.getAllVariables().get(0).setValue(t.get(i).getDouble("data"));
+//						mySensor.getFormulaContainer().evaluate();
+//						String s="";
+//						for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
+//							s=e.getValue().getValue()+"";
+//						}
+//						value = s;
 //					}
-					data.add(mySensor.getSensorName()+":"+value+" Time:"+date);
-				}
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		a.notifyDataSetChanged();		
-//		for(int i=0;i<100;++i){
-//			try {
-//				data.add(i + ": "+(new JSONObject(json).getString("sensorName")));
-//			} catch (JSONException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
+//					
+//>>>>>>> a851541d888323b9023903dbce9c1673b1f2d22c
+////					try {
+////						f.setValue(t.get(i).getDouble("data"));
+////					} catch (Exception e1) {
+////						// TODO Auto-generated catch block
+////						e1.printStackTrace();
+////					}
+//<<<<<<< HEAD
+//					
+//					mySensor.getFormulaContainer().evaluate();
+//					String s="";
+//					
+//					for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
+//						L.d("formula jkdjflkjsdalkjf "+e.getValue().toString());
+//						s=e.getValue().getValue()+"";
+//					}
+//					L.d(s);
+//					
+//					data.add(mySensor.getId()+":"+s+" Time:"+date);
+//					if(mySensor instanceof I2CProc){
+//						for(I2C_ItemClass i2c : ((I2CProc) mySensor).getExecList()){
+//							checkEmptyRegisters.put(i2c.getAddr(),true);
+//						}
+//					}else{
+//						checkEmptyRegisters.put("pin",true);
+//					}
+//					//data.add(t.get(i).getDouble("data")+"");
+//					}
+//=======
+//					data.add(mySensor.getSensorName()+":"+value+" Time:"+date);
+//>>>>>>> a851541d888323b9023903dbce9c1673b1f2d22c
+//				}
+//			} catch (JSONException e) {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-			
 //		}
-	}
+//		a.notifyDataSetChanged();		
+////		for(int i=0;i<100;++i){
+////			try {
+////				data.add(i + ": "+(new JSONObject(json).getString("sensorName")));
+////			} catch (JSONException e1) {
+////				// TODO Auto-generated catch block
+////				e1.printStackTrace();
+////			}
+////			try {
+////				Thread.sleep(1000);
+////			} catch (InterruptedException e) {
+////				// TODO Auto-generated catch block
+////				e.printStackTrace();
+////			}
+//			
+////		}
+//	}
 
 	public void setContext(Context c) {
 		// TODO Auto-generated method stub
@@ -336,7 +395,7 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 		// TODO Auto-generated method stub
 //		data.add(count++ +" hi");
 //		a.notifyDataSetChanged();
-		loadData();
+//		loadData();
 		getLoaderManager().restartLoader(0, null, this);
 	}
 

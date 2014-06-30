@@ -335,5 +335,11 @@ public class GlobalState extends Application{
 		
 	
 	};
+
+	public void startingTest() {
+		// TODO Auto-generated method stub
+		Intent i = new Intent(getApplicationContext(),USBInput.class);
+		startService(i);
+	}
 	
 }

@@ -36,6 +36,7 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 	I2CProc tempSensor;
 
 	Callbacks i2c_config_callback;
+	
 	public interface Callbacks {
 
 		public void makeToast(String t);
@@ -84,7 +85,10 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 		read = (FButton) rootView.findViewById(R.id.i2c_read);
 		write = (FButton) rootView.findViewById(R.id.i2c_write);
 		delay = (FButton) rootView.findViewById(R.id.i2c_delay);
-		list = new ArrayList<I2C_ItemClass>();
+		list = tempSensor.getConfigList();
+		if(list==null){
+			list = new ArrayList<I2C_ItemClass>();
+		}		
 		adapter = new I2C_Adapter(context, list,R.layout.list_layout_i2c);
 		lv.setAdapter(adapter);
 
@@ -109,7 +113,6 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 		switch(item.getItemId()){
 		
 		case R.id.exec_menu:
-			
 			i2c_config_callback.openExec();
 			break;
 		case R.id.form_menu:

@@ -1,10 +1,15 @@
 package com.idl.daq;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.daq.formula.Formula;
+import com.daq.formula.FormulaContainer;
 import com.daq.sensors.I2CProc;
 
+import expr.Variable;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -27,15 +32,19 @@ public class I2C_ExecFragment extends Fragment implements OnClickListener {
 	ListView lv;
 	FButton read, write, delay;
 	List<I2C_ItemClass> list;
+	HashMap<String, I2C_ItemClass> readItems;
 	Context context;
 	I2C_Adapter adapter;
 	I2C_ItemClass obj;
 	String TAG;
-	
+
+	int countRead;
+
 	GlobalState gS;
 	I2CProc tempSensor;
 
 	Callbacks i2c_exec_callback;
+
 	public interface Callbacks {
 
 		public void makeToast(String t);
@@ -68,7 +77,8 @@ public class I2C_ExecFragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		rootView = inflater.inflate(R.layout.list_layout_i2c_exec, container, false);
+		rootView = inflater.inflate(R.layout.list_layout_i2c_exec, container,
+				false);
 		defineAttributes();
 		setHasOptionsMenu(true);
 		return rootView;
@@ -79,20 +89,27 @@ public class I2C_ExecFragment extends Fragment implements OnClickListener {
 		context = getActivity();
 		gS = (GlobalState) i2c_exec_callback.getContext();
 		tempSensor = (I2CProc) gS.getSensor();
+
+		readItems = new HashMap<String, I2C_ItemClass>();
+		countRead = 0;
 		lv = (ListView) rootView.findViewById(R.id.listView_i2c_exec);
 		// context = this;
 		read = (FButton) rootView.findViewById(R.id.i2c_read_exec);
 		write = (FButton) rootView.findViewById(R.id.i2c_write_exec);
 		delay = (FButton) rootView.findViewById(R.id.i2c_delay_exec);
-		list = new ArrayList<I2C_ItemClass>();
-		adapter = new I2C_Adapter(context, list,R.layout.list_layout_i2c_exec);
+		list = tempSensor.getExecList();
+		if (list == null) {
+			L.d("exec list is empty");
+			list = new ArrayList<I2C_ItemClass>();
+		}
+		adapter = new I2C_Adapter(context, list, R.layout.list_layout_i2c_exec);
 		lv.setAdapter(adapter);
 
 		obj = new I2C_ItemClass();
 		read.setOnClickListener(this);
 		write.setOnClickListener(this);
 		delay.setOnClickListener(this);
-		
+
 	}
 
 	@Override
@@ -106,8 +123,10 @@ public class I2C_ExecFragment extends Fragment implements OnClickListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
 		tempSensor.setExecList(list);
-		switch(item.getItemId()){
+		switch (item.getItemId()) {
 		case R.id.formula_menu:
+			L.d("opening formula sfdashfsdhk");
+			setFormulaContainer();
 			i2c_exec_callback.openFormula("");
 			break;
 		case R.id.config_menu:
@@ -115,6 +134,20 @@ public class I2C_ExecFragment extends Fragment implements OnClickListener {
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void setFormulaContainer() {
+		// TODO Auto-generated method stub
+		FormulaContainer fc = tempSensor.getFormulaContainer();
+		Formula f;
+		for (Map.Entry<String, I2C_ItemClass> e : readItems.entrySet()) {
+			L.d(e.getKey() + " " + e.getValue().getAddr());
+			f = new Formula(e.getKey(), e.getKey(), e.getValue().getAddr(),
+					e.getKey());
+			Variable x = Variable.make(e.getKey());
+			//f.addVariable(x);
+			fc.put(e.getKey(), f);
+		}
 	}
 
 	@Override
@@ -229,6 +262,8 @@ public class I2C_ExecFragment extends Fragment implements OnClickListener {
 							public void onClick(DialogInterface dialog, int id) {
 								list.get(position).setAddr(
 										addr.getText().toString());
+								readItems.put("read" + countRead++,
+										list.get(position));
 								adapter.notifyDataSetChanged();
 								dialog.dismiss();
 

@@ -19,10 +19,9 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 	public static final String I2C_SENSOR_CODE = "sensor_code";
 	public static final String I2C_QUANTITY = "quantity";
 	public static final String I2C_UNIT = "unit";
-	public static final String I2C_ADDRESS = "address";
+	public static final String I2C_ADDRESS = "i2c_id";
 	public static final String I2C_PIN_SCL = "pin_scl";
 	public static final String I2C_PIN_SDA = "pin_sda";
-	public static final String I2C_ID = "i2c_id";
 	public static final String I2C_KEY = "_id";
 
 	public static final String I2C_FORMULA_TABLE_NAME = "I2C_FORMULA";
@@ -31,6 +30,8 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 	public static final String I2C_FORMULA_VARIABLES = "variables";
 	public static final String I2C_FORMULA_KEY = "_id";
 	public static final String I2C_FORMULA_SENSOR = "sensor";
+	public static final String I2C_FORMULA_DISPLAY_NAME = "displayName";
+	public static final String I2C_FORMULA_DISPLAY_EXPRESSION = "displayExpression";
 
 	public static final String I2C_CONFIG_TABLE = "I2C_CONFIG";
 	public static final String I2C_CONFIG_KEY = "_id";
@@ -67,8 +68,7 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 			+ " TEXT, "
 			+ I2C_PIN_SDA
 			+ " TEXT, "
-			+ I2C_ID
-			+ " NUMERIC, TEXT, UNIQUE ("
+			+ " UNIQUE ("
 			+ I2C_SENSOR_CODE
 			+ ", "
 			+ I2C_QUANTITY + ", " + I2C_UNIT + ") ON CONFLICT REPLACE);";
@@ -79,8 +79,12 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 			+ I2C_FORMULA_KEY
 			+ " INTEGER PRIMARY KEY AUTOINCREMENT, "
 			+ I2C_FORMULA_NAME
-			+ " TEXT,"
+			+ " TEXT, "
 			+ I2C_FORMULA_EXPRESSION
+			+ " TEXT, "
+			+ I2C_FORMULA_DISPLAY_NAME
+			+ " TEXT,"
+			+ I2C_FORMULA_DISPLAY_EXPRESSION
 			+ " TEXT, "
 			+ I2C_FORMULA_VARIABLES
 			+ " TEXT, "
@@ -90,7 +94,7 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 			+ ") REFERENCES "
 			+ I2C_TABLE_NAME + "(" + I2C_KEY + "));";
 
-	public static final String I2C_CONFIG_CREATE_SCRIPT = "CREATE TABLE IF NOT EXISTS "
+	public static final String I2C_CONFIG_CREATE_SCRIPT = " CREATE TABLE IF NOT EXISTS "
 			+ I2C_CONFIG_TABLE
 			+ " ("
 			+ I2C_CONFIG_KEY
@@ -103,7 +107,7 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 			+ ") REFERENCES "
 			+ I2C_TABLE_NAME
 			+ "("
-			+ I2C_KEY + "));";;
+			+ I2C_KEY + "));";
 
 	public static final String I2C_EXEC_CREATE_SCRIPT = "CREATE TABLE IF NOT EXISTS "
 			+ I2C_EXEC_TABLE
@@ -155,6 +159,7 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 		// TODO Auto-generated method stub
 		if (sqlDB == null) {
 			sqlDB = getWritableDatabase();
+			L.d("get wrtiable database");
 		}
 	}
 
@@ -194,31 +199,74 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 	public void test() {
 		// TODO Auto-generated method stub
 		ContentValues values = new ContentValues();
-		values.put(I2C_SENSOR_CODE, "MPU 60x0");
+		values.put(I2C_SENSOR_CODE, "MPU6050");
 		values.put(I2C_QUANTITY, "temperature");
 		values.put(I2C_UNIT, "celsius");
 		values.put(I2C_PIN_SCL, "P9_19");
 		values.put(I2C_PIN_SDA, "P9_20");
-		values.put(I2C_ID, 69);
 
 		long newRowId;
 		newRowId = sqlDB.insert(I2C_TABLE_NAME, null, values);
+		L.d("in test i2c table "+newRowId);
+		
+		ContentValues valuesConfig = new ContentValues();
+		valuesConfig.put(I2C_CONFIG_CMD,"w:6B:0");
+		valuesConfig.put(I2C_CONFIG_FOREIGN, newRowId);
+		
+		L.d("in test config cmd " + sqlDB.insert(I2C_CONFIG_TABLE,null,valuesConfig));
+		
+		valuesConfig = new ContentValues();
+		valuesConfig.put(I2C_CONFIG_CMD,"w:6C:0");
+		valuesConfig.put(I2C_CONFIG_FOREIGN, newRowId);
+		
+		L.d("in test config cmd " + sqlDB.insert(I2C_CONFIG_TABLE,null,valuesConfig));
+		
+		ContentValues valuesExec = new ContentValues();
+		valuesExec.put(I2C_EXEC_CMD, "r:3B");
+		valuesExec.put(I2C_EXEC_FOREIGN, newRowId);
+		
+		
+		long temp = sqlDB.insert(I2C_EXEC_TABLE,null,valuesExec);
+		L.d("in test exec table row "+temp+ " "+newRowId);
+		
+		valuesExec = new ContentValues();
+		valuesExec.put(I2C_EXEC_CMD, "r:3C");
+		valuesExec.put(I2C_EXEC_FOREIGN, newRowId);
+		
+		temp = sqlDB.insert(I2C_EXEC_TABLE,null,valuesExec);
+		L.d("in test exec table row "+temp+" "+newRowId);
 
 		ContentValues valuesFormula = new ContentValues();
-		valuesFormula.put(I2C_FORMULA_NAME, "Temperature");
-		valuesFormula.put(I2C_FORMULA_EXPRESSION, "Temperature");
+		valuesFormula.put(I2C_FORMULA_NAME, "read0");
+		valuesFormula.put(I2C_FORMULA_EXPRESSION, "read0");
 		valuesFormula.put(I2C_FORMULA_VARIABLES, "");
 		valuesFormula.put(I2C_FORMULA_SENSOR, newRowId);
+		valuesFormula.put(I2C_FORMULA_DISPLAY_NAME, "0x3b");
+		valuesFormula.put(I2C_FORMULA_DISPLAY_EXPRESSION, "read0");
 
-		sqlDB.insert(I2C_FORMULA_TABLE_NAME, null, valuesFormula);
+		L.d("in test formula1 "+sqlDB.insert(I2C_FORMULA_TABLE_NAME, null, valuesFormula));
 
 		valuesFormula = new ContentValues();
-		valuesFormula.put(I2C_FORMULA_NAME, "Temp");
-		valuesFormula.put(I2C_FORMULA_EXPRESSION, "Temperature/10");
-		valuesFormula.put(I2C_FORMULA_VARIABLES, "Temperature");
+		valuesFormula.put(I2C_FORMULA_NAME, "read1");
+		valuesFormula.put(I2C_FORMULA_EXPRESSION, "read1");
+		valuesFormula.put(I2C_FORMULA_VARIABLES, "");
 		valuesFormula.put(I2C_FORMULA_SENSOR, newRowId);
+		valuesFormula.put(I2C_FORMULA_DISPLAY_NAME, "0x3c");
+		valuesFormula.put(I2C_FORMULA_DISPLAY_EXPRESSION, "read1");
 
-		sqlDB.insert(I2C_FORMULA_TABLE_NAME, null, valuesFormula);
+		L.d("in test formula2 "+sqlDB.insert(I2C_FORMULA_TABLE_NAME, null, valuesFormula));
+		
+		valuesFormula = new ContentValues();
+		valuesFormula.put(I2C_FORMULA_NAME, "raw");
+		valuesFormula.put(I2C_FORMULA_EXPRESSION, "read0*256+read1");
+		valuesFormula.put(I2C_FORMULA_VARIABLES, "read0:read1:");
+		valuesFormula.put(I2C_FORMULA_SENSOR, newRowId);
+		valuesFormula.put(I2C_FORMULA_DISPLAY_NAME, "raw");
+		valuesFormula.put(I2C_FORMULA_DISPLAY_EXPRESSION, "0x3b*256+0x3c");
+
+		
+		L.d("in test formula3 "+sqlDB.insert(I2C_FORMULA_TABLE_NAME, null, valuesFormula));
+		
 
 	}
 

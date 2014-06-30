@@ -1,5 +1,7 @@
 package com.idl.daq;
 
+import android.util.Log;
+
 public class I2C_ItemClass {
 
 	String type;
@@ -46,8 +48,9 @@ public class I2C_ItemClass {
 	
 	public String getInfo(){
 		if(type.equals("read")){
-			return "r:"+addr;
+			return "ru:"+addr;
 		}else if(type.equals("write")){
+			Log.e("write val",val);
 			return "w:"+addr+":"+val;
 		}else{
 			return "d:"+delay;
