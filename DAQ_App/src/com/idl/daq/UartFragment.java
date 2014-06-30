@@ -170,14 +170,14 @@ public class UartFragment extends Fragment implements OnClickListener{
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		// TODO Auto-generated method stub
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.adc_form_menu, menu);
+		inflater.inflate(R.menu.form_menu, menu);
 	}
 	
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		
-		if(item.getItemId()==R.id.done_menu)
+		if(item.getItemId()==R.id.done)
 		{
 			fillForm();
 

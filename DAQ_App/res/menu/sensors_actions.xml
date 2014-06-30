@@ -14,8 +14,4 @@
           android:title="@string/action_stop"
           app:showAsAction="always"
           android:visible="true" />
-    <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_settings"
-          android:title="@string/action_settings"
-          app:showAsAction="never" />
 </menu>

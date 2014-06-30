@@ -112,10 +112,10 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 		tempSensor.setConfigList(list);
 		switch(item.getItemId()){
 		
-		case R.id.exec_menu:
+		case R.id.exec_menu1:
 			i2c_config_callback.openExec();
 			break;
-		case R.id.form_menu:
+		case R.id.form_menu1:
 			i2c_config_callback.showProtocolForm();
 			break;
 		}
