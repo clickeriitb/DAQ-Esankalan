@@ -48,7 +48,7 @@ public class UartDbHelper extends SQLiteOpenHelper {
 			+ " TEXT, " + UART_QUANTITY + " TEXT, " + UART_UNIT + " TEXT, "
 			+ UART_PIN_RX + " TEXT, " + UART_PIN_TX + " TEXT, "
 			+ UART_BAUD_RATE + " NUMERIC, " + UART_COMMAND
-			+ " NUMERIC, " + UART_BYTES + " NUNERIC, UNIQUE ("
+			+ " TEXT, " + UART_BYTES + " NUMERIC, UNIQUE ("
 			+ UART_SENSOR_CODE + ", " + UART_QUANTITY + ", " + UART_UNIT
 			+ ") ON CONFLICT REPLACE);";
 	
