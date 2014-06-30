@@ -6,81 +6,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/adc4"
-    android:orientation="vertical">
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@+id/lv_formula"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="15dp"
-        android:baselineAligned="true"
-        android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        tools:context="${packageName}.${activityClass}" >
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="5"
+        android:orientation="horizontal" >
 
-        
-        <LinearLayout
+        <com.idl.daq.FButton
+            android:id="@+id/add_formula"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:text="Add New"
+            android:layout_marginRight="5dp"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            
+            android:textStyle="bold"
+            fbutton:buttonColor="#701abc9c"
+            fbutton:shadowEnabled="false" />
 
-            <TextView
-                android:id="@+id/expr"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_weight="1"
-                android:background="@drawable/rounded"
-                android:ems="15"
-                android:gravity="center_vertical"
-                android:hint="Expression"
-                android:paddingLeft="10dp"
-                android:textColor="#ffffff"
-                android:textColorHint="#ffffff"
-                android:textSize="17dp" />
+        <com.idl.daq.FButton
+            android:id="@+id/clear_all"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Clear All"
+			android:layout_weight="1"         
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            fbutton:buttonColor="#701abc9c"
+            fbutton:shadowEnabled="false" />
 
-            <com.idl.daq.FButton
-                android:id="@+id/add_formula"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="3"
-                android:gravity="center"
-                android:text="Add New"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                fbutton:buttonColor="#701abc9c"
-                fbutton:shadowEnabled="false" />
-        </LinearLayout>
-        <LinearLayout android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <com.idl.daq.FButton
-                android:id="@+id/clear_all"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="3"
-                android:gravity="center"
-                android:text="Clear All"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                fbutton:buttonColor="#701abc9c"
-                fbutton:shadowEnabled="false" />
-        </LinearLayout>
-        <LinearLayout  android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <ListView
-                android:id="@+id/lv_formula"  
-                android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        </LinearLayout>
-        
-      
     </LinearLayout>
 
 </LinearLayout>

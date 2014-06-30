@@ -7,6 +7,7 @@ public class I2C_ItemClass {
 	String type;
 	String addr;
 	String val;
+	boolean signed;
 	int delay;
 
 	public I2C_ItemClass(){
@@ -14,7 +15,20 @@ public class I2C_ItemClass {
 		addr = "";
 		val = "";
 		delay = 1000;
+		signed = false;
 	}
+	
+	
+	public boolean isSigned() {
+		return signed;
+	}
+
+
+	public void setSigned(boolean signed) {
+		this.signed = signed;
+	}
+
+
 	public void setType(String type) {
 		this.type = type;
 	}
@@ -48,7 +62,11 @@ public class I2C_ItemClass {
 	
 	public String getInfo(){
 		if(type.equals("read")){
-			return "ru:"+addr;
+			if(signed){
+				return "rs:"+addr;
+			}else{
+				return "ru:"+addr;
+			}
 		}else if(type.equals("write")){
 			Log.e("write val",val);
 			return "w:"+addr+":"+val;

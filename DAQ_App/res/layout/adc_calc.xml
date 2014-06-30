@@ -6,46 +6,55 @@
     android:layout_height="match_parent"
     android:background="@drawable/adc4"
     android:orientation="vertical" >
-    
-    <EditText
-            android:id="@+id/fname"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded"
-            android:ems="15"
-            android:hint="Formula name"
-            android:paddingLeft="10dp"
-            android:textColor="#ffffff"
-            android:textColorHint="#ffffff" />
-    
-
-    <TextView
-        android:id="@+id/express"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/rounded"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textColor="#ffffcc"
-        android:textSize="24sp"
-        android:textStyle="bold" >
-    </TextView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/fname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:background="@drawable/rounded"
+            android:hint="Name"
+            android:paddingLeft="5dp"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            android:textColorHint="#ffffff" />
+
+        <TextView
+            android:id="@+id/express"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded"
+            android:hint="Expression"
+            android:paddingLeft="5dp"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            android:textColorHint="#ffffff"
+             >
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:layout_gravity="fill_vertical" >
 
         <ScrollView
             android:id="@+id/scrollView1"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" >
 
@@ -424,17 +433,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:layout_weight="8"
+            android:layout_weight="2"
             android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:text="Variables"
-                android:textAlignment="center"
                 android:textColor="#ffffff"
-                android:textSize="25sp" />
+                android:textSize="20sp" />
 
             <ListView
                 android:id="@+id/lv"

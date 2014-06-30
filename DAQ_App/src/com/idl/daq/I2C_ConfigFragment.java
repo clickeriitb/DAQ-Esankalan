@@ -20,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 
 public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 
@@ -153,12 +154,12 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 	private void delayInstruction(final int position) {
 		// TODO Auto-generated method stub
 		LayoutInflater li = LayoutInflater.from(context);
-		View dialogview = li.inflate(R.layout.i2c_dialog_view, null);
+		View dialogview = li.inflate(R.layout.i2c_dialog_delay, null);
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				context);
 		alertDialogBuilder.setView(dialogview);
 		final EditText addr = (EditText) dialogview
-				.findViewById(R.id.editText1);
+				.findViewById(R.id.edit_delay);
 
 		alertDialogBuilder
 				.setCancelable(false)
@@ -185,13 +186,13 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 	private void writeInstruction(final int position) {
 		// TODO Auto-generated method stub
 		LayoutInflater li = LayoutInflater.from(context);
-		View dialogview = li.inflate(R.layout.i2c_dialog_view, null);
+		View dialogview = li.inflate(R.layout.i2c_dialog_write, null);
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				context);
 		alertDialogBuilder.setView(dialogview);
 		final EditText addr = (EditText) dialogview
-				.findViewById(R.id.editText1);
-		final EditText val = (EditText) dialogview.findViewById(R.id.editText2);
+				.findViewById(R.id.edit_write_addr);
+		final EditText val = (EditText) dialogview.findViewById(R.id.edit_write_value);
 
 		alertDialogBuilder
 				.setCancelable(false)
@@ -220,12 +221,14 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 	private void readInstruction(final int position) {
 		// TODO Auto-generated method stub
 		LayoutInflater li = LayoutInflater.from(context);
-		View dialogview = li.inflate(R.layout.i2c_dialog_view, null);
+		View dialogview = li.inflate(R.layout.i2c_dialog_read, null);
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				context);
 		alertDialogBuilder.setView(dialogview);
 		final EditText addr = (EditText) dialogview
-				.findViewById(R.id.editText1);
+				.findViewById(R.id.edit_read_addr);
+		
+		final boolean signed = getReadSigned(dialogview);
 
 		alertDialogBuilder
 				.setCancelable(false)
@@ -234,6 +237,7 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 							public void onClick(DialogInterface dialog, int id) {
 								list.get(position).setAddr(
 										addr.getText().toString());
+								list.get(position).setSigned(signed);
 								adapter.notifyDataSetChanged();
 								dialog.dismiss();
 
@@ -247,6 +251,20 @@ public class I2C_ConfigFragment extends Fragment implements OnClickListener {
 						});
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
+	}
+	
+	private boolean getReadSigned(View dialogview) {
+		// TODO Auto-generated method stub
+		RadioGroup sign = (RadioGroup) dialogview.findViewById(R.id.sign);
+		int selected = sign.getCheckedRadioButtonId();
+		switch(selected){
+		case R.id.signed:
+			return true;
+		case R.id.unsigned:
+			return false;
+		default:
+			return false;
+		}
 	}
 
 }

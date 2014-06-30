@@ -96,9 +96,9 @@ public class SensorFormActivity extends FragmentActivity implements
 			Log.e("old formula screen shown", "old fragment retained");
 			newFrag = fm.findFragmentByTag("formula");
 			Log.e("string glbal", gS.getGlobalString());
-			TextView ex = (TextView) findViewById(R.id.expr);
-			ex.setText("");
-			ex.setText(gS.getGlobalString());
+//			TextView ex = (TextView) findViewById(R.id.expr);
+//			ex.setText("");
+//			ex.setText(gS.getGlobalString());
 		}
 		Log.e("add", "added");
 		t.hide(oldFrag);
@@ -318,6 +318,7 @@ public class SensorFormActivity extends FragmentActivity implements
 			}
 		}
 	}
-		
+
+	
 
 }

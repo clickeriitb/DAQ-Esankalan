@@ -31,6 +31,8 @@ public class USBInput extends IntentService{
 	private FileDescriptor mFileDescriptor = null;
 	private FileInputStream mInputStream = null;
 	private FileOutputStream mOutputStream = null;
+	
+	private int count = 0;
 
 	public USBInput() {
 		super("com.idl.daq.USBInput");
@@ -51,8 +53,9 @@ public class USBInput extends IntentService{
 //			
 //			try {
 //				json.put("sensor_code", "abc");
-//				json.put("data", "1.618");
-//				json.put("date", "2313");
+//				json.put("data", "41:1.618;42:3.14;");
+//				count++;
+//				json.put("date", String.valueOf(count));
 //				temp.add(json);
 //			} catch (JSONException e1) {
 //				// TODO Auto-generated catch block
