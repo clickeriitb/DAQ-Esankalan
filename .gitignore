@@ -5,6 +5,7 @@
 **/*.ap_
 
 **/*.properties
+**/*.properties~
 
 # files for the dex VM
 **/*.dex
@@ -56,3 +57,4 @@ proguard/
 
 #python compiled files
 .pyc
+.py~

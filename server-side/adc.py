@@ -13,7 +13,7 @@ class Adc() :
 			decoded = json.loads(json_string)
 		else:
 			decoded = json.loads(jsonObj)
-		self.rate =  decoded["rate"]/1000;
+		self.rate = decoded["rate"]/1000;
 		self.protocol = decoded["protocol"]
 		self.pin = decoded["pin"];
 		self.sensor_code = decoded["sensor_code"]

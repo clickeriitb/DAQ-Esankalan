@@ -12,7 +12,9 @@ import org.json.JSONObject;
 import com.daq.formula.Formula;
 import com.daq.sensors.I2CProc;
 import com.daq.sensors.Sensor;
+import com.idl.daq.SensorBrowseFragment.Callbacks;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -43,12 +45,14 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 	Context c;
 	Sensor mySensor;
 	public static final String ARG_ITEM_ID = "item_id";
-	HashMap<String,Boolean> checkEmptyRegisters;
+	
 	ArrayList<String> data;// = new ArrayList<String>();
 	ArrayAdapter<String> a;// = new ArrayAdapter<String>(c,android.R.layout.simple_list_item_1,data);
 	View rootView;
 	private int count;
 	GlobalState gS;
+	
+	
 
 	ArrayList<JSONObject> t;
 	/**
@@ -56,6 +60,7 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 	 */
 	//private DummyContent.DummyItem mItem;
 	private String json;
+	private Callbacks detailCallbacks;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -64,13 +69,36 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 	public SensorDetailFragment() {
 	}
 
+	public interface Callbacks {
+		
+		public Context getContext();
+		
+		public Sensor getSensor();
+		
+		public void sendArrayWithAdapter(ArrayAdapter<String> a,ArrayList<String> data);
+		
+	}
 	
+	
+	
+	@Override
+	public void onAttach(Activity activity) {
+		// TODO Auto-generated method stub
+		super.onAttach(activity);
+		if (!(activity instanceof Callbacks)) {
+			throw new IllegalStateException(
+					"Activity must implement fragment's callbacks.");
+		}
+		detailCallbacks = (Callbacks) activity;
+	}
+
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		
 		super.onActivityCreated(savedInstanceState);
-		setRetainInstance(true);
+		setRetainInstance(false);
 //		if(a==null)
 //		{
 //			lv = (ListView) rootView.findViewById(R.id.dataList);
@@ -95,7 +123,7 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 //			tw.setText(mySensor.getSensorName());
 //		}
 		count = 0;
-		getLoaderManager().initLoader(0, null, this);
+		//getLoaderManager().initLoader(0, null, this);
 	}
 	
 	
@@ -117,9 +145,10 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		L.d("Oncreate view");
-		rootView = inflater.inflate(R.layout.fragment_sensor_detail,
+		rootView = inflater.inflate(R.layout.raw,
 				container, false);
-
+		gS = (GlobalState) detailCallbacks.getContext();
+		mySensor = detailCallbacks.getSensor();
 		// Show the dummy content as text in a TextView.
 		//if (json != null) {
 //			lv = (ListView) rootView.findViewById(R.id.dataList);
@@ -155,14 +184,8 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 		        }
 		    };
 			lv.setAdapter(a);
-			checkEmptyRegisters = new HashMap<String,Boolean>();
-			if(mySensor instanceof I2CProc){
-				for(I2C_ItemClass i : ((I2CProc) mySensor).getExecList()){
-					checkEmptyRegisters.put(i.getAddr(),true);
-				}
-			}else{
-				checkEmptyRegisters.put("pin",true);
-			}
+			detailCallbacks.sendArrayWithAdapter(a,data);
+			L.d("Sent adapter");
 //			lv.post(new Runnable(){
 //
 //				@Override
@@ -175,102 +198,129 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 			TextView tw = (TextView) rootView.findViewById(R.id.textView1);
 			tw.setText(mySensor.getSensorName());
 		//}
-
 		return rootView;
 	}
 	
 
 	
-	public void loadData(){
-		L.d("Loading data");
-//		ArrayList<String> data = new ArrayList<String>();
-//		ArrayAdapter<String> a = new ArrayAdapter<String>(c,android.R.layout.simple_list_item_1,data);
-//		lv.setAdapter(a);
-//		getLoaderManager().initLoader(0, null, this);
-		
-		
-		t = gS.getTemp();
-		for(int i=data.size();i<t.size();++i){
-			try {
-				Formula f;
-				if(t.get(i).get("sensor_code").equals(mySensor.getSensorName())){
-					if(mySensor instanceof I2CProc){
-						String dataList[] = t.get(i).getString("data").split(":");
-						String register = dataList[0];
-						double val = Double.parseDouble(dataList[1]);
-						f=null;
-						for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
-							if(e.getValue().getDisplayName().equals(register)){
-								f = e.getValue();
-								break;
-							}
-						}
-						f.setValue(val);
-						checkEmptyRegisters.put(register, false);
-					}else{
-						f = mySensor.getFormulaContainer().getFc().get("pin");
-						String value = t.get(i).getString("data");
-						Double d = Double.parseDouble(value);
-						f.setValue(d);
-						checkEmptyRegisters.put("pin", false);
-					}
-				
-					String date = t.get(i).getString("date");
-					//String[] r = info.split(":");
-					//L.d(r.length);
-					L.d("date: "+date);
-					
-					L.d("value of formula "+f.getValue());
-					//f.getAllVariables().get(0).setValue(t.get(i).getDouble("data"));
-//					try {
-//						f.setValue(t.get(i).getDouble("data"));
-//					} catch (Exception e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
+//	public void loadData(){
+//		L.d("Loading data");
+////		ArrayList<String> data = new ArrayList<String>();
+////		ArrayAdapter<String> a = new ArrayAdapter<String>(c,android.R.layout.simple_list_item_1,data);
+////		lv.setAdapter(a);
+////		getLoaderManager().initLoader(0, null, this);
+//		
+//		
+//		t = gS.getTemp();
+//		for(int i=data.size();i<t.size();++i){
+//			try {
+//				Formula f;
+//				if(t.get(i).get("sensor_code").equals(mySensor.getSensorName())){
+//<<<<<<< HEAD
+//					
+//				
+//					String date = t.get(i).getString("date");
+//					//String[] r = info.split(":");
+//					//L.d(r.length);
+//					L.d("date: "+date);
+//					
+//					L.d("value of formula "+f.getValue());
+//					//f.getAllVariables().get(0).setValue(t.get(i).getDouble("data"));
+//=======
+//					String value = t.get(i).getString("data");
+//					String date = t.get(i).getString("date");
+//					//String[] r = info.split(":");
+//					//L.d(r.length);
+//					L.d(value+" "+date);
+//					if(mySensor.getFormulaContainer()!=null){
+//						if(mySensor instanceof I2CProc){
+//							String dataList[] = t.get(i).getString("data").split(":");
+//							String register = dataList[0];
+//							double val = Double.parseDouble(dataList[1]);
+//							f=null;
+//							for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
+//								if(e.getValue().getDisplayName().equals(register)){
+//									f = e.getValue();
+//									break;
+//								}
+//							}
+//							f.setValue(val);
+//							checkEmptyRegisters.put(register, false);
+//						}else{
+//							f = mySensor.getFormulaContainer().getFc().get("pin");
+//							String value = t.get(i).getString("data");
+//							Double d = Double.parseDouble(value);
+//							f.setValue(d);
+//							checkEmptyRegisters.put("pin", false);
+//						}
+//						Formula f = mySensor.getFormulaContainer().getFc().get("pin");
+//						if(f==null){
+//							L.d("I told ya!");
+//						}
+//						f.setValue(Double.parseDouble(value));
+//						f.getAllVariables().get(0).setValue(t.get(i).getDouble("data"));
+//						mySensor.getFormulaContainer().evaluate();
+//						String s="";
+//						for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
+//							s=e.getValue().getValue()+"";
+//						}
+//						value = s;
 //					}
-					if(!checkEmptyRegisters.containsValue(true)){
-					mySensor.getFormulaContainer().evaluate();
-					String s="";
-					L.d("leaving formula container");
-					for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
-						L.d("formula jkdjflkjsdalkjf "+e.getValue().toString());
-						s=e.getValue().getValue()+"";
-					}
-					L.d(s);
-					mySensor.getFormulaContainer().logAllFormulas();
-					data.add(mySensor.getId()+":"+s+" Time:"+date);
-					if(mySensor instanceof I2CProc){
-						for(I2C_ItemClass i2c : ((I2CProc) mySensor).getExecList()){
-							checkEmptyRegisters.put(i2c.getAddr(),true);
-						}
-					}else{
-						checkEmptyRegisters.put("pin",true);
-					}
-					//data.add(t.get(i).getDouble("data")+"");
-					}
-				}
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		a.notifyDataSetChanged();		
-//		for(int i=0;i<100;++i){
-//			try {
-//				data.add(i + ": "+(new JSONObject(json).getString("sensorName")));
-//			} catch (JSONException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
+//					
+//>>>>>>> a851541d888323b9023903dbce9c1673b1f2d22c
+////					try {
+////						f.setValue(t.get(i).getDouble("data"));
+////					} catch (Exception e1) {
+////						// TODO Auto-generated catch block
+////						e1.printStackTrace();
+////					}
+//<<<<<<< HEAD
+//					
+//					mySensor.getFormulaContainer().evaluate();
+//					String s="";
+//					
+//					for(Map.Entry<String, Formula> e : mySensor.getFormulaContainer().getFc().entrySet()){
+//						L.d("formula jkdjflkjsdalkjf "+e.getValue().toString());
+//						s=e.getValue().getValue()+"";
+//					}
+//					L.d(s);
+//					
+//					data.add(mySensor.getId()+":"+s+" Time:"+date);
+//					if(mySensor instanceof I2CProc){
+//						for(I2C_ItemClass i2c : ((I2CProc) mySensor).getExecList()){
+//							checkEmptyRegisters.put(i2c.getAddr(),true);
+//						}
+//					}else{
+//						checkEmptyRegisters.put("pin",true);
+//					}
+//					//data.add(t.get(i).getDouble("data")+"");
+//					}
+//=======
+//					data.add(mySensor.getSensorName()+":"+value+" Time:"+date);
+//>>>>>>> a851541d888323b9023903dbce9c1673b1f2d22c
+//				}
+//			} catch (JSONException e) {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-			
 //		}
-	}
+//		a.notifyDataSetChanged();		
+////		for(int i=0;i<100;++i){
+////			try {
+////				data.add(i + ": "+(new JSONObject(json).getString("sensorName")));
+////			} catch (JSONException e1) {
+////				// TODO Auto-generated catch block
+////				e1.printStackTrace();
+////			}
+////			try {
+////				Thread.sleep(1000);
+////			} catch (InterruptedException e) {
+////				// TODO Auto-generated catch block
+////				e.printStackTrace();
+////			}
+//			
+////		}
+//	}
 
 	public void setContext(Context c) {
 		// TODO Auto-generated method stub
@@ -345,7 +395,7 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 		// TODO Auto-generated method stub
 //		data.add(count++ +" hi");
 //		a.notifyDataSetChanged();
-		loadData();
+//		loadData();
 		getLoaderManager().restartLoader(0, null, this);
 	}
 
