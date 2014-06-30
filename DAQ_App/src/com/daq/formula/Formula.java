@@ -3,8 +3,10 @@ package com.daq.formula;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.idl.daq.GlobalState;
+import com.idl.daq.L;
 
 import android.util.Log;
 import expr.Expr;
@@ -74,7 +76,8 @@ public class Formula {
 		
 		try { 
 			expr = Parser.parse(expression);
-			Log.e("evaluate",expr.toString());
+			Log.e("evaluate ",expr.toString());
+			L.d(expression);
 			Variable v;
 //			if(variables == null){
 //				Log.e("var","What the hell!");
@@ -86,6 +89,9 @@ public class Formula {
 				for(int i=0;i<var.size();++i){
 					v = var.get(i);
 					f = variables.get(v.toString());
+					if(f!=null){
+						L.d("under evaluation "+f.getName()+" "+f.getDisplayName()+" not null");
+					}
 					v.setValue(f.getValue());
 				}
 				value = expr.value();
@@ -95,6 +101,7 @@ public class Formula {
 		    System.err.println(e.explain());
 		    
 		}
+		L.d("formula "+name+" value:"+value);
 		
 	}
 	
@@ -120,5 +127,13 @@ public class Formula {
 	
 	public String getDisplayExpression(){
 		return displayExpression;
+	}
+
+	public void logAllVariables() {
+		// TODO Auto-generated method stub
+		L.d("logging variables for formula "+name);
+		for(Map.Entry<String, Formula> e : variables.entrySet()){
+			L.d(e.getKey()+" "+e.getValue().getName());
+		}
 	}
 }

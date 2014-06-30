@@ -23,8 +23,10 @@ public class FormulaContainer {
 	}
 	
 	public void evaluate(){
+		L.d("inside formula container");
+		L.d("is fc empty "+fc.isEmpty());
 		for(Map.Entry<String, Formula> e : fc.entrySet()){
-			Log.e("formula",e.getValue().toString());
+			L.d("formulacontainer "+e.getValue().toString());
 			e.getValue().evaluate();
 		}
 	}
@@ -59,6 +61,15 @@ public class FormulaContainer {
 		L.d("Displaying new formula strings");
 		for(Map.Entry<String, Formula> e : fc.entrySet()){
 			L.d(e.getKey()+" "+e.getValue());
+		}
+	}
+	
+	public void logAllFormulas(){
+		Formula f;
+		L.d(">formula-container< displaying all formulas");
+		for(Map.Entry<String, Formula> e : fc.entrySet() ){
+			f = e.getValue();
+			L.d(">formula-container< key "+e.getKey()+" name:"+f.getName()+" expression:"+f.getExpression()+" displayName:"+f.getDisplayName()+" displayExpression:"+f.getDisplayExpression()+" Value:"+f.getValue());
 		}
 	}
 	
