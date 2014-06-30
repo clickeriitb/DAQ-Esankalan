@@ -272,9 +272,16 @@ public class SensorBrowseFragment extends Fragment implements
 		}
 		L.d(query);
 		c = db.rawQuery(query, null);
-		L.d(c.toString());
-		L.d(c.getCount());
+		L.d("in sensor browse fragment toString" +c.toString());
+		L.d("in sensor browse fragment getCount"+c.getCount());
 		browseSensorCallbacks.openProtocol(c);
+		Cursor c2 = gS.getI2CDbHelper().getSqlDB().query(I2CDbHelper.I2C_EXEC_TABLE, null,null, null, null, null, null);
+		L.d("From sensor browse fragment");
+		if(c2.moveToFirst()){
+			do{
+			L.d(c2.getString(c2.getColumnIndex(I2CDbHelper.I2C_EXEC_CMD))+" "+c2.getString(c2.getColumnIndex(I2CDbHelper.I2C_EXEC_FOREIGN)));
+			}while(c2.moveToNext());
+		}
 	}
 
 }

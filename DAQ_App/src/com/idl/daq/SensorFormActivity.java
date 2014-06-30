@@ -1,4 +1,4 @@
-package com.idl.daq;
+ package com.idl.daq;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -189,9 +189,12 @@ public class SensorFormActivity extends FragmentActivity implements
 
 		if (c != null) {
 			this.c = c;
+			L.d("in openprotocol cursor is not null");
 		}
-		if (fragment != null)
+		if (fragment != null){
 			addNewFragment(fragment, protocol, R.anim.left_in, R.anim.left_out);
+			L.d("in openprotocol fragment is not null");
+		}
 	}
 
 	@Override
