@@ -298,7 +298,7 @@ public class AdcFragment extends Fragment implements OnClickListener {
 		String name, expression, variables,displayName,displayExpression;
 		ContentValues values;
 		for (Map.Entry<String, Formula> e : fc.entrySet()) {
-			name = e.getValue().toString();
+			name = e.getValue().getName();
 			expression = e.getValue().getExpression();
 			displayName = e.getValue().getDisplayName();
 			displayExpression = e.getValue().getDisplayExpression();
