@@ -34,6 +34,8 @@ public abstract class Sensor {
 	
 	public Sensor(){
 		fc = new FormulaContainer();
+		dataFrag = new SensorDetailFragment();
+		dataFrag.setSensor(this);
 	}
 
 	@Override
