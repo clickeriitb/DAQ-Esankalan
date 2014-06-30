@@ -6,6 +6,8 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.idl.daq.I2C_ItemClass;
 
 public class I2CProc extends Sensor{
@@ -29,21 +31,23 @@ public class I2CProc extends Sensor{
 			json.put("i2c_id", i2cAddress);
 			String config="";
 			for(I2C_ItemClass i : configList){
+				Log.e("info cmd",i.getInfo());
 				config+=i.getInfo()+",";
 			}
-			config = "["+config.substring(0, config.length()-2)+"]";
+			config = "["+config.substring(0, config.length()-1)+"]";
 			json.put("config_cmd", config);
 			String exec="";
 			for(I2C_ItemClass i : execList){
+				
 				exec+=i.getInfo()+",";
 			}
-			exec = "["+exec.substring(0, exec.length()-2)+"]";
+			exec = "["+exec.substring(0, exec.length()-1)+"]";
 			json.put("cmd", exec);
 		}catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return json;
 	}
 
 	@Override
