@@ -4,6 +4,10 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.idl.daq.USBEngine.USBCallback;
 
@@ -37,6 +41,34 @@ public class USBInput extends IntentService{
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		// TODO Auto-generated method stub
+		
+		//Testing code
+//		JSONObject json;
+//		gS = (GlobalState) getApplicationContext();
+//		ArrayList<JSONObject> temp = gS.getTemp();
+//		while(true){
+//			json = new JSONObject();
+//			
+//			try {
+//				json.put("sensor_code", "abc");
+//				json.put("data", "1.618");
+//				json.put("date", "2313");
+//				temp.add(json);
+//			} catch (JSONException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+//			
+//			L.d("added "+json.toString());
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+		
+		//Actual code
 		gS = (GlobalState) getApplicationContext();
 		usb = gS.getUsb();
 		mUsbManager = usb.getUsbManager();
