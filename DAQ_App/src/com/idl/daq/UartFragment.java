@@ -34,7 +34,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 	EditText SensorName,Quantity,BaudRate,Unit,Command,Byte;
 	TextView Formula,PinOne,PinTwo,PinProtocol;
 	String sensor,pin1,pin2,command,quantity,unit,formulaString,sub_protocol;
-	float baud;
+	int baud;
 	int byteValue;
 	FButton pin_select;
 	private Boolean err;
@@ -109,9 +109,9 @@ public class UartFragment extends Fragment implements OnClickListener{
 					.getColumnIndex(UartDbHelper.UART_PIN_RX)));
 			PinTwo.setText(c.getString(c
 					.getColumnIndex(UartDbHelper.UART_PIN_TX)));
-			BaudRate.setText(c.getFloat(c
+			BaudRate.setText(c.getInt(c
 					.getColumnIndex(UartDbHelper.UART_BAUD_RATE)) + "");
-			Command.setText(c.getFloat(c
+			Command.setText(c.getInt(c
 					.getColumnIndex(UartDbHelper.UART_COMMAND)) + "");
 			Byte.setText(c.getString(c.getColumnIndex(UartDbHelper.UART_BYTES))
 					+ "");
@@ -216,7 +216,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 		//formulaString = Formula.getText().toString();
 		
 		try {
-			baud = Float.parseFloat(BaudRate.getText().toString());
+			baud = Integer.parseInt(BaudRate.getText().toString());
 			byteValue = Integer.parseInt(Byte.getText().toString());
 		} catch (Exception e) {
 			err=true;
@@ -244,6 +244,7 @@ public class UartFragment extends Fragment implements OnClickListener{
 		tempUartSensor.setCommand(command);
 		tempUartSensor.setBaudRate(baud);
 		tempUartSensor.setByteValue(byteValue);
+		tempUartSensor.setPin(sub_protocol);
 	}
 
 	private void updateDatabase() {
