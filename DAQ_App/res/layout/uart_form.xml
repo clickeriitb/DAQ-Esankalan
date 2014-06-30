@@ -72,7 +72,7 @@
                 android:background="@drawable/rounded"
                 android:ems="10"
                 android:hint="Baudrate"
-                android:inputType="numberDecimal"
+                android:inputType="number"
                 android:paddingLeft="10dp"
                 android:textColor="#FFFCCA"
                 android:textColorHint="#FFFCCA" />

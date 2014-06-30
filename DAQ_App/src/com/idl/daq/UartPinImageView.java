@@ -10,10 +10,9 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.FloatMath;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
-import android.widget.Toast;
+
 
 public class UartPinImageView extends ImageView{
 		

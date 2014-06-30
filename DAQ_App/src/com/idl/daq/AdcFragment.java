@@ -94,6 +94,7 @@ public class AdcFragment extends Fragment implements OnClickListener {
 		Quantity = (EditText) rootView.findViewById(R.id.quantity_name);
 		Unit = (EditText) rootView.findViewById(R.id.unit_adc);
 		pinNo.setText(adcCallbacks.getPindata());
+		
 		selectPin = (FButton) rootView.findViewById(R.id.pin);
 		gS = (GlobalState) adcCallbacks.getContext();
 		c = adcCallbacks.getCursor();
@@ -131,7 +132,7 @@ public class AdcFragment extends Fragment implements OnClickListener {
 			Formula f;
 			do {
 				f = getFormula(c, tempFc);
-				tempFc.put(f.toString(), f);
+				tempFc.put(f.getName(), f);
 			} while (c.moveToNext());
 		}
 	}
@@ -154,11 +155,7 @@ public class AdcFragment extends Fragment implements OnClickListener {
 			f.addVariable(x);
 		} else {
 			String[] variableList = variables.split(":");
-			HashMap<String, Formula> allVars = tempFc.getFc();
-			L.d("name of the formula: "+name);
-			for(Map.Entry<String, Formula> e : allVars.entrySet()){
-				L.d(e.getKey()+" "+e.getValue().toString());
-			}
+			HashMap<String, Formula> allVars = tempFc.getFc();			
 			for (int i=0;i<variableList.length-1;++i) {
 				f.addToHashMap(variableList[i], allVars.get(variableList[i]));
 			}
@@ -216,6 +213,7 @@ public class AdcFragment extends Fragment implements OnClickListener {
 					Variable x = Variable.make("pin");
 					f.addVariable(x);
 					tempFc.put("pin", f);
+					L.d("hmm lets see : " + tempFc.getFc().get("pin"));
 				}
 				updateSensor();
 				adcCallbacks.openFormula("");

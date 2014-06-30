@@ -2,40 +2,49 @@ package com.daq.sensors;
 
 import java.util.ArrayList;
 
+import javax.crypto.spec.DESKeySpec;
+
 import org.json.JSONObject;
 
 import android.content.Context;
 
 import com.daq.formula.Formula;
 import com.daq.formula.FormulaContainer;
+import com.idl.daq.L;
 import com.idl.daq.SensorDetailFragment;
+import com.idl.daq.DetailsFrag;
 
 public abstract class Sensor {
-	String sensorName, desc;
+	String sensorName,desc;
 	int id;
-	SensorDetailFragment dataFrag;
+	public DetailsFrag dataFrag;
 	FormulaContainer fc;
-
-	double minThresh, maxThresh;
+	//most probably the graph data series will be defined here
+	double minThresh,maxThresh;
 
 	static private int sensorCount = 0;
-
-	public Sensor(String sensorName, FormulaContainer fc) {
+	
+	public Sensor(String sensorName,FormulaContainer fc) {
 		super();
 		this.sensorName = sensorName;
 		this.fc = fc;
 		sensorCount++;
 		id = sensorCount;
-		dataFrag = new SensorDetailFragment();
-		// dataFrag.setRetainInstance(true);
+		dataFrag = new DetailsFrag();
+		//dataFrag.setRetainInstance(true);
 		dataFrag.setSensor(this);
 		
 	}
 	
 	public Sensor(){
-		fc = new FormulaContainer();
+		dataFrag = new DetailsFrag();
+		dataFrag.setSensor(this);
 	}
 
+	public void initializeFrag(){
+		dataFrag = new DetailsFrag();
+		dataFrag.setSensor(this);
+	}
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
@@ -70,15 +79,16 @@ public abstract class Sensor {
 	public int getId() {
 		return id;
 	}
-
+	
+	//returns the jSon of the particular classes
 	public abstract JSONObject getJSON();
 
-	public SensorDetailFragment getDataFrag(Context c) {
+	public DetailsFrag getDataFrag(Context c) {
 		dataFrag.setContext(c);
 		return dataFrag;
 	}
-
-	public void setThresh(double min, double max) {
+	
+	public void setThresh(double min,double max){
 		minThresh = min;
 		maxThresh = max;
 	}
@@ -90,18 +100,20 @@ public abstract class Sensor {
 	public double getMaxThresh() {
 		return maxThresh;
 	}
-
-	public abstract String getQuantity();
 	
 	public abstract String display();
+	public abstract String getQuantity();
+	
+	
+
 	
 	//Getters and Setters
 	
-	public SensorDetailFragment getDataFrag() {
+	public DetailsFrag getDataFrag() {
 		return dataFrag;
 	}
 
-	public void setDataFrag(SensorDetailFragment dataFrag) {
+	public void setDataFrag(DetailsFrag dataFrag) {
 		this.dataFrag = dataFrag;
 	}
 

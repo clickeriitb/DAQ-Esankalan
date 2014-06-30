@@ -6,13 +6,15 @@ import json
 import global_module
 import datetime
 import threading
-import threading
 import ast
 
 class I2c() :
 	def __init__(self,jsonObj):
-		json_string = json.dumps(jsonObj)
-		decoded = json.loads(json_string)
+		if global_module.mode == 0:
+			json_string  = json.dumps(jsonObj)
+			decoded = json.loads(json_string)
+		else:
+			decoded = json.loads(jsonObj)
 		self.protocol = decoded["protocol"]
 		self.i2c_id = decoded["i2c_id"]
 		self.config_cmd = ast.literal_eval(decoded["config_cmd"])
@@ -20,13 +22,15 @@ class I2c() :
 		self.sensor_code = decoded["sensor_code"]
 		self.quantity = deocoded["quantity"]
 		self.isLogging = decoded["isLogging"]
+		#at present no explicit rate it provoded, it is included as a delay command in the commands
+		#self.rate = decoded["rate"]/1000
 
 		try:	
 		        self.log_file = open('./logs/' + decoded["sensor_code"] + "_" + decoded["quantity"] + ".txt", 'a')
 		except:
 			e_msg = "Sorry! Unable to request logging for this I2C protocol sensor"
 			print e_msg
-			if global_mode == 0:
+			if global_module.mode == 0:
 			    global_module.wifi_namespace_reference.on_error(e_msg)
 			else:
 			    global_module.ep_out.write(e_msg.encode('utf-8'),timeout=0)
@@ -41,7 +45,7 @@ class I2c() :
 		except:
 	            e_msg = "Sorry! Unable to recognise and enable the I2C address you have entered"
 	            print e_msg
-		    if global_mode == 0:
+		    if global_module.mode == 0:
 			global_module.wifi_namespace_reference.on_error(e_msg)
 		    else:
 			global_module.ep_out.write(e_msg.encode('utf-8'),timeout=0)
@@ -52,7 +56,7 @@ class I2c() :
 		except:
 	            e_msg = "Sorry! Unable to set up the initial configirations!! "
 	            print e_msg
-		    if global_mode == 0:
+		    if global_module.mode == 0:
 			global_module.wifi_namespace_reference.on_error(e_msg)
 		    else:
 			global_module.ep_out.write(e_msg.encode('utf-8'),timeout=0)
@@ -61,7 +65,7 @@ class I2c() :
 		
 
 	def setConfiguration(self):
-		for str_cmd in config_cmd:
+		for str_cmd in self.config_cmd:
 			params = str_cmd.split(':')
 			if params[0] == 'w':
 			    i2c.write8(int(params[1],16),int(params[2],10))
@@ -72,7 +76,7 @@ class I2c() :
 	def executeCommands():
 		  while not self.stop:
 			try:
-			    for str_cmd in cmd:
+			    for str_cmd in self.cmd:
 			      params = str_cmd.split(':')
 			      print params[0]
 			      if params[0] == 'w' :
@@ -81,8 +85,11 @@ class I2c() :
 				now = datetime.datetime.now()
 				rs = i2c.readS8(int(params[1],16))
 				val = str(params[1]) + ":" + str(rs) + ":" + str(now.minute) + ":" + str(now.second) + ":" + str(now.microsecond)
+				print val
+				value = str(params[1]) + ":" + str(rs)
+				date = str(now.minute) + ":" + str(now.second) + ":" + str(now.microsecond)
 				#create json Object
-				data = [{'data':val,'sensor_code':self.sensor_code}]
+				data = [{'data':val,'sensor_code':self.sensor_code,'date':date}]
 				string_data = json.dumps(data)
 				if global_module.mode == 0:
 			            global_module.wifi_namespace_reference.on_send(data)
@@ -95,8 +102,11 @@ class I2c() :
 				now = datetime.datetime.now()
 				ru = i2c.readS8(int(params[1],16))
 				val = str(params[1]) + ":" + str(ru) + ":" + str(now.minute) + ":" + str(now.second) + ":" + str(now.microsecond)
+				print val
+				value = str(params[1]) + ":" + str(ru)
+				date = str(now.minute) + ":" + str(now.second) + ":" + str(now.microsecond)
 				#create json Object
-				data = [{'data':val,'sensor_code':self.sensor_code}]
+				data = [{'data':val,'sensor_code':self.sensor_code,'date':date}]
 				string_data = json.dumps(data)
 				if global_module.mode == 0:
 			            global_module.wifi_namespace_reference.on_send(data)
@@ -110,7 +120,7 @@ class I2c() :
 			except:
 			    e_msg = "Sorry! Error while running the commands in loop!! "
 			    print e_msg
-			    if global_mode == 0:
+			    if global_module.mode == 0:
 				global_module.wifi_namespace_reference.on_error(e_msg)
 			    else:
 				global_module.ep_out.write(e_msg.encode('utf-8'),timeout=0)
@@ -125,7 +135,7 @@ class I2c() :
 		except:
 			e_msg = "Sorry! Unable to end the read thread for this I2C protocol sensor"
 			print e_msg
-			if global_mode == 0:
+			if global_module.mode == 0:
 			    global_module.wifi_namespace_reference.on_error(e_msg)
 			else:
 			    global_module.ep_out.write(e_msg.encode('utf-8'),timeout=0)
