@@ -166,12 +166,7 @@ public class UartFragment extends Fragment implements OnClickListener {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.adc_form_menu, menu);
 	}
-<<<<<<< HEAD
 
-=======
-	
-	
->>>>>>> 46e66b703b90b68a143efdef153912a53c658df8
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
