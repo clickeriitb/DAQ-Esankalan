@@ -106,7 +106,7 @@ public class SensorListActivity extends ActionBarActivity implements
 		setContentView(R.layout.activity_sensor_twopane);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		// Show the Up button in the action bar.
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		//getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// if (findViewById(R.id.sensor_detail_container) != null) {
 		// The detail container view will be present only in the
@@ -445,4 +445,10 @@ public class SensorListActivity extends ActionBarActivity implements
 	// L.d("Cleared");
 	// super.onDestroy();
 	// }
+	public void onBackPressed() {
+		Intent intent=new Intent(this,SelectProtocol.class);
+		startActivity(intent);
+		finish();
+	}
+	
 }
