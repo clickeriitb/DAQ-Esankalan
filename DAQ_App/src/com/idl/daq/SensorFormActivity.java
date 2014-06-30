@@ -163,8 +163,10 @@ public class SensorFormActivity extends FragmentActivity implements
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
-
-		super.onBackPressed();
+		Intent intent=new Intent(this,SelectProtocol.class);
+		startActivity(intent);
+		finish();
+		//super.onBackPressed();
 	}
 
 	@Override
@@ -318,7 +320,5 @@ public class SensorFormActivity extends FragmentActivity implements
 			}
 		}
 	}
-
-	
 
 }

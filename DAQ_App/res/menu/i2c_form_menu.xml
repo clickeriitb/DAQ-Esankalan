@@ -4,15 +4,14 @@
 
     <item
         android:id="@+id/cmd_menu"
-        android:title="Config"
+        android:title="CONFIG"
         android:visible="true"
-        android:icon="@drawable/ic_launcher"
-        app:showAsAction="ifRoom|withText"/>
+        android:showAsAction="always"/>
+    
     <item
         android:id="@+id/done_menu"
-        android:title="Done"
-        android:visible="true"
-        android:icon="@drawable/ic_action_done"
-        app:showAsAction="ifRoom|withText"/>
+        android:title="DONE"
+        android:showAsAction="always"
+        android:visible="true"/>
 
 </menu>

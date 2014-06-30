@@ -54,4 +54,8 @@ public class SelectProtocol extends Activity implements OnClickListener{
 		finish();
 	}
 	
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+	}
+	
 }
