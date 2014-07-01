@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.daq.db.AdcDbHelper;
 import com.daq.db.I2CDbHelper;
 import com.daq.db.UartDbHelper;
+import com.daq.formula.Formula;
 import com.daq.sensors.Sensor;
 import com.idl.daq.AdcFragment.Callbacks;
 
@@ -58,6 +59,7 @@ public class SensorBrowseFragment extends Fragment implements
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
 
 	}
 
@@ -89,16 +91,19 @@ public class SensorBrowseFragment extends Fragment implements
 			sensorCodes = gS.getAdcDbHelper().getAdcCodes();
 			sensorQuantities = gS.getAdcDbHelper().getAdcQuantities();
 			sensorUnits = gS.getAdcDbHelper().getAdcUnits();
+			rootView.setBackgroundResource(R.drawable.adc4);
 		} else if (protocol.equals("UART")) {
 			gS.getUartDbHelper().loadEntries();
 			sensorCodes = gS.getUartDbHelper().getUartCodes();
 			sensorQuantities = gS.getUartDbHelper().getUartQuantities();
 			sensorUnits = gS.getUartDbHelper().getUartUnits();
+			rootView.setBackgroundResource(R.drawable.blue);
 		} else if (protocol.equals("I2C")) {
 			gS.getI2CDbHelper().loadEntries();
 			sensorCodes = gS.getI2CDbHelper().getI2CCodes();
 			sensorQuantities = gS.getI2CDbHelper().getI2CQuantities();
 			sensorUnits = gS.getI2CDbHelper().getI2CUnits();
+			rootView.setBackgroundResource(R.drawable.green);
 		}
 		sensorDetails = new ArrayList<String>();
 		for (int i = 0; i < sensorCodes.size(); ++i) {
@@ -107,7 +112,8 @@ public class SensorBrowseFragment extends Fragment implements
 		}
 
 		listAdapter = new ArrayAdapter<>(getActivity(),
-				android.R.layout.simple_list_item_1, sensorDetails);
+				R.layout.variable_list, R.id.list_item, sensorDetails);
+		
 
 		sensorList.setAdapter(listAdapter);
 		sensorList.setOnItemClickListener(this);

@@ -117,7 +117,7 @@ public class PinSelectFragmentAdc extends Fragment implements OnTouchListener,On
 			if (s != "") {
 				pinSelectCallbacks.sendSelectedPins(s);
 				pinSelectCallbacks.openForm();
-			} else;
+			} else
 				pinSelectCallbacks.makeToast("Please select a pin");
 					//	Toast.LENGTH_SHORT).show();
 
@@ -242,7 +242,7 @@ public class PinSelectFragmentAdc extends Fragment implements OnTouchListener,On
 		
 	}
 
-//	public void onBackPressed() {
+ //     public void onBackPressed() {
 //		Intent intent = new Intent();
 //		intent.putExtra("done", s);
 //		setResult(RESULT_OK, intent);

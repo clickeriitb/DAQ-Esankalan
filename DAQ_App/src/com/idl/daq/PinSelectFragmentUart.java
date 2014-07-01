@@ -128,7 +128,7 @@ public class PinSelectFragmentUart extends Fragment implements OnTouchListener,O
 			if (s1 != "") {
 				pinSelectCallbacks.sendSelectedPins(s1 + ":" + s2 + ":" + s3);
 				pinSelectCallbacks.openForm();
-			} else;
+			} else
 			pinSelectCallbacks.makeToast("Please select a pin");
 					//	Toast.LENGTH_SHORT).show();
 

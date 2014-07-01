@@ -9,6 +9,7 @@
     android:layout_gravity="center"
     android:orientation="vertical" 
     android:layout_weight="1">
+
     <ImageButton
         android:id="@+id/adc"
         android:layout_width="match_parent"
