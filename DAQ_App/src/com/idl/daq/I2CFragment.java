@@ -118,7 +118,7 @@ public class I2CFragment extends Fragment implements OnClickListener {
 					.getColumnIndex(I2CDbHelper.I2C_QUANTITY)));
 			Unit.setText(c.getString(c.getColumnIndex(I2CDbHelper.I2C_UNIT)));
 			i2cAddress.setText(c.getString(c
-					.getColumnIndex(I2CDbHelper.I2C_UNIT)));
+					.getColumnIndex(I2CDbHelper.I2C_ADDRESS)));
 			sda.setText(c.getString(c.getColumnIndex(I2CDbHelper.I2C_PIN_SDA)));
 			scl.setText(c.getString(c.getColumnIndex(I2CDbHelper.I2C_PIN_SCL)));
 			row_id = c.getLong(c.getColumnIndex(I2CDbHelper.I2C_KEY));
