@@ -167,9 +167,9 @@ public class AdcDbHelper extends SQLiteOpenHelper {
 		sqlDB.insert(ADC_FORMULA_TABLE_NAME, null, valuesFormula);
 
 		valuesFormula = new ContentValues();
-		valuesFormula.put(ADC_FORMULA_NAME, "Temp");
+		valuesFormula.put(ADC_FORMULA_NAME, "Temperature");
 		valuesFormula.put(ADC_FORMULA_EXPRESSION, "pin/10");
-		valuesFormula.put(ADC_FORMULA_DISPLAY_NAME, "Temp");
+		valuesFormula.put(ADC_FORMULA_DISPLAY_NAME, "Temperature");
 		valuesFormula.put(ADC_FORMULA_DISPLAY_EXPRESSION, "P9_37/10");
 		valuesFormula.put(ADC_FORMULA_VARIABLES, "pin:");
 		valuesFormula.put(ADC_FORMULA_SENSOR, newRowId);
