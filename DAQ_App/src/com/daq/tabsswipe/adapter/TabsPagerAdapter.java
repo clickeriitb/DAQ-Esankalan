@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 public class TabsPagerAdapter extends FragmentPagerAdapter {
 	
 	public GraphFragment graph;
+	public SensorDetailFragment detail;
 	public TabsPagerAdapter(FragmentManager fm) {
 		super(fm);
 	}
@@ -29,7 +30,8 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 		case 1:
 			// Movies fragment activity
 			L.d("data fragment");
-			return new SensorDetailFragment();
+			detail = new SensorDetailFragment();
+			return detail;
 		}
 		return null;
 	}

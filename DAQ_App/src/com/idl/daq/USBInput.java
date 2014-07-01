@@ -53,7 +53,8 @@ public class USBInput extends IntentService{
 //			
 //			try {
 //				json.put("sensor_code", "abc");
-//				json.put("data", "41:1.618;42:3.14;");
+//			//	json.put("data", "41:1.618;42:3.14;");
+//				json.put("data", "pin:1.618;");
 //				count++;
 //				json.put("date", String.valueOf(count));
 //				temp.add(json);
