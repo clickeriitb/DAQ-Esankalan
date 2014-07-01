@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
-    
+
+    <item
+        android:id="@+id/exec_menu1"
+        android:showAsAction="always"
+        android:title="EXEC"
+        android:visible="true"/>
     <item
         android:id="@+id/form_menu1"
+        android:showAsAction="always"
         android:title="FORM"
-        android:visible="true"
-        android:showAsAction="always"/>
-    
-     <item
-        android:id="@+id/exec_menu1"
-        android:title="EXEC"
-        android:visible="true"
-        android:showAsAction="always"/>
-    
+        android:visible="true"/>
 
 </menu>
