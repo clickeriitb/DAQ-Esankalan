@@ -19,6 +19,7 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import android.widget.TabHost;
 
 import com.daq.formula.Formula;
 import com.daq.sensors.I2CProc;
+import com.daq.sensors.OthersProc;
 import com.daq.sensors.Sensor;
 import com.daq.tabsswipe.adapter.TabsPagerAdapter;
 import com.jjoe64.graphview.GraphView;
@@ -143,6 +145,7 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener,
 		count = 0;
 		// load the asyc task
 		getLoaderManager().initLoader(0, null, this);
+
 		// checkEmptyRegisters = new HashMap<String, Boolean>();
 		// initializeInputs();
 
@@ -244,11 +247,11 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener,
 	private void loadData() {
 		// TODO Auto-generated method stub
 		// it receives the new data from SensorListActivity
-		info = sensorInfoCallbacks.getArrayList();
-		infoAdapter = sensorInfoCallbacks.getArrayAdapter();
+		series = mAdapter.graph.series;
+		info = mAdapter.detail.data;
+		infoAdapter = mAdapter.detail.a;
 		L.d("received adapters");
 		L.d("Loading data");
-		series = mAdapter.graph.series;
 		L.d("Received series");
 		t = gS.getTemp();
 		for (int i = data.size(); i < t.size(); ++i) {
@@ -262,8 +265,10 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener,
 					// }
 					String date = t.get(i).getString("date");
 					time.add(date);
+					data.add(date);
 					String sensorData = "";
 					if (mySensor.getFormulaContainer() != null) {
+						Log.e("formula","other formula not null");
 						Formula f;
 						if (mySensor instanceof I2CProc) {
 							String dataList[] = t.get(i).getString("data")
@@ -289,8 +294,7 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener,
 						} else {
 							String dataVals[] = t.get(i).getString("data")
 									.split(";");
-							String dataList[] = t.get(i).getString("data")
-									.split(":");
+							String dataList[] = dataVals[0].split(":");
 							double val = Double.parseDouble(dataList[1]);
 							f = mySensor.getFormulaContainer().getFc()
 									.get("pin");
@@ -310,13 +314,16 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener,
 						displayRawData(sensorData, date);
 						displayGraphData(sensorData);
 					} else {
-						String dataVals[] = t.get(i).getString("data")
-								.split(";");
-						String dataList[] = t.get(i).getString("data")
-								.split(":");
-						String value = dataList[1];
-						sensorData = value;
-						L.d("rawdata " + sensorData);
+						if (mySensor instanceof OthersProc) {
+							sensorData = t.get(i).getString("data");
+						} else {
+							String dataVals[] = t.get(i).getString("data")
+									.split(";");
+							String dataList[] = dataVals[0].split(":");
+							String value = dataList[1];
+							sensorData = value;
+							L.d("rawdata " + sensorData);
+						}
 						displayRawData(sensorData, date);
 					}
 					L.d(sensorData + " " + date);
