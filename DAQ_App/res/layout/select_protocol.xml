@@ -18,7 +18,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:background="#00000000"
-        android:src="@drawable/adc4" />
+        android:src="@drawable/adcbutton" />
 
     <ImageButton
         android:id="@+id/uart"
