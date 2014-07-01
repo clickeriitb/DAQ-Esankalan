@@ -42,7 +42,7 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener,
 	private PagerTabStrip strip;
 	private ActionBar actionBar;
 	private TabsPagerAdapter mAdapter;
-	private String[] tabs = { "Graphical", "Tabular" };
+	private String[] tabs = { "Gauge", "Tabular", "Graphical" };
 	// recieves sensor object from SensorListActivity in the form of the tabId
 	private Sensor mySensor;
 
@@ -54,10 +54,7 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener,
 	// needed for display
 	private ArrayList<String> data, time, info;
 	private ArrayAdapter<String> infoAdapter;
-
-	int count;
-	// why
-	static int countFrag = 0;
+	private GaugeData gData;
 
 	ArrayList<JSONObject> t;
 
@@ -102,7 +99,6 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener,
 		// TODO Auto-generated method stub
 		TIME = 0;
 		L.d("on create view called");
-		countFrag++;
 		rootView = inflater.inflate(R.layout.fragment_sensor_detail, container,
 				false);
 		viewPager = (ViewPager) rootView.findViewById(R.id.pager);
@@ -140,7 +136,6 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener,
 		});
 		data = new ArrayList<String>();
 		time = new ArrayList<String>();
-		count = 0;
 		// load the asyc task
 		getLoaderManager().initLoader(0, null, this);
 		// checkEmptyRegisters = new HashMap<String, Boolean>();
@@ -244,11 +239,13 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener,
 	private void loadData() {
 		// TODO Auto-generated method stub
 		// it receives the new data from SensorListActivity
-		info = sensorInfoCallbacks.getArrayList();
-		infoAdapter = sensorInfoCallbacks.getArrayAdapter();
+		info = mAdapter.data.data;
+		infoAdapter = mAdapter.data.a;
 		L.d("received adapters");
 		L.d("Loading data");
-		series = mAdapter.graph.series;
+	//	series = mAdapter.graph.series;
+		gData = mAdapter.gauge.gData;
+		
 		L.d("Received series");
 		t = gS.getTemp();
 		for (int i = data.size(); i < t.size(); ++i) {
@@ -332,25 +329,26 @@ public class DetailsFrag extends Fragment implements ActionBar.TabListener,
 	private void displayGraphData(String sensorData) {
 		// TODO Auto-generated method stub
 		final double graphVal = Double.parseDouble(sensorData);
-		getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				// keep appending the particular list
-				JSONObject obj = mySensor.getJSON();
-				try {
-					// TODO change hardcoded value
-					series.appendData(new GraphView.GraphViewData(TIME
-							+ (float) (1000), graphVal), true);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					series.appendData(new GraphView.GraphViewData(TIME++,
-							graphVal), true);
-					e.printStackTrace();
-				}
-				// Here I try few different things
-
-			}
-		});
+		gData.setData(graphVal);
+//		getActivity().runOnUiThread(new Runnable() {
+//			@Override
+//			public void run() {
+//				// keep appending the particular list
+//				JSONObject obj = mySensor.getJSON();
+//				try {
+//					// TODO change hardcoded value
+//					series.appendData(new GraphView.GraphViewData(TIME
+//							+ (float) (1000), graphVal), true);
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					series.appendData(new GraphView.GraphViewData(TIME++,
+//							graphVal), true);
+//					e.printStackTrace();
+//				}
+//				// Here I try few different things
+//
+//			}
+//		});
 	}
 
 	private void displayRawData(String sensorData, String date) {

@@ -171,6 +171,7 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 		            String[] val = temp.split(" ");
 		            String[] val2 = val[0].split(":");
 		            double d = Double.parseDouble(val2[1]);
+		        
 		            /*YOUR CHOICE OF COLOR*/
 		            if(d < mySensor.getMinThresh()){
 		            	textView.setTextColor(Color.BLUE);

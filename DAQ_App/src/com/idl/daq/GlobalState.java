@@ -31,6 +31,7 @@ import android.widget.Toast;
 public class GlobalState extends Application{
 	
 	boolean isUsb,isExiting;
+	double demo=0.0d;
 	USBEngine usb=null;
 	String protocol="",globalString;
 
@@ -192,6 +193,14 @@ public class GlobalState extends Application{
 	public void setProtocol(String p)
 	{
 		protocol = p;
+	}
+	public void setDemo(double k)
+	{
+		demo=k;
+	}
+	public double getDemo()
+	{
+		return demo;
 	}
 	
 	

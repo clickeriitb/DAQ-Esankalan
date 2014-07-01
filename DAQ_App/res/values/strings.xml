@@ -49,5 +49,6 @@
     <string name="spinner_prompt">Variable Name</string>
     <string name="signed">Signed</string>
     <string name="unsigned">Unsigned</string>
+    <string name="title_activity_gauge">GaugeActivity</string>
 
 </resources>
