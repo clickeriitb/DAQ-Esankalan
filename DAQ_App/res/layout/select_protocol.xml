@@ -1,20 +1,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center"
-    android:background="@drawable/back4"
-    android:orientation="horizontal" 
-   
->
-
+   android:background= "@drawable/back4"
+    android:orientation="horizontal" >
+<LinearLayout   
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center"
+    android:orientation="vertical" 
+    android:layout_weight="1">
     <ImageButton
         android:id="@+id/adc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        
         android:layout_weight="1"
         android:gravity="center"
         android:background="#00000000"
-        android:src="@drawable/adc3" />
+        android:src="@drawable/adc4" />
 
     <ImageButton
         android:id="@+id/uart"
@@ -22,16 +25,33 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        
          android:background="#00000000"
-        android:src="@drawable/uart3" />
-
-    <ImageButton
+        android:src="@drawable/uart4" />
+</LinearLayout>
+ <LinearLayout 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_weight="1"    >
+<ImageButton
         android:id="@+id/i2c"
         android:layout_width="match_parent"
         android:layout_weight="1"
         android:layout_height="wrap_content"
+       
         android:background="#00000000"
         android:gravity="center"
-        android:src="@drawable/i2c3" />
+        android:src="@drawable/i2c4" />
+    <ImageButton
+        android:id="@+id/other"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+       
+        android:background="#00000000"
+        android:gravity="center"
+        android:src="@drawable/other4" />
 
-</LinearLayout>
+ </LinearLayout>
+ </LinearLayout>

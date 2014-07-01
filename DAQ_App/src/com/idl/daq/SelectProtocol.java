@@ -10,10 +10,10 @@ import android.widget.ImageButton;
 
 public class SelectProtocol extends Activity implements OnClickListener{
 
-	private ImageButton adc,uart,i2c;
+	private ImageButton adc,uart,i2c, others;
 	String proc;
 	
-	Intent i;
+	Intent i = null;
 	GlobalState gS;
 	
 	@Override
@@ -26,9 +26,12 @@ public class SelectProtocol extends Activity implements OnClickListener{
 		adc = (ImageButton) findViewById(R.id.adc);
 		uart = (ImageButton) findViewById(R.id.uart);
 		i2c = (ImageButton) findViewById(R.id.i2c);
+		others = (ImageButton) findViewById(R.id.other);
 		adc.setOnClickListener(this);
 		uart.setOnClickListener(this);
 		i2c.setOnClickListener(this);
+		others.setOnClickListener(this);
+		
 		gS = (GlobalState) getApplicationContext();
 	
 	}
@@ -47,8 +50,14 @@ public class SelectProtocol extends Activity implements OnClickListener{
 		else if(v.getId()==R.id.i2c)
 		{
 			proc="I2C";
+		}else if(v.getId()==R.id.other){
+			proc = "Others";
+			i = new Intent(getApplicationContext(),OthersActivity.class);
 		}
-		i = new Intent(getApplicationContext(),SensorFormActivity.class);
+		if(i==null){
+			i = new Intent(getApplicationContext(),SensorFormActivity.class);
+		}
+		
 		gS.setProtocol(proc);
 		startActivity(i);
 		finish();
