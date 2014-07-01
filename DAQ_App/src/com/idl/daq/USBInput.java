@@ -114,6 +114,7 @@ public class USBInput extends IntentService{
 //		L.d("Hello");
 //		while (!usb.mQuit.get()) {
 //			try {
+
 //				message = "";
 //				//Toast.makeText(gS, "input", Toast.LENGTH_SHORT).show();
 //				byte[] buf = new byte[BUFFER_SIZE];
@@ -132,6 +133,8 @@ public class USBInput extends IntentService{
 //			} catch (Exception e) {
 //				L.e("ex " + e.getMessage());
 //				break;
+
+
 //			}
 //			count++;
 //		}

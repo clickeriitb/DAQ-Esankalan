@@ -204,6 +204,7 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 		values.put(I2C_UNIT, "celsius");
 		values.put(I2C_PIN_SCL, "P9_19");
 		values.put(I2C_PIN_SDA, "P9_20");
+		values.put(I2C_ADDRESS, "69");
 
 		long newRowId;
 		newRowId = sqlDB.insert(I2C_TABLE_NAME, null, values);
@@ -215,14 +216,8 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 		
 		L.d("in test config cmd " + sqlDB.insert(I2C_CONFIG_TABLE,null,valuesConfig));
 		
-		valuesConfig = new ContentValues();
-		valuesConfig.put(I2C_CONFIG_CMD,"w:6C:0");
-		valuesConfig.put(I2C_CONFIG_FOREIGN, newRowId);
-		
-		L.d("in test config cmd " + sqlDB.insert(I2C_CONFIG_TABLE,null,valuesConfig));
-		
 		ContentValues valuesExec = new ContentValues();
-		valuesExec.put(I2C_EXEC_CMD, "r:3B");
+		valuesExec.put(I2C_EXEC_CMD, "rs:41");
 		valuesExec.put(I2C_EXEC_FOREIGN, newRowId);
 		
 		
@@ -230,7 +225,14 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 		L.d("in test exec table row "+temp+ " "+newRowId);
 		
 		valuesExec = new ContentValues();
-		valuesExec.put(I2C_EXEC_CMD, "r:3C");
+		valuesExec.put(I2C_EXEC_CMD, "ru:42");
+		valuesExec.put(I2C_EXEC_FOREIGN, newRowId);
+		
+		temp = sqlDB.insert(I2C_EXEC_TABLE,null,valuesExec);
+		L.d("in test exec table row "+temp+" "+newRowId);
+		
+		valuesExec = new ContentValues();
+		valuesExec.put(I2C_EXEC_CMD, "d:1000");
 		valuesExec.put(I2C_EXEC_FOREIGN, newRowId);
 		
 		temp = sqlDB.insert(I2C_EXEC_TABLE,null,valuesExec);
@@ -241,7 +243,7 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 		valuesFormula.put(I2C_FORMULA_EXPRESSION, "read0");
 		valuesFormula.put(I2C_FORMULA_VARIABLES, "");
 		valuesFormula.put(I2C_FORMULA_SENSOR, newRowId);
-		valuesFormula.put(I2C_FORMULA_DISPLAY_NAME, "0x3b");
+		valuesFormula.put(I2C_FORMULA_DISPLAY_NAME, "41");
 		valuesFormula.put(I2C_FORMULA_DISPLAY_EXPRESSION, "read0");
 
 		L.d("in test formula1 "+sqlDB.insert(I2C_FORMULA_TABLE_NAME, null, valuesFormula));
@@ -251,7 +253,7 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 		valuesFormula.put(I2C_FORMULA_EXPRESSION, "read1");
 		valuesFormula.put(I2C_FORMULA_VARIABLES, "");
 		valuesFormula.put(I2C_FORMULA_SENSOR, newRowId);
-		valuesFormula.put(I2C_FORMULA_DISPLAY_NAME, "0x3c");
+		valuesFormula.put(I2C_FORMULA_DISPLAY_NAME, "42");
 		valuesFormula.put(I2C_FORMULA_DISPLAY_EXPRESSION, "read1");
 
 		L.d("in test formula2 "+sqlDB.insert(I2C_FORMULA_TABLE_NAME, null, valuesFormula));
@@ -262,7 +264,18 @@ public class I2CDbHelper extends SQLiteOpenHelper {
 		valuesFormula.put(I2C_FORMULA_VARIABLES, "read0:read1:");
 		valuesFormula.put(I2C_FORMULA_SENSOR, newRowId);
 		valuesFormula.put(I2C_FORMULA_DISPLAY_NAME, "raw");
-		valuesFormula.put(I2C_FORMULA_DISPLAY_EXPRESSION, "0x3b*256+0x3c");
+		valuesFormula.put(I2C_FORMULA_DISPLAY_EXPRESSION, "41*256+42");
+
+		
+		L.d("in test formula3 "+sqlDB.insert(I2C_FORMULA_TABLE_NAME, null, valuesFormula));
+		
+		valuesFormula = new ContentValues();
+		valuesFormula.put(I2C_FORMULA_NAME, "f1");
+		valuesFormula.put(I2C_FORMULA_EXPRESSION, "raw/340+36.53");
+		valuesFormula.put(I2C_FORMULA_VARIABLES, "raw:");
+		valuesFormula.put(I2C_FORMULA_SENSOR, newRowId);
+		valuesFormula.put(I2C_FORMULA_DISPLAY_NAME, "f1");
+		valuesFormula.put(I2C_FORMULA_DISPLAY_EXPRESSION, "raw/340+36.53");
 
 		
 		L.d("in test formula3 "+sqlDB.insert(I2C_FORMULA_TABLE_NAME, null, valuesFormula));

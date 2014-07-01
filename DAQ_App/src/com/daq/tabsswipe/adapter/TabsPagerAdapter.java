@@ -14,8 +14,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 public class TabsPagerAdapter extends FragmentPagerAdapter {
 	
 	public GraphFragment graph;
+
 	public GaugeFragment gauge;
 	public SensorDetailFragment data;
+
+	public SensorDetailFragment detail;
+
 	public TabsPagerAdapter(FragmentManager fm) {
 		super(fm);
 	}
@@ -40,6 +44,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 //			L.d("graph fragment");
 //			graph = new GraphFragment(); 
 //			return graph;
+
 		}
 		return null;
 	}
