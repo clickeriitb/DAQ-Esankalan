@@ -18,7 +18,7 @@ public abstract class Sensor {
 	String sensorName,desc;
 	int id;
 	public DetailsFrag dataFrag;
-	FormulaContainer fc;
+	FormulaContainer fc = null;
 	//most probably the graph data series will be defined here
 	double minThresh,maxThresh;
 
@@ -32,8 +32,7 @@ public abstract class Sensor {
 		id = sensorCount;
 		dataFrag = new DetailsFrag();
 		//dataFrag.setRetainInstance(true);
-		dataFrag.setSensor(this);
-		
+		dataFrag.setSensor(this);		
 	}
 	
 	public Sensor(){
@@ -128,5 +127,8 @@ public abstract class Sensor {
 	public void setMaxThresh(double maxThresh) {
 		this.maxThresh = maxThresh;
 	}
+
+	
+	
 
 }
