@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,8 +25,6 @@ import com.daq.formula.Formula;
 import com.daq.formula.FormulaContainer;
 import com.daq.sensors.AdcProc;
 import com.daq.sensors.Sensor;
-
-import expr.Variable;
 
 public class AdcFragment extends Fragment implements OnClickListener {
 
