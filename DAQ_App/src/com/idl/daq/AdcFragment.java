@@ -116,6 +116,7 @@ public class AdcFragment extends Fragment implements OnClickListener {
 			row_id = c.getLong(c.getColumnIndex(AdcDbHelper.ADC_KEY));
 			L.d(row_id + "");
 			autoFillFormula(row_id);
+			tempFc.logAllFormulas();
 		}
 	}
 	
@@ -154,7 +155,7 @@ public class AdcFragment extends Fragment implements OnClickListener {
 		} else {
 			String[] variableList = variables.split(":");
 			HashMap<String, Formula> allVars = tempFc.getFc();			
-			for (int i=0;i<variableList.length-1;++i) {
+			for (int i=0;i<variableList.length;++i) {
 				f.addToHashMap(variableList[i], allVars.get(variableList[i]));
 			}
 		}
@@ -208,8 +209,6 @@ public class AdcFragment extends Fragment implements OnClickListener {
 				// name of output parameter is sent as argument
 				if(c==null){
 					Formula f = new Formula("pin", "pin",pinNo.getText().toString(),"pin");
-					Variable x = Variable.make("pin");
-					f.addVariable(x);
 					tempFc.put("pin", f);
 					L.d("hmm lets see : " + tempFc.getFc().get("pin"));
 				}
@@ -231,6 +230,7 @@ public class AdcFragment extends Fragment implements OnClickListener {
 			else {
 				updateSensor();
 				updateDatabase();
+				tempFc.logAllFormulas();
 				adcCallbacks.makeSensor(tempAdcSensor);
 			}
 			break;

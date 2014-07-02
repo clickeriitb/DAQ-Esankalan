@@ -31,6 +31,8 @@ public class USBInput extends IntentService{
 	private FileDescriptor mFileDescriptor = null;
 	private FileInputStream mInputStream = null;
 	private FileOutputStream mOutputStream = null;
+	
+	private int count = 0;
 
 	public USBInput() {
 		super("com.idl.daq.USBInput");
@@ -43,128 +45,134 @@ public class USBInput extends IntentService{
 		// TODO Auto-generated method stub
 		
 		//Testing code
-//		JSONObject json;
-//		gS = (GlobalState) getApplicationContext();
-//		ArrayList<JSONObject> temp = gS.getTemp();
-//		while(true){
-//			json = new JSONObject();
-//			
-//			try {
-//				json.put("sensor_code", "abc");
-//				json.put("data", "1.618");
-//				json.put("date", "2313");
-//				temp.add(json);
-//			} catch (JSONException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-//			
-//			L.d("added "+json.toString());
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
+		JSONObject json;
+		gS = (GlobalState) getApplicationContext();
+		ArrayList<JSONObject> temp = gS.getTemp();
+		while(true){
+			json = new JSONObject();
+			
+			try {
+				double val = 25 + Math.random()*10;
+				json.put("sensor_code", "abc");
+				json.put("data", "pin:"+val);
+				//json.put("data", "41:1.618;42:3.14;");
+				count++;
+				json.put("date", String.valueOf(count));
+				temp.add(json);
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			L.d("added "+json.toString());
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 		//Actual code
-		gS = (GlobalState) getApplicationContext();
-		usb = gS.getUsb();
-		mUsbManager = usb.getUsbManager();
-		mCallback = usb.getUsbCallBack();
-		mAccessory = usb.getUsbAccessory();
-		mParcelFileDescriptor = usb.getParcel();
-		mInputStream = usb.getInputStream();
-		mOutputStream = usb.getOutputStream();
-		int count = 0;
-		L.d("adding....");
-//		while(true){
-//			gS.addToTemp(count + " hi");
-//			count++;
+//		gS = (GlobalState) getApplicationContext();
+//		usb = gS.getUsb();
+//		mUsbManager = usb.getUsbManager();
+//		mCallback = usb.getUsbCallBack();
+//		mAccessory = usb.getUsbAccessory();
+//		mParcelFileDescriptor = usb.getParcel();
+//		mInputStream = usb.getInputStream();
+//		mOutputStream = usb.getOutputStream();
+//		int count = 0;
+//		L.d("adding....");
+////		while(true){
+////			gS.addToTemp(count + " hi");
+////			count++;
+////			try {
+////				Thread.sleep(1000);
+////			} catch (InterruptedException e) {
+////				// TODO Auto-generated catch block
+////				e.printStackTrace();
+////			}
+////		}
+//		
+//		L.d("open connection");
+////		mParcelFileDescriptor = mUsbManager.openAccessory(mAccessory);
+////		if (mParcelFileDescriptor == null) {
+////			L.e("could not open accessory");
+////			mCallback.onConnectionClosed();
+////			return;
+////		}
+////		mFileDescriptor = mParcelFileDescriptor.getFileDescriptor();
+////		mInputStream = new FileInputStream(mFileDescriptor);
+////		mOutputStream = new FileOutputStream(mFileDescriptor);
+//		mCallback.onConnectionEstablished();
+//		usb.setAccessoryConnected(true);
+//
+//		//DataInputStream dis = new DataInputStream(mInputStream);
+//		String message;
+//		
+//		L.d("Hello");
+//		while (!usb.mQuit.get()) {
 //			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
+
+//				message = "";
+//				//Toast.makeText(gS, "input", Toast.LENGTH_SHORT).show();
+//				byte[] buf = new byte[BUFFER_SIZE];
+//				//message = dis.readUTF();
+//				L.d("hi");
+//				int read = mInputStream.read(buf);
+//				for(int i=0;i<read;++i){
+//					message += (char)buf[i];
+//				}
+//				mCallback.onDataRecieved(message);
+//				//Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+//				if(message.equals("exit")){
+//					usb.mQuit.set(true);
+//				}
+//				//Thread.sleep(8000);
+//			} catch (Exception e) {
+//				L.e("ex " + e.getMessage());
+//				break;
+
+
+//			}
+//			count++;
+//		}
+//		L.d("exiting reader thread");
+//		mCallback.onConnectionClosed();
+//
+//		if (mParcelFileDescriptor != null) {
+//			try {
+//				mParcelFileDescriptor.close();
+//			} catch (IOException e) {
+//				L.e("Unable to close ParcelFD");
 //			}
 //		}
-		
-		L.d("open connection");
-//		mParcelFileDescriptor = mUsbManager.openAccessory(mAccessory);
-//		if (mParcelFileDescriptor == null) {
-//			L.e("could not open accessory");
-//			mCallback.onConnectionClosed();
-//			return;
+//
+//		if (mInputStream != null) {
+//			try {
+//				mInputStream.close();
+//			} catch (IOException e) {
+//				L.e("Unable to close InputStream");
+//			}
 //		}
-//		mFileDescriptor = mParcelFileDescriptor.getFileDescriptor();
-//		mInputStream = new FileInputStream(mFileDescriptor);
-//		mOutputStream = new FileOutputStream(mFileDescriptor);
-		mCallback.onConnectionEstablished();
-		usb.setAccessoryConnected(true);
-
-		//DataInputStream dis = new DataInputStream(mInputStream);
-		String message;
-		
-		L.d("Hello");
-		while (!usb.mQuit.get()) {
-			try {
-				message = "";
-				//Toast.makeText(gS, "input", Toast.LENGTH_SHORT).show();
-				byte[] buf = new byte[BUFFER_SIZE];
-				//message = dis.readUTF();
-				L.d("hi");
-				int read = mInputStream.read(buf);
-				for(int i=0;i<read;++i){
-					message += (char)buf[i];
-				}
-				mCallback.onDataRecieved(message);
-				//Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-				if(message.equals("exit")){
-					usb.mQuit.set(true);
-				}
-				//Thread.sleep(8000);
-			} catch (Exception e) {
-				L.e("ex " + e.getMessage());
-				break;
-			}
-			count++;
-		}
-		L.d("exiting reader thread");
-		mCallback.onConnectionClosed();
-
-		if (mParcelFileDescriptor != null) {
-			try {
-				mParcelFileDescriptor.close();
-			} catch (IOException e) {
-				L.e("Unable to close ParcelFD");
-			}
-		}
-
-		if (mInputStream != null) {
-			try {
-				mInputStream.close();
-			} catch (IOException e) {
-				L.e("Unable to close InputStream");
-			}
-		}
-
-		if (mOutputStream != null) {
-			try {
-				mOutputStream.close();
-			} catch (IOException e) {
-				L.e("Unable to close OutputStream");
-			}
-		}
-
-		usb.setAccessoryConnected(false);
-		L.d("usb set Accessory Connected false");
-		usb.mQuit.set(false);
-		L.d("mQuit false");
-		usb.onDestroy();
-		gS.finishUSB();
-		L.d("finish USB");
-//	//	sAccessoryThread = null;
+//
+//		if (mOutputStream != null) {
+//			try {
+//				mOutputStream.close();
+//			} catch (IOException e) {
+//				L.e("Unable to close OutputStream");
+//			}
+//		}
+//
+//		usb.setAccessoryConnected(false);
+//		L.d("usb set Accessory Connected false");
+//		usb.mQuit.set(false);
+//		L.d("mQuit false");
+//		usb.onDestroy();
+//		gS.finishUSB();
+//		L.d("finish USB");
+//  	sAccessoryThread = null;
 	}
 
 	@Override

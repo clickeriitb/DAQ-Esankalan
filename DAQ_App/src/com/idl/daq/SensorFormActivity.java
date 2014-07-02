@@ -1,4 +1,4 @@
- package com.idl.daq;
+package com.idl.daq;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +24,9 @@ public class SensorFormActivity extends FragmentActivity implements
 
 		ExpressionFragment.Callbacks, UartFragment.Callbacks,
 		PinSelectFragmentAdc.Callbacks, SensorBrowseFragment.Callbacks,
-		PinSelectFragmentUart.Callbacks, I2CFragment.Callbacks, I2CPinSelect.Callbacks, I2C_ConfigFragment.Callbacks,I2C_ExecFragment.Callbacks  {
-
+		PinSelectFragmentUart.Callbacks, I2CFragment.Callbacks,
+		I2CPinSelect.Callbacks, I2C_ConfigFragment.Callbacks,
+		I2C_ExecFragment.Callbacks {
 
 	GlobalState gS;
 	String protocol, initialSpinnerValue;
@@ -74,7 +75,7 @@ public class SensorFormActivity extends FragmentActivity implements
 		}
 	}
 
-	//TODO clean it saaf safayi
+	// TODO clean it saaf safayi
 	@Override
 	public void openFormula(String s) {
 		// TODO Auto-generated method stub
@@ -96,9 +97,9 @@ public class SensorFormActivity extends FragmentActivity implements
 			Log.e("old formula screen shown", "old fragment retained");
 			newFrag = fm.findFragmentByTag("formula");
 			Log.e("string glbal", gS.getGlobalString());
-			TextView ex = (TextView) findViewById(R.id.expr);
-			ex.setText("");
-			ex.setText(gS.getGlobalString());
+			// TextView ex = (TextView) findViewById(R.id.expr);
+			// ex.setText("");
+			// ex.setText(gS.getGlobalString());
 		}
 		Log.e("add", "added");
 		t.hide(oldFrag);
@@ -130,11 +131,13 @@ public class SensorFormActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void getFormula(String name, String expression,String displayName,String displayExpression) {
+	public void getFormula(String name, String expression, String displayName,
+			String displayExpression) {
 		// TODO Auto-generated method stub
 		Log.e("entered getformula", "jkhjh");
 		allVar = gS.getSensor().getFormulaContainer().getFc();
-		Formula formula = new Formula(name, expression,displayName,displayExpression);
+		Formula formula = new Formula(name, expression, displayName,
+				displayExpression);
 		for (String str : varList)
 			formula.addToHashMap(str, allVar.get(str));
 		gS.getSensor().addToFc(formula);
@@ -159,12 +162,104 @@ public class SensorFormActivity extends FragmentActivity implements
 		varList = varlist;
 	}
 
-
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
+		// Intent intent=new Intent(this,SelectProtocol.class);
+		// startActivity(intent);
+		// finish();
+		// super.onBackPressed();
+		
+		L.d("on back pressed called ");
 
-		super.onBackPressed();
+		FragmentManager fm = getSupportFragmentManager();
+		FragmentTransaction t = fm.beginTransaction();
+
+		Fragment temp;
+		
+		L.d("browse frag added"+fm.findFragmentByTag("browse").isAdded());
+		
+		L.d("browse frag visible"+fm.findFragmentByTag("browse").isVisible());
+
+		if ((temp = fm.findFragmentByTag("browse"))!=null) {
+			if (temp.isVisible()) {
+				Intent intent = new Intent(this, SelectProtocol.class);
+				L.d("Browse frag visible, intent added");
+				startActivity(intent);
+				L.d("Browse frag visible, intent starts");
+				finish();
+				L.d("Browse frag finishes");
+				return;
+				
+			}
+		}
+		
+		
+
+		if ((temp=fm.findFragmentByTag(protocol))!=null) {
+			L.d("protocol is added");
+			if(temp.isVisible())
+			{
+				L.d("protocol is visible");
+				oldFrag = temp;
+				newFrag = fm.findFragmentByTag("browse");
+				L.d("back to browse");
+			}
+		}
+		
+		if ((temp = fm.findFragmentByTag(protocol+"_id"))!=null) {
+			if(temp.isVisible())
+			{
+				oldFrag = temp;
+				newFrag = fm.findFragmentByTag(protocol);
+			}
+		} 
+		
+		if ((temp = fm.findFragmentByTag("expression"))!=null) {
+			if(temp.isVisible())
+			{
+				oldFrag = temp;
+				newFrag = fm.findFragmentByTag("formula");
+			}
+		} 
+		if ((temp = fm.findFragmentByTag("i2c_config"))!=null) {
+			if(temp.isVisible())
+			{
+				oldFrag = temp;
+				newFrag = fm.findFragmentByTag(protocol);
+			}
+		} 
+		if ((temp = fm.findFragmentByTag("i2c_exec"))!=null) {
+			if(temp.isVisible())
+			{
+				oldFrag = temp;
+				newFrag = fm.findFragmentByTag("i2c_config");
+			}
+		} 
+		if ((temp = fm.findFragmentByTag("formula"))!=null) {
+			if(temp.isVisible()){
+				oldFrag = temp;
+				if (protocol.equals("ADC")) {
+					newFrag = fm.findFragmentByTag(protocol);
+				} else {
+					newFrag = fm.findFragmentByTag("i2c_exec");
+				}
+			}
+		}
+		if (R.anim.right_in != -1 && R.anim.right_out != -1) {
+			t.setCustomAnimations(R.anim.right_in,
+					R.anim.right_out);
+		}
+		
+		if(oldFrag==null && newFrag==null){
+			L.d("old Frag and new Frag null");
+		}
+		t.hide(oldFrag);
+		L.d("hide old frag");
+		t.show(newFrag);
+		L.d("show new frag");
+		t.commit();
+		L.d("commit frag");
 	}
 
 	@Override
@@ -183,7 +278,7 @@ public class SensorFormActivity extends FragmentActivity implements
 			this.c = c;
 			L.d("in openprotocol cursor is not null");
 		}
-		if (fragment != null){
+		if (fragment != null) {
 			addNewFragment(fragment, protocol, R.anim.left_in, R.anim.left_out);
 			L.d("in openprotocol fragment is not null");
 		}
@@ -201,11 +296,12 @@ public class SensorFormActivity extends FragmentActivity implements
 		Fragment fragment = null;
 		if (protocol == "ADC")
 			fragment = new PinSelectFragmentAdc();
-		else if(protocol == "UART")
+		else if (protocol == "UART")
 			fragment = new PinSelectFragmentUart();
 		else if (protocol.equals("I2C"))
 			fragment = new I2CPinSelect();
-		addNewFragment(fragment, protocol + "_pin", R.anim.vertical_up_in,R.anim.vertical_up_out);
+		addNewFragment(fragment, protocol + "_pin", R.anim.vertical_up_in,
+				R.anim.vertical_up_out);
 	}
 
 	@Override
@@ -224,20 +320,20 @@ public class SensorFormActivity extends FragmentActivity implements
 	public void openForm() {
 		// TODO Auto-generated method stub
 
-		if(showOldFragment(protocol, R.anim.vertical_down_in, R.anim.vertical_down_out)){
-			if(protocol.equals("ADC")){
+		if (showOldFragment(protocol, R.anim.vertical_down_in,
+				R.anim.vertical_down_out)) {
+			if (protocol.equals("ADC")) {
 				TextView pin_view = (TextView) findViewById(R.id.pin_no);
-			    pin_view.setText(pinData);
-			}
-			else if (protocol.equals("UART")){
+				pin_view.setText(pinData);
+			} else if (protocol.equals("UART")) {
 				String[] data = pinData.split(":");
-				TextView pin_view = (TextView)findViewById(R.id.sub_protocol);
+				TextView pin_view = (TextView) findViewById(R.id.sub_protocol);
 				pin_view.setText(data[0]);
-				TextView pin_view1 = (TextView)findViewById(R.id.pin1);
+				TextView pin_view1 = (TextView) findViewById(R.id.pin1);
 				pin_view1.setText(data[1]);
-				TextView pin_view2= (TextView)findViewById(R.id.pin2);
+				TextView pin_view2 = (TextView) findViewById(R.id.pin2);
 				pin_view2.setText(data[2]);
-				
+
 			} else if (protocol.equals("I2C")) {
 				String arr[] = pinData.split(":");
 				TextView sda = (TextView) findViewById(R.id.sda);
@@ -281,7 +377,7 @@ public class SensorFormActivity extends FragmentActivity implements
 			}
 			oldFrag = newFrag;
 			fragmentTransaction.hide(oldFrag);
-			Fragment tempFrag = fragmentManager.findFragmentByTag(tag); 
+			Fragment tempFrag = fragmentManager.findFragmentByTag(tag);
 			if (tempFrag != null) {
 				newFrag = tempFrag;
 				fragmentTransaction.show(newFrag);
@@ -300,9 +396,9 @@ public class SensorFormActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 		if (protocol.equals("I2C")) {
 			Fragment fragment = new I2C_ConfigFragment();
-			if(!showOldFragment("i2c_config", R.anim.left_in, R.anim.left_out)){
+			if (!showOldFragment("i2c_config", R.anim.left_in, R.anim.left_out)) {
 				addNewFragment(fragment, "i2c_config", R.anim.left_in,
-		R.anim.left_out);
+						R.anim.left_out);
 			}
 		}
 	}
@@ -312,12 +408,11 @@ public class SensorFormActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 		if (protocol.equals("I2C")) {
 			Fragment fragment = new I2C_ExecFragment();
-			if(!showOldFragment("i2c_exec", R.anim.left_in, R.anim.left_out)){
+			if (!showOldFragment("i2c_exec", R.anim.left_in, R.anim.left_out)) {
 				addNewFragment(fragment, "i2c_exec", R.anim.left_in,
-		R.anim.left_out);
+						R.anim.left_out);
 			}
 		}
 	}
-		
 
 }

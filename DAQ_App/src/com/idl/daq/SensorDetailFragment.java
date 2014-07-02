@@ -168,18 +168,21 @@ public class SensorDetailFragment extends Fragment implements LoaderCallbacks<Vo
 
 		            TextView textView=(TextView) view.findViewById(android.R.id.text1);
 		            String temp = textView.getText().toString();
-		            String[] val = temp.split(" ");
-		            String[] val2 = val[0].split(":");
-		            double d = Double.parseDouble(val2[1]);
-		            /*YOUR CHOICE OF COLOR*/
-		            if(d < mySensor.getMinThresh()){
-		            	textView.setTextColor(Color.BLUE);
-		            }else if(d > mySensor.getMaxThresh()){
-		            	textView.setTextColor(Color.RED);
-		            }else{
-		            	textView.setTextColor(Color.BLACK);
-		            }
 
+		            if(!gS.getProtocol().equals("Others")){
+						String[] val = temp.split(" ");
+						String[] val2 = val[0].split(":");
+						double d = Double.parseDouble(val2[1]);
+						/* YOUR CHOICE OF COLOR */
+						if (d < mySensor.getMinThresh()) {
+							textView.setTextColor(Color.BLUE);
+						} else if (d > mySensor.getMaxThresh()) {
+							textView.setTextColor(Color.RED);
+						} else {
+							textView.setTextColor(Color.BLACK);
+						}
+
+		            }
 		            return view;
 		        }
 		    };

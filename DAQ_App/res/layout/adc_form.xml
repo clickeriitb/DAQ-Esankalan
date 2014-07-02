@@ -65,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_weight="1"
-                android:background="@drawable/rounded"
+                android:background="@drawable/rounded_text_view"
                 android:ems="10"
                 android:hint="Pin Number"
                 android:inputType="text"

@@ -45,7 +45,7 @@ import android.widget.EditText;
  * {@link SensorListFragment.Callbacks} interface to listen for item selections.
  */
 public class SensorListActivity extends ActionBarActivity implements
-		SensorListFragment.Callbacks, SensorDetailFragment.Callbacks, DetailsFrag.Callbacks, GraphFragment.Callbacks {
+		SensorListFragment.Callbacks, SensorDetailFragment.Callbacks, DetailsFrag.Callbacks, GraphFragment.Callbacks, GaugeFragment.Callbacks {
 
 	/**
 	 * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -106,7 +106,7 @@ public class SensorListActivity extends ActionBarActivity implements
 		setContentView(R.layout.activity_sensor_twopane);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		// Show the Up button in the action bar.
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		//getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// if (findViewById(R.id.sensor_detail_container) != null) {
 		// The detail container view will be present only in the
@@ -156,6 +156,12 @@ public class SensorListActivity extends ActionBarActivity implements
 		// if ADD button clicked(to add new sensor)
 		else if (id == R.id.action_add) {
 			Intent i = new Intent(getApplicationContext(), SelectProtocol.class);
+			startActivity(i);
+			// gS.setExiting(false);
+			finish();
+		}
+		else if (id == R.id.action_demo) {
+			Intent i = new Intent(getApplicationContext(), GaugeFragment.class);
 			startActivity(i);
 			// gS.setExiting(false);
 			finish();
@@ -445,4 +451,10 @@ public class SensorListActivity extends ActionBarActivity implements
 	// L.d("Cleared");
 	// super.onDestroy();
 	// }
+	public void onBackPressed() {
+		Intent intent=new Intent(this,SelectProtocol.class);
+		startActivity(intent);
+		finish();
+	}
+	
 }

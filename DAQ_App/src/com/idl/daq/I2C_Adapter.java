@@ -103,12 +103,12 @@ public class I2C_Adapter extends ArrayAdapter<I2C_ItemClass> implements
 	private void delayInstruction(final int position) {
 		// TODO Auto-generated method stub
 		LayoutInflater li = LayoutInflater.from(context);
-		View dialogview = li.inflate(R.layout.i2c_dialog_view, null);
+		View dialogview = li.inflate(R.layout.i2c_dialog_delay, null);
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				context);
 		alertDialogBuilder.setView(dialogview);
 		final EditText addr = (EditText) dialogview
-				.findViewById(R.id.editText1);
+				.findViewById(R.id.edit_delay);
 
 		alertDialogBuilder
 				.setCancelable(false)
@@ -135,14 +135,14 @@ public class I2C_Adapter extends ArrayAdapter<I2C_ItemClass> implements
 	private void writeInstruction(final int position) {
 		// TODO Auto-generated method stub
 		LayoutInflater li = LayoutInflater.from(context);
-		View dialogview = li.inflate(R.layout.i2c_dialog_view, null);
+		View dialogview = li.inflate(R.layout.i2c_dialog_write, null);
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				context);
 		alertDialogBuilder.setView(dialogview);
 		final EditText addr = (EditText) dialogview
-				.findViewById(R.id.editText1);
+				.findViewById(R.id.edit_write_addr);
 		final EditText val = (EditText) dialogview
-				.findViewById(R.id.editText2);
+				.findViewById(R.id.edit_write_value);
 
 		alertDialogBuilder
 				.setCancelable(false)
@@ -171,12 +171,12 @@ public class I2C_Adapter extends ArrayAdapter<I2C_ItemClass> implements
 	private void readInstruction(final int position) {
 		// TODO Auto-generated method stub
 		LayoutInflater li = LayoutInflater.from(context);
-		View dialogview = li.inflate(R.layout.i2c_dialog_view, null);
+		View dialogview = li.inflate(R.layout.i2c_dialog_read, null);
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				context);
 		alertDialogBuilder.setView(dialogview);
 		final EditText addr = (EditText) dialogview
-				.findViewById(R.id.editText1);
+				.findViewById(R.id.edit_read_addr);
 
 		alertDialogBuilder
 				.setCancelable(false)

@@ -118,7 +118,7 @@ public class I2CFragment extends Fragment implements OnClickListener {
 					.getColumnIndex(I2CDbHelper.I2C_QUANTITY)));
 			Unit.setText(c.getString(c.getColumnIndex(I2CDbHelper.I2C_UNIT)));
 			i2cAddress.setText(c.getString(c
-					.getColumnIndex(I2CDbHelper.I2C_UNIT)));
+					.getColumnIndex(I2CDbHelper.I2C_ADDRESS)));
 			sda.setText(c.getString(c.getColumnIndex(I2CDbHelper.I2C_PIN_SDA)));
 			scl.setText(c.getString(c.getColumnIndex(I2CDbHelper.I2C_PIN_SCL)));
 			row_id = c.getLong(c.getColumnIndex(I2CDbHelper.I2C_KEY));
@@ -167,9 +167,10 @@ public class I2CFragment extends Fragment implements OnClickListener {
 				L.d("in auto fill exec, Exec cmd "+cmd);
 				obj = new I2C_ItemClass();
 				String[] cmdParts = cmd.split(":");
-				if(cmdParts[0].equals("r")){
+				if(cmdParts[0].equals("ru") || cmdParts[0].equals("rs")){
 					obj.setType("read");
 					obj.setAddr(cmdParts[1]);
+					obj.setSigned(cmdParts[0].equals("ru") ? false : true);
 				}else if(cmdParts[0].equals("w")){
 					obj.setType("write");
 					obj.setAddr(cmdParts[1]);

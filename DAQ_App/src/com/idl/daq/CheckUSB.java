@@ -36,7 +36,7 @@ public class CheckUSB extends Activity{
 			gS.setUsb(false);
 			L.d(gS.usb);
 			gS.startSocket();
-			//gS.startingTest();
+			gS.startingTest();
 		}
 //		Intent i = new Intent(getApplicationContext(),USBInput.class);
 //		startService(i);
