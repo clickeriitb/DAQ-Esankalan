@@ -1,4 +1,4 @@
 DAQ-Esankalan
 =============
 
-Data Acquisition System on Aakash Tabalets for Sensor Data
+Data Acquisition System on Aakash Tablets for Sensor Data
